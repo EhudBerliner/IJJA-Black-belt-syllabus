@@ -1,8 +1,9 @@
 const CACHE_NAME = 'ijja-syllabus-v1';
 const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json'
+'./', 
+  './index.html', 
+  './manifest.json', 
+  './Logo.png' // הוספת הלוגו למטמון
 ];
 
 // התקנה ושמירת הקבצים בזיכרון המטמון
@@ -34,4 +35,5 @@ self.addEventListener('fetch', (event) => {
       return cachedResponse || fetch(event.request);
     })
   );
+
 });
