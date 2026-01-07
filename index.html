@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <link rel="manifest" href="manifest.json">
+	<meta name="theme-color" content="#007aff">
+	<link rel="apple-touch-icon" href="logo.png"><meta charset="UTF-8">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Syllabus for black belts in ju-jitsu</title>
+
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #0056a6;
+    --secondary: #009be5;
+    --accent: #e3f2fd;
+    --text-dark: #233142;
+    --card-bg: #ffffff;
+    --border: #d2dce5;
+    --header-height: 70px;
+}
+
+body {
+    font-family: 'Heebo', sans-serif;
+    margin: 0;
+    background: #f7f9fb;
+    color: var(--text-dark);
+    padding-top: var(--header-height);
+}
+
+/* ---------- HEADER ---------- */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: var(--header-height);
+    background: white;
+    border-bottom: 3px solid var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	text-align: center;
+    z-index: 1000;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 800;
+    color: var(--primary);
+	font-size: 30px;
+}
+
+/* ---------- LAYOUT ---------- */
+.layout {
+    display: flex;
+    flex-direction: row;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* ---------- SIDEBAR ---------- */
+.filter-sidebar {
+    width: 230px;
+    position: sticky;
+    top: calc(var(--header-height) + 10px);
+    height: fit-content;
+}
+
+.filter-bar {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.filter-button {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: #f0f4f8;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: right;
+}
+
+.filter-button.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* ---------- CONTENT ---------- */
+.container {
+    flex: 1;
+    max-width: 900px;
+	/* התיקון מאפשר גלילה מלאה של הפריט האחרון */
+    padding-bottom: 53vh;
+}
+
+        /* ---------- CATEGORY (Sticky) ---------- */
+
+        .category {
+            margin-top: 40px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.6em;
+            font-weight: 900;
+            position: sticky;
+            /* Adjusted position to sit below the filter bar */
+            top: calc(var(--header-height) + 1px); 
+            z-index: 500;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Reset margin for the first category */
+        .category:first-of-type {
+            margin-top: 0;
+        }
+
+        /* ---------- SERIES (collapsible trigger) ---------- */
+
+        .series {
+            background: var(--series-bg);
+            padding: 15px 20px;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-top: 15px;
+            border-right: 4px solid var(--secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.25s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .series:hover {
+            background: var(--accent);
+        }
+
+        /* Rotate icon when series is open */
+        .series i {
+            transition: transform 0.3s ease;
+        }
+        
+        .series.active {
+             border-radius: 8px 8px 0 0; /* Adjust border for when the list is visible */
+             box-shadow: none;
+        }
+        
+        .series.active i {
+            transform: rotate(180deg);
+        }
+
+        /* Link the series header visually to the list below */
+        .series + .exercise-list {
+            margin-top: -8px; /* Slightly overlap with series for a cleaner join */
+        }
+
+        /* ---------- LIST (collapsible content) ---------- */
+
+.exercise-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: white;
+}
+
+.exercise-list.expanded {
+    max-height: 2000px;
+}
+
+.exercise {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.exercise a {
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* ---------- HELPERS ---------- */
+.hidden {
+    display: none !important;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 900px) {
+
+    .layout {
+        flex-direction: column;
+    }
+
+    .filter-sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .filter-bar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .filter-button {
+        width: auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>סילבוס חגורה שחורה<br>Ju-Jitsu</h1>
+</header>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="filter-sidebar">
+        <div class="filter-bar">
+        <button class="filter-button active" data-filter="all">הכל</button>
+        <button class="filter-button" data-filter="attacks">התקפות</button>
+        <button class="filter-button" data-filter="hand-grabs">תפיסות ידים</button>
+        <button class="filter-button" data-filter="chokes">חניקות</button>
+        <button class="filter-button" data-filter="holds">חביקות</button>
+        <button class="filter-button" data-filter="clothing-grabs">תפיסות בגדים</button>
+        <button class="filter-button" data-filter="series">סדרות</button>
+        <button class="filter-button" data-filter="Weapons_Defense">הגנה מכלי נשק</button>
+        <button class="filter-button" data-filter="Kicks_Defense">הגנה מבעיטה</button>
+        <button class="filter-button" data-filter="Judo">ג'ודו</button>
+		<button class="filter-button" data-filter="Sequels&fractures">שבירות והמשכים</button>
+        </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="container">
+
+        <div class="category" data-filter="attacks">התקפות</div>
+
+        <div class="series">סטירה <i class="fa-solid fa-chevron-down"></i></div>
+        <ul class="exercise-list">
+			<li class="exercise"><a href="https://youtu.be/rJkTpu48iwE?t=39" target="_blank">1. קלאסי שבירה על הבטן</a></li>
+			<li class="exercise"><a href="https://youtu.be/zwUKVRC9N4U?t=117" target="_blank">2. Kubi-Nage</a></li>
+			<li class="exercise"><a href="https://youtu.be/mMZXg3AvoiM" target="_blank">3. מנוף (למעלה)</a></li>
+			<li class="exercise"><a href="https://youtu.be/mMZXg3AvoiM?t=45" target="_blank">4. Tai Sabaki (למטה)</a></li>
+			<li class="exercise"><a href="https://youtu.be/qZh8Q4ObTIY" target="_blank">5. Ippon-seoi-nage</a></li>
+			<li class="exercise"><a href="https://youtu.be/qZh8Q4ObTIY?t=51" target="_blank">6. גליוטינה + גלגול</a></li>
+			<li class="exercise"><a href="https://youtu.be/TRfU-ssP7cM?t=2" target="_blank">7. הטלת בית שחי Yoko Wakare</a></li>
+        </ul>
+
+		<div class="series">שתי סטירות<i class="fa-solid fa-chevron-down"></i></div>
+		<ul class="exercise-list">
+			<li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=12" target="_blank">1. נגיחה</a></li>
+			<li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=15" target="_blank">2. Osoto Gari</a></li>
+			<li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=24" target="_blank">3. Kubi-Nage</a></li>
+			<li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=33" target="_blank">4. Tai-otoshi</a></li>
+			<li class="exercise"><a href="https://youtu.be/iZRjXQCBrU4?t=6" target="_blank">5. פרפר</a></li>
+			<li class="exercise"><a href="https://youtu.be/iZRjXQCBrU4?t=37" target="_blank">6. בייגלה</a></li>
+		</ul>
+
+    <div class="series">גב יד<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/85DkKh8wxug" target="_blank">1. גריפת עקב</a></li>
+        <li class="exercise"><a href="https://youtu.be/85DkKh8wxug?t=9" target="_blank">2. דריכה על הברך</a></li>
+        <li class="exercise"><a href="https://youtu.be/85DkKh8wxug?t=21" target="_blank">3. הפלה מהעקב</a></li>
+        <li class="exercise"><a href="https://youtu.be/dDJA4gFRX6g?t=1" target="_blank">4. מריצה</a></li>
+        <li class="exercise"><a href="https://youtu.be/dDJA4gFRX6g?t=29" target="_blank">5. Tai Sabaki מהמרפק</a></li>
+        <li class="exercise"><a href="https://youtu.be/9ynvwuT7Wbg?t=1" target="_blank">6. Kani-basami (מספריים)</a></li>
+        <li class="exercise"><a href="https://youtu.be/9ynvwuT7Wbg?t=21" target="_blank">7. מספריים הפוכים</a></li>
+    </ul>
+
+    <div class="series">אגרוף<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=9" target="_blank">1. אגרוף גזע המוח</a></li>
+        <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=19" target="_blank">2. מרפק גזע המוח</a></li>
+        <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=30" target="_blank">3. שבירת מרפק</a></li>
+        <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=40" target="_blank">4. 2 ברכיות + שבירת מרפק</a></li>
+        <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=64" target="_blank">5. Tai Sabaki + המשך</a></li>
+        <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=80" target="_blank">6. קלאסי</a></li>
+        <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=125" target="_blank">7. יוקו וגלגול</a></li>
+    </ul>
+	
+    <div class="category" data-filter="hand-grabs">תפיסות ידים</div>
+
+    <div class="series">תפיסות ידים מלפנים <i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ" target="_blank">1. משיכת ידים</a></li>
+        <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ?t=12" target="_blank">2. משיכת יד שמאל + אגרוף</a></li>
+        <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ?t=21" target="_blank">3. שמש</a></li>
+        <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ?t=36" target="_blank">4. Tani-Otoshi (ספה)</a></li>
+        <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=2" target="_blank">5. Tai Sabaki</a></li>
+        <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=63" target="_blank">6. מנוף ממטוטלת</a></li>
+        <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=167" target="_blank">7. חרב ממטוטלת</a></li>
+        <li class="exercise"><a href="https://youtu.be/rJkTpu48iwE?t=1" target="_blank">8. בורג</a></li>
+        <li class="exercise"><a href="https://youtu.be/fzGJeR-BMe4?t=1" target="_blank">9. כניסה שמאל (שבירת ימין) + הוק ברגל</a></li>
+        <li class="exercise"><a href="https://youtu.be/fzGJeR-BMe4?t=42" target="_blank">10. כניסה ימין (שבירת שמאל) + גלגול</a></li>
+        <li class="exercise"><a href="https://youtu.be/RxbUuf-oqOk?t=2" target="_blank">11. שבירת שורש כף יד</a></li>
+    </ul>
+
+    <div class="series">תפיסות ידים מלמעלה<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/IogVMWRxuSQ?t=1" target="_blank">1. משיכת ידים (למטה)</a></li>
+        <li class="exercise"><a href="https://youtu.be/IogVMWRxuSQ?t=6" target="_blank">2. משיכת יד שמאל + אגרוף</a></li>
+        <li class="exercise"><a href="https://youtu.be/IogVMWRxuSQ?t=14" target="_blank">3. כניסה למנוף</a></li>
+        <li class="exercise"><a href="https://youtu.be/IogVMWRxuSQ?t=53" target="_blank">4. כניסה Ippon-seoi-nage ממנוף</a></li>
+        <li class="exercise"><a href="https://youtu.be/rJkTpu48iwE?t=7" target="_blank">5. בורג</a></li>
+        <li class="exercise"><a href="https://youtu.be/rJkTpu48iwE?t=29" target="_blank">6. קלאסי (מרפק למרפק)</a></li>
+    </ul>
+
+    <div class="series">תפיסות ידים מאחור<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/fiugpSZrE-g?t=2" target="_blank">1. טורקי קטן</a></li>
+        <li class="exercise"><a href="https://youtu.be/fiugpSZrE-g?t=13" target="_blank">2. טורקי גדול</a></li>
+        <li class="exercise"><a href="https://youtu.be/fiugpSZrE-g?t=39" target="_blank">3. Tani-Otoshi (ספה)</a></li>
+        <li class="exercise"><a href="https://youtu.be/USQirtqBYvc" target="_blank">4. Tai Sabaki</a></li>
+        <li class="exercise"><a href="https://youtu.be/USQirtqBYvc?t=14" target="_blank">5. יוקו וגלגול</a></li>
+        <li class="exercise"><a href="https://youtu.be/USQirtqBYvc?t=62" target="_blank">6. יוקו קלאסי</a></li>
+        <li class="exercise"><a href="https://youtu.be/Xp5cq9ZO9y8?t=13" target="_blank">7. בורג</a></li>
+    </ul>
+
+    <div class="category" data-filter="chokes">חניקות</div>
+
+    <div class="series">חניקה מלפנים <i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/9nQhR6-v4L0?t=1" target="_blank">1. דחיפה</a></li>
+        <li class="exercise"><a href="https://youtu.be/9nQhR6-v4L0?t=11" target="_blank">2. ברך</a></li>
+        <li class="exercise"><a href="https://youtu.be/9nQhR6-v4L0?t=19" target="_blank">3. ברך לראש</a></li>
+        <li class="exercise"><a href="https://youtu.be/9nQhR6-v4L0?t=25" target="_blank">4. מרפקים</a></li>
+        <li class="exercise"><a href="https://youtu.be/9nQhR6-v4L0?t=40" target="_blank">5. קומבינציה</a></li>
+        <li class="exercise"><a href="https://youtu.be/JpA40aYDyXM" target="_blank">6. Osoto Gari</a></li>
+        <li class="exercise"><a href="https://youtu.be/JpA40aYDyXM?t=98" target="_blank">7. Kobi Nage</a></li>
+        <li class="exercise"><a href="https://youtu.be/UAwfPvCjJWQ?t=12" target="_blank">8. קלאסי</a></li>
+        <li class="exercise"><a href="https://youtu.be/-QgHq7dSYn4?t=5" target="_blank">9. פתיחה 1 (Tai Sabaki)</a></li>
+        <li class="exercise"><a href="https://youtu.be/-QgHq7dSYn4?t=31" target="_blank">10. פתיחה 2 (מנוף)</a></li>
+        <li class="exercise"><a href="https://youtu.be/-QgHq7dSYn4?t=85" target="_blank">11. פתיחה 3 (הטלה ממנוף)</a></li>
+        <li class="exercise"><a href="https://youtu.be/Mkdvf0j19vk?t=1" target="_blank">12. שוטר 1</a></li>
+        <li class="exercise"><a href="https://youtu.be/Mkdvf0j19vk?t=62" target="_blank">13. שוטר 2</a></li>
+        <li class="exercise"><a href="https://youtu.be/Mkdvf0j19vk?t=110" target="_blank">14. שוטר 3</a></li>
+    </ul>
+
+    <div class="series">חניקות מהצד <i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/qdJD5I5Yeso?t=1" target="_blank">1. אשכים</a></li>
+        <li class="exercise"><a href="https://youtu.be/qdJD5I5Yeso?t=5" target="_blank">2. דחיפה</a></li>
+        <li class="exercise"><a href="https://youtu.be/qdJD5I5Yeso?t=7" target="_blank">3. פנים</a></li>
+        <li class="exercise"><a href="https://youtu.be/qdJD5I5Yeso?t=11" target="_blank">4. Kobi Nage</a></li>
+        <li class="exercise"><a href="https://youtu.be/6q9bqqt6tNI?t=57" target="_blank">5. פתיחה 1 Tai Sabaki</a></li>
+        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 6. פתיחה 2 מנוף **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="https://youtu.be/6q9bqqt6tNI?t=1" target="_blank">7. פתיחה 3 (הטלה ממנוף)</a></li>
+        <li class="exercise"><a href="https://youtu.be/6q9bqqt6tNI?t=18" target="_blank">8. פתיחה 4 Ouchi gari</a></li>
+        <li class="exercise"><a href="https://youtu.be/LsPAmPpI6AQ" target="_blank">9. קלאסי</a></li>
+        <li class="exercise"><a href="https://youtu.be/LsPAmPpI6AQ?t=45" target="_blank">10. שוטר 1</a></li>
+        <li class="exercise"><a href="https://youtu.be/LsPAmPpI6AQ?t=59" target="_blank">11. שוטר 2</a></li>
+    </ul>
+
+    <div class="series">חניקה מאחור <i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=17" target="_blank">1. דריכה</a></li>
+        <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=20" target="_blank">2. אשכים</a></li>
+        <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=25" target="_blank">3. שבירת אגודלים</a></li>
+        <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=35" target="_blank">4. מרפקים</a></li>
+        <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=51" target="_blank">5. ריקוד</a></li>
+        <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=63" target="_blank">6. Ippon Seoi Nage</a></li>
+        <li class="exercise"><a href="https://youtu.be/hF8_KLbpD70?t=7" target="_blank">7. מנוף</a></li>
+        <li class="exercise"><a href="https://youtu.be/hF8_KLbpD70?t=82" target="_blank">8. חרב</a></li>
+        <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=87" target="_blank">9. שבירת רגל (חצי ריקוד עם המשך)</a></li>
+        <li class="exercise"><a href="https://youtu.be/olrAEswx2uA?t=14" target="_blank">10. הטלת שתי ידים מעבר לכתף + המשך</a></li>
+        <li class="exercise"><a href="https://youtu.be/olrAEswx2uA?t=114" target="_blank">11. שבירת ידים בהצלבה</a></li>
+    </ul>
+
+    <div class="series">לפני חניקה<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/5UdaNuVG-14?t=9" target="_blank">1. מכה לגרון עם יד ימין (צעד ימין קדימה)</a></li>
+        <li class="exercise"><a href="https://youtu.be/5UdaNuVG-14?t=27" target="_blank">2. מייגרי רגל ימין</a></li>
+        <li class="exercise"><a href="https://youtu.be/5UdaNuVG-14?t=40" target="_blank">3. חביקה – ימין למטה + שמאל למטה חביקה מצד שמאל, טאי סבקי והטלה</a></li>
+        <li class="exercise"><a href="https://youtu.be/aAZMwjuZko4?t=17" target="_blank">4. הטלה – ימין למעלה + שמאל למטה, כניסת ישבן</a></li>
+        <li class="exercise"><a href="https://youtu.be/34ZBsoxZjXI?t=21" target="_blank">5. Tai Sabaki</a></li>
+        <li class="exercise"><a href="https://youtu.be/34ZBsoxZjXI?t=51" target="_blank">6. קלאסי + יוקו</a></li>
+    </ul>
+
+
+    <div class="category" data-filter="holds">חביקות</div>
+
+    <div class="series">נלסון<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/Bza5z_xN1Mw?t=13" target="_blank">1. Tani-Otoshi (ספה)</a></li>
+        <li class="exercise"><a href="https://youtu.be/Bza5z_xN1Mw?t=0.5" target="_blank">2. הטלה בסיבוב Sukui Nage</a></li>
+        <li class="exercise"><a href="https://youtu.be/Bza5z_xN1Mw?t=23" target="_blank">3. ירידה לברכיים, וגלגול יריב</a></li>
+        <li class="exercise"><a href="https://youtu.be/Bza5z_xN1Mw?t=37" target="_blank">4. לפני נלסון – נפילה למטה</a></li>
+    </ul>
+
+    <div class="series">חביקה מאחור <i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/Y4nHmSFkpMo?t=4" target="_blank">1. נקישה</a></li>
+        <li class="exercise"><a href="https://youtu.be/Y4nHmSFkpMo?t=7" target="_blank">2. דריכה</a></li>
+        <li class="exercise"><a href="https://youtu.be/Y4nHmSFkpMo?t=7" target="_blank">3. אשכים</a></li>
+        <li class="exercise"><a href="https://youtu.be/Y4nHmSFkpMo?t=7" target="_blank">4. נגיחה</a></li>
+        <li class="exercise"><a href="https://youtu.be/Y4nHmSFkpMo?t=7" target="_blank">5. מרפקים</a></li>
+        <li class="exercise"><a href="https://youtu.be/Y4nHmSFkpMo?t=33" target="_blank">6. הטלה בסיבוב Sukui Nage</a></li>
+        <li class="exercise"><a href="https://youtu.be/Y4nHmSFkpMo?t=45" target="_blank">7. Tani-Otoshi (ספה)</a></li>
+        <li class="exercise"><a href="https://youtu.be/f__7zC1V32Y?t=5" target="_blank">8. הפלה / משיכת רגל יריב</a></li>
+        <li class="exercise"><a href="https://youtu.be/f__7zC1V32Y?t=48" target="_blank">9. קלאסי</a></li>
+        <li class="exercise"><a href="https://youtu.be/f__7zC1V32Y?t=74" target="_blank">10. גלגול</a></li>
+        <li class="exercise"><a href="https://youtu.be/uTBg1J2-ANg?t=3" target="_blank">11. שוטר</a></li>
+    </ul>
+
+    <div class="series">חביקה מלפנים<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/ZYYsMpu4xvQ?t=7" target="_blank">1. ברך לאשכים</a></li>
+        <li class="exercise"><a href="https://youtu.be/ZYYsMpu4xvQ?t=7" target="_blank">2. אגרופים לכליות</a></li>
+        <li class="exercise"><a href="https://youtu.be/ZYYsMpu4xvQ?t=7" target="_blank">3. נשיכה</a></li>
+        <li class="exercise"><a href="https://youtu.be/ZYYsMpu4xvQ?t=7" target="_blank">4. נגיחה</a></li>
+        <li class="exercise"><a href="https://youtu.be/ZYYsMpu4xvQ?t=11" target="_blank">5. מכה לאוזניים</a></li>
+        <li class="exercise"><a href="https://youtu.be/ZYYsMpu4xvQ?t=25" target="_blank">6. שבירת מפרקת</a></li>
+        <li class="exercise"><a href="https://youtu.be/ZYYsMpu4xvQ?t=55" target="_blank">7. Ouchi gari (רגל חמישית)</a></li>
+        <li class="exercise"><a href="https://youtu.be/I4j3eq7F5MY?t=1" target="_blank">8. גליוטינה + גלגול</a></li>
+        <li class="exercise"><a href="https://youtu.be/I4j3eq7F5MY?t=33" target="_blank">9. הוקים</a></li>
+    </ul>
+    
+    <div class="series">תפיסות ראש מהצד<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/s3AFt1hX3yY?t=7" target="_blank">1. לקיחת יד מאחורי הגב</a></li>
+        <li class="exercise"><a href="https://youtu.be/s3AFt1hX3yY?t=20" target="_blank">2. Tani-Otoshi (ספה)</a></li>
+        <li class="exercise"><a href="https://youtu.be/s3AFt1hX3yY?t=35" target="_blank">3. לקיחת יד והפלה קדימה + שבירות</a></li>
+        <li class="exercise"><a href="https://youtu.be/s3AFt1hX3yY?t=56" target="_blank">4. גלגול בין הרגלים בסיבוב</a></li>
+        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 5. קלאסי **(קישור חסר)**</a></li>
+    </ul>
+   <div class="category" data-filter="clothing-grabs">תפיסות בגדים</div>
+    <div class="series">תפיסת בגדים כתף<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/sdp1J7SrHsM?t=2" target="_blank">1. ניתוק שורש כף יד</a></li>
+        <li class="exercise"><a href="https://youtu.be/sdp1J7SrHsM?t=13" target="_blank">2. תקיפת מרפק</a></li>
+        <li class="exercise"><a href="https://youtu.be/drvekJDZbR8" target="_blank">3. Osoto Gari</a></li>
+        <li class="exercise"><a href="https://youtu.be/drvekJDZbR8?t=6" target="_blank">4. Tai Sabaki</a></li>
+        <li class="exercise"><a href="https://youtu.be/drvekJDZbR8?t=14" target="_blank">5. שוטר ראשון</a></li>
+        <li class="exercise"><a href="https://youtu.be/drvekJDZbR8?t=23" target="_blank">6. שוטר שני</a></li>
+        <li class="exercise"><a href="https://youtu.be/drvekJDZbR8?t=32" target="_blank">7. קלאסי</a></li>
+    </ul>
+    
+    <div class="series">תפיסת בגדים בטן<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/w3UPvu43bKA?t=8" target="_blank">1. שוטר</a></li>
+        <li class="exercise"><a href="https://youtu.be/w3UPvu43bKA?t=79" target="_blank">2. Tai Sabaki</a></li>
+        <li class="exercise"><a href="https://youtu.be/tXswGVJ8owk" target="_blank">3. ריתוק שורש כף היד</a></li>
+        <li class="exercise"><a href="https://youtu.be/tXswGVJ8owk?t=48" target="_blank">4. בריח על מפרק (תרגיל שני סדרה שניה)</a></li>
+    </ul>
+    
+    <div class="series">תפיסת בגדים חזה<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/5kHBARRENrk?t=1" target="_blank">1. Tai Sabaki</a></li>
+        <li class="exercise"><a href="https://youtu.be/5kHBARRENrk?t=14" target="_blank">2. הטלת כתף Ippon-seoi-nage</a></li>
+        <li class="exercise"><a href="https://youtu.be/5kHBARRENrk?t=35" target="_blank">3. שוטר שני</a></li>
+        <li class="exercise"><a href="https://youtu.be/5kHBARRENrk?t=45" target="_blank">4. קלאסי</a></li>
+    </ul>
+    
+    <div class="category" data-filter="series">סדרות</div>
+    <div class="series">סידרה ראשונה - שבירות<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/A7zpd6RHoys?t=3" target="_blank">1. juji-gatame</a></li>
+        <li class="exercise"><a href="https://youtu.be/A7zpd6RHoys?t=16" target="_blank">2. Ude-garami</a></li>
+        <li class="exercise"><a href="https://youtu.be/A7zpd6RHoys?t=28" target="_blank">3. המשך אופנוע (מרפק) (Ude-hishigi-ude-gatame)</a></li>
+    </ul>
+    
+    <div class="series">סידרה שנייה - שבירות<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/76I7HbCnE30?t=2" target="_blank">1. juji-gatame</a></li>
+        <li class="exercise"><a href="https://youtu.be/76I7HbCnE30?t=26" target="_blank">2. מרפק ממאונט (נפילה לימין)</a></li>
+        <li class="exercise"><a href="https://youtu.be/76I7HbCnE30?t=59" target="_blank">3. כתף ממאונט</a></li>
+    </ul>
+    
+    <div class="series">סידרה שלישית - חניקות על הקרקע<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/3WNu6Fg8W38?t=3" target="_blank">1. חניקה יד ימין - שבירת יד שמאל</a></li>
+        <li class="exercise"><a href="https://youtu.be/3WNu6Fg8W38?t=45" target="_blank">2. חניקה שתי ידיים - שבירת יד ימין</a></li>
+        <li class="exercise"><a href="https://youtu.be/3WNu6Fg8W38?t=75" target="_blank">3. חניקה יד ימין - משולש על היד</a></li>
+        <li class="exercise"><a href="https://youtu.be/3WNu6Fg8W38?t=104" target="_blank">4. שבירת שתי ידים {שכיבת שמיכה}</a></li>
+    </ul>
+    
+    <div class="series">סדרה רביעית - חמור<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/nanNjWEpwTk?t=19" target="_blank">1. עמידת 4 - רגל שמאל קדימה, שבירת יד </a></li>
+        <li class="exercise"><a href="https://youtu.be/nanNjWEpwTk?t=45" target="_blank">2. עמידת 4 - רגל ימין קדימה, שבירת יד</a></li>
+        <li class="exercise"><a href="https://youtu.be/nanNjWEpwTk?t=64" target="_blank">3. עמידת 4 - תפיסת שוטר</a></li>
+        <li class="exercise"><a href="https://youtu.be/nanNjWEpwTk?t=92" target="_blank">4. חמור -  יד ימין, גלגול ימין, juji-gatame</a></li>
+    </ul>
+    
+    <div class="series">סדרה חמישית - ריתוקים <i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=21" target="_blank">1. ריתוק 1-  On-Kesa-Gatame </a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=32" target="_blank">2. On-Kesa-Gatame – שבירה 1</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=36" target="_blank">3. On-Kesa-Gatame – שבירה 2</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=51" target="_blank">4. ריתוק 2- Kesa-Gatame </a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=61" target="_blank">5. ריתוק 3- Shio-Gatame </a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=71" target="_blank">6. ריתוק 4- חגורה</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=77" target="_blank">7. שבירה 4 - שבירת מרפק</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=99" target="_blank">8. ריתוק 5-ריתוק ראשון הפוך USHIRO KESA GATAME</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=110" target="_blank">9. שבירה 5 - שבירת מרפק</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=127" target="_blank">10. ריתוק 6 - תפיסת רגל + יד YOKO SHIHO GATAME</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=137" target="_blank">11. ריתוק 7 - צב</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=141" target="_blank">12. שבירה 7 - שבירת מרפק + המשך</a></li>
+        <li class="exercise"><a href="https://youtu.be/LT-pVeAALRY?t=170" target="_blank">13. ריתוק 8 - הוק</a></li>
+    </ul>
+    
+    <div class="series">סדרה שישית - תפיסות בגדים<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/BxcG5y_iLkg?t=18" target="_blank">1. שורש כף יד</a></li>
+        <li class="exercise"><a href="https://youtu.be/BxcG5y_iLkg?t=39" target="_blank">2. מרפק, 2 ידים על המרפק</a></li>
+        <li class="exercise"><a href="https://youtu.be/BxcG5y_iLkg?t=57" target="_blank">3. כתף - שוטר שלישי</a></li>
+        <li class="exercise"><a href="https://youtu.be/BxcG5y_iLkg?t=63" target="_blank">4. כתף - קלאסי</a></li>
+        <li class="exercise"><a href="https://youtu.be/BxcG5y_iLkg?t=74" target="_blank">5. בטן - ריתוק שורש כף היד</a></li>
+        <li class="exercise"><a href="https://youtu.be/BxcG5y_iLkg?t=109" target="_blank">6. חזה - בריח על מפרק (תרגיל שני סדרה שניה)</a></li>
+    </ul>
+    
+    <div class="series">סדרת חניקות<i class="fa-solid fa-chevron-down"></i></div>
+    <ul class="exercise-list">
+        <li class="exercise"><a href="https://youtu.be/t3tQriIPdlI?t=50" target="_blank">1. חניקת איקס Gyaku-juji-jime</a></li>
+        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 2. קרקע - חניקת דש **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 3. קרקע - חניקת x  בנפילה **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="https://youtu.be/9f0n8jez7iA?t=4" target="_blank">4. חניקת אמה Hadaka Jime</a></li>
+        <li class="exercise"><a href="https://youtu.be/EiqyoVcIAi8?t=5" target="_blank">5. חניקת דש Okuri Eri Jime</a></li>
+        <li class="exercise"><a href="https://youtu.be/yaTGgRjnwB8?t=6" target="_blank">6. חניקה יד על הראש Kataha-jime</a></li>
+        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 7. חניקה קלאסית **(קישור חסר)**</a></li>
+    </ul>
+   
+    <div class="category" data-filter="Weapons_Defense">הגנה מכלי נשק</div>
+	<div class="series">סכין קדימה<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/IYFQNjnJ_UI?t=1" target="_blank">1. Tai Sabaki - בלימה ימין, החלפת יד, אגרוף ימין, Tai Sabaki</a></li>
+                <li class="exercise"><a href="https://youtu.be/IYFQNjnJ_UI?t=12" target="_blank">2. בלימה ימין, שבירה על הכתף, Ippon-seoi-nage מהשרוול</a></li>
+                <li class="exercise"><a href="https://youtu.be/avu1B5ETs6U?t=32" target="_blank">3. Tai Sabaki - בלימה יד שמאל</a></li>
+                <li class="exercise"><a href="https://youtu.be/BFKcSTjTDZA?t=67" target="_blank">4. גלגול (Soto Makikomi) - כניסה לימין, בלימה שמאל + אגרוף, ריתוק ראשון הפוך</a></li>
+            </ul>
+        
+        <div class="series">סכין מלמעלה<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/J3Ms7S6-YLQ?t=16" target="_blank">1. התחמקות מתחת לסכין</a></li>
+                <li class="exercise"><a href="https://youtu.be/J3Ms7S6-YLQ?t=29" target="_blank">2. התחמקות + הסטה</a></li>
+                <li class="exercise"><a href="https://youtu.be/J3Ms7S6-YLQ?t=45" target="_blank">3. מנוף (רגל שמאל, יד שמאל בולמת+ אגרוף)</a></li>
+                <li class="exercise"><a href="https://youtu.be/J3Ms7S6-YLQ?t=87" target="_blank">4. טאי סבקי (רגל שמאל, יד ימין בולמת + אגרוף), יד שמאל מלמעלה</a></li>
+                <li class="exercise"><a href="https://youtu.be/kH-kV92eN6Q?t=25" target="_blank">5. חרב (רגל שמאל, יד שמאל בולמת + אגרוף)</a></li>
+            </ul>
+        
+        <div class="series">סכין מלמטה<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/EMpXojuv9Io?t=1" target="_blank">1. בירכיות (יד שמאל בולמת)</a></li>
+                <li class="exercise"><a href="https://youtu.be/EMpXojuv9Io?t=55" target="_blank">2. Tai Sabaki (יד ימין בולמת), סיבוב פנימה</a></li>
+                <li class="exercise"><a href="https://youtu.be/Eth4Rpbv6g8?t=18" target="_blank">3. שורש כף יד (יד שמאל בולמת), סיבוב החוצה, ומשיכה של שורש כף היד לרצפה</a></li>
+                <li class="exercise"><a href="https://youtu.be/Eth4Rpbv6g8?t=66" target="_blank">4. מנוף (יד ימין בולמת), שבירה על הכתף</a></li>
+            </ul>
+        
+        <div class="series">הגנה ממקל<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/9mouMeYyI1g?t=1" target="_blank">1. הפלה מהגרון</a></li>
+                <li class="exercise"><a href="https://youtu.be/9mouMeYyI1g?t=11" target="_blank">2. הפלה מהעורף + חניקה</a></li>
+                <li class="exercise"><a href="https://youtu.be/9mouMeYyI1g?t=30" target="_blank">3. Tai Sabaki</a></li>
+                <li class="exercise"><a href="https://youtu.be/9mouMeYyI1g?t=60" target="_blank">4. Kubi-Nage</a></li>
+                <li class="exercise"><a href="https://youtu.be/9mouMeYyI1g?t=77" target="_blank">5. Osoto Gari</a></li>
+                <li class="exercise"><a href="https://youtu.be/n_TahEGuZns?t=1" target="_blank">6. בריח על המרפק</a></li>
+            </ul>
+        
+        <div class="series">הגנה מאקדח<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/0y3fvcW9HE0?t=1181" target="_blank">1. אקדח למצח</a></li>
+                <li class="exercise"><a href="https://youtu.be/0y3fvcW9HE0?t=1190" target="_blank">2. אקדח לחזה שמאל, תפיסה, טאי סבקי</a></li>
+                <li class="exercise"><a href="https://youtu.be/0y3fvcW9HE0?t=1197" target="_blank">3. אקדח לחזה ימין, תפיסה, טאי סבקי</a></li>
+                <li class="exercise"><a href="https://youtu.be/0y3fvcW9HE0?t=1204" target="_blank">4. אקדח לגב לשמאל </a></li>
+                <li class="exercise"><a href="https://youtu.be/0y3fvcW9HE0?t=1215" target="_blank">5. אקדח לגב לימין</a></li>
+            </ul>
+
+		<div class="category" data-filter="Kicks_Defense">הגנה מבעיטה</div>
+        <div class="series">הגנה בעיטה Mae Geri<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/R-1sSOy2PY8?t=11" target="_blank">1. הגנה לשמאל (1) - הפלה לאחור</a></li>
+                <li class="exercise"><a href="https://youtu.be/R-1sSOy2PY8?t=21" target="_blank">2. הגנה לשמאל (2) - ירך</a></li>
+                <li class="exercise"><a href="https://youtu.be/FdB9I0jOssU?t=25" target="_blank">3. הגנה לימין - Ouchi gari </a></li>
+                <li class="exercise"><a href="https://youtu.be/FdB9I0jOssU?t=51" target="_blank">4. הגנה לימין - Ouchi-mata</a></li>
+            </ul>
+        
+        <div class="series">הגנה Mawashi Geri<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/R7r0zBIMNjw?t=4" target="_blank">1. הגנה לימין - Kubi-Nage</a></li>
+                <li class="exercise"><a href="https://youtu.be/R7r0zBIMNjw?t=43" target="_blank">2. משיכת רגל, קיפול רגל יריב עם אגרוף בגומץ הברך - High kick</a></li>
+            </ul>
+        
+		<div class="category" data-filter="Judo">ג'ודו</div>
+        <div class="series">ג'ודו - הטלות מותן<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+                <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=1" target="_blank">1. O-Ghosi</a></li>
+                <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=10" target="_blank">2. Kubi-Nage</a></li>
+                <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=22" target="_blank">3. Tsuri-Goshi</a></li>
+                <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=40" target="_blank">4. Goshi-Garome</a></li>
+            <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=54" target="_blank">5. Harai-goshi</a></li>
+            <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=83" target="_blank">6. Hane-goshi</a></li>
+            <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=113" target="_blank">7. Ouchi-mata</a></li>
+        </ul>
+    
+        <div class="series">ג'ודו - הטלות כתף<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+            <li class="exercise"><a href="https://youtu.be/2M2Ob8DFJaU?t=6" target="_blank">1. Ippon-seoi-nage</a></li>
+            <li class="exercise"><a href="https://youtu.be/2M2Ob8DFJaU?t=18" target="_blank">2. Seoi-Nage</a></li>
+            <li class="exercise"><a href="https://youtu.be/2M2Ob8DFJaU?t=43" target="_blank">3. Hane-Seoi-Nage</a></li>
+        </ul>
+    
+        <div class="series">ג'ודו - הפלות רגליים<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+            <li class="exercise"><a href="https://youtu.be/J1Qy_mzZw9I?t=17" target="_blank">1. O-soto-gari</a></li>
+            <li class="exercise"><a href="https://youtu.be/J1Qy_mzZw9I?t=30" target="_blank">2. De-ashi-barai</a></li>
+            <li class="exercise"><a href="https://youtu.be/J1Qy_mzZw9I?t=44" target="_blank">3. Hiza-guruma</a></li>
+            <li class="exercise"><a href="https://youtu.be/J1Qy_mzZw9I?t=58" target="_blank">4. Ko-soto-gari</a></li>
+            <li class="exercise"><a href="https://youtu.be/J1Qy_mzZw9I?t=68" target="_blank">5. O-uchi-gari</a></li>
+            <li class="exercise"><a href="https://youtu.be/J1Qy_mzZw9I?t=80" target="_blank">6. Ko-uchi-gari</a></li>
+        </ul>
+    
+        <div class="series">ג'ודו - זרוע<i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+            <li class="exercise"><a href="" target="_blank">1. טאי סבקי לטאי אוטושי</a></li>
+        </ul>
+    
+		<div class="category" data-filter="Sequels&fractures">שבירות והמשכים</div>
+        <div class="series">שבירות והמשכים <i class="fa-solid fa-chevron-down"></i></div>
+			<ul class="exercise-list">
+            <li class="exercise"><a href="https://youtu.be/RzFiHGpLweY?t=136" target="_blank">1. juji- מעבר ל-juji הפוך + כימורה בין הרגליים</a></li>
+            <li class="exercise"><a href="https://youtu.be/JpA40aYDyXM?t=121" target="_blank">2. juji- חניקה עם רגל שמאל, שבירת מרפק ומעבר לאופנוע</a></li>
+            <li class="exercise"><a href="https://youtu.be/JpA40aYDyXM?t=42" target="_blank">3. הטלה - שבירת מרפק (*2) הפיכה ל-juji</a></li>
+            <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=4" target="_blank">4. Tai Sabaki\הטלה - מסביב לברך, שבירת יד בין רגליים פנים אחורה</a></li>
+            <li class="exercise"><a href="https://youtu.be/zwUKVRC9N4U?t=70" target="_blank">5. הטלה - שבירת מרפק ומעבר לגולף הפוך</a></li>
+            <li class="exercise"><a href="https://youtu.be/-QgHq7dSYn4?t=102" target="_blank">6. הטלה ממנוף - אמריקנה, אגרוף שמאל, מעל לאמה, ומתחת לגומץ לשוטר עם בריח שמאל</a></li>
+            <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=24" target="_blank">7. Tai Sabaki\מנוף - הפיכה, קיפול ידים ויציאה בגלגול </a></li>
+            <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=115" target="_blank">8. Tai Sabaki\מנוף - הפיכה, פנים לפנים, רגל שמאל מעל היד כימורה בין הרגליים</a></li>
+            <li class="exercise"><a href="https://youtu.be/-QgHq7dSYn4?t=40" target="_blank">9. Tai Sabaki\מנוף - הפיכה, גולף</a></li>
+            <li class="exercise"><a href="https://youtu.be/hF8_KLbpD70?t=32" target="_blank">10. ארבע שבירות</a></li>
+        </ul>
+    
+        <div class="series">סיומות קלאסי<i class="fa-solid fa-chevron-down"></i></div>
+        			<ul class="exercise-list">
+            <li class="exercise"><a href="https://youtu.be/rJkTpu48iwE?t=39" target="_blank">1. קלאסי שבירה על הבטן</a></li>
+            <li class="exercise"><a href="https://youtu.be/UAwfPvCjJWQ?t=46" target="_blank">2. קלאסי ריתוק ראשון</a></li>
+            <li class="exercise"><a href="https://youtu.be/LsPAmPpI6AQ?t=6" target="_blank">3. קלאסי מעל למרפק שורש כף יד</a></li>
+            <li class="exercise"><a href="https://youtu.be/USQirtqBYvc?t=75" target="_blank">4. קלאסי מעל למרפק אצבעות</a></li>
+            <li class="exercise"><a href="https://youtu.be/34ZBsoxZjXI?t=62" target="_blank">5. קלאסי "ר"</a></li>
+        </ul>
+
+    </main>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Collapse / Expand
+    document.querySelectorAll('.series').forEach(series => {
+        series.addEventListener('click', () => {
+            const list = series.nextElementSibling;
+            series.classList.toggle('active');
+            list.classList.toggle('expanded');
+            list.style.maxHeight = list.classList.contains('expanded')
+                ? list.scrollHeight + 'px'
+                : '0';
+        });
+    });
+
+    // Filtering
+    const buttons = document.querySelectorAll('.filter-button');
+    const content = document.querySelectorAll('.category, .series, .exercise-list');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.dataset.filter;
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            let current = null;
+
+            content.forEach(el => {
+                if (el.classList.contains('category')) {
+                    current = el.dataset.filter;
+                    el.classList.toggle('hidden', filter !== 'all' && current !== filter);
+                } else {
+                    el.classList.toggle('hidden', filter !== 'all' && current !== filter);
+                }
+            });
+        });
+    });
+});
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('Service Worker Registered'));
+  }
+</script>
+
+</body>
+</html>
+
+
+
+
