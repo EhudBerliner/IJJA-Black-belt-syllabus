@@ -3,7 +3,7 @@ const ASSETS = [
 './', 
   './index.html', 
   './manifest.json', 
-  './logo.png' // הוספת הלוגו למטמון
+  './Logo.png' // הוספת הלוגו למטמון
 ];
 
 // התקנה ושמירת הקבצים בזיכרון המטמון
@@ -37,4 +37,5 @@ self.addEventListener('fetch', (event) => {
   );
 
 });
+
 
