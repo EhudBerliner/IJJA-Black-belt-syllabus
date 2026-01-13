@@ -105,75 +105,67 @@ header h1 {
 .container {
     flex: 1;
     max-width: 900px;
-	/* התיקון מאפשר גלילה מלאה של הפריט האחרון */
     padding-bottom: 53vh;
 }
 
-        /* ---------- CATEGORY (Sticky) ---------- */
+/* ---------- CATEGORY (Sticky) ---------- */
+.category {
+    margin-top: 40px;
+    background: var(--primary);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 1.6em;
+    font-weight: 900;
+    position: sticky;
+    top: calc(var(--header-height) + 1px); 
+    z-index: 500;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
 
-        .category {
-            margin-top: 40px;
-            background: var(--primary);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 1.6em;
-            font-weight: 900;
-            position: sticky;
-            /* Adjusted position to sit below the filter bar */
-            top: calc(var(--header-height) + 1px); 
-            z-index: 500;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* Reset margin for the first category */
-        .category:first-of-type {
-            margin-top: 0;
-        }
+.category:first-of-type {
+    margin-top: 0;
+}
 
-        /* ---------- SERIES (collapsible trigger) ---------- */
+/* ---------- SERIES (collapsible trigger) ---------- */
+.series {
+    background: white;
+    padding: 15px 20px;
+    font-weight: 700;
+    font-size: 1.2em;
+    margin-top: 15px;
+    border-right: 4px solid var(--secondary);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.25s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
 
-        .series {
-            background: var(--series-bg);
-            padding: 15px 20px;
-            font-weight: 700;
-            font-size: 1.2em;
-            margin-top: 15px;
-            border-right: 4px solid var(--secondary);
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.25s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
+.series:hover {
+    background: var(--accent);
+}
 
-        .series:hover {
-            background: var(--accent);
-        }
+.series i {
+    transition: transform 0.3s ease;
+}
 
-        /* Rotate icon when series is open */
-        .series i {
-            transition: transform 0.3s ease;
-        }
-        
-        .series.active {
-             border-radius: 8px 8px 0 0; /* Adjust border for when the list is visible */
-             box-shadow: none;
-        }
-        
-        .series.active i {
-            transform: rotate(180deg);
-        }
+.series.active {
+     border-radius: 8px 8px 0 0;
+     box-shadow: none;
+}
 
-        /* Link the series header visually to the list below */
-        .series + .exercise-list {
-            margin-top: -8px; /* Slightly overlap with series for a cleaner join */
-        }
+.series.active i {
+    transform: rotate(180deg);
+}
 
-        /* ---------- LIST (collapsible content) ---------- */
+.series + .exercise-list {
+    margin-top: -8px;
+}
 
+/* ---------- LIST (collapsible content) ---------- */
 .exercise-list {
     list-style: none;
     padding: 0;
@@ -193,12 +185,30 @@ header h1 {
 .exercise {
     padding: 12px 20px;
     border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
 }
 
+.exercise:hover {
+    background: #f8fbff;
+}
+
+/* עיצוב הקישור המעודכן */
 .exercise a {
     text-decoration: none;
     color: var(--primary);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* רווח בין הטקסט לאייקון */
+}
+
+/* הוספת האייקון לפני הטקסט */
+.exercise a::before {
+    content: "\f04b"; /* אייקון Play של FontAwesome */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.9em;
+    color: var(--secondary);
 }
 
 /* ---------- HELPERS ---------- */
@@ -208,22 +218,18 @@ header h1 {
 
 /* ---------- MOBILE ---------- */
 @media (max-width: 900px) {
-
     .layout {
         flex-direction: column;
     }
-
     .filter-sidebar {
         width: 100%;
         position: static;
     }
-
     .filter-bar {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
     }
-
     .filter-button {
         width: auto;
     }
@@ -239,7 +245,6 @@ header h1 {
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
     <aside class="filter-sidebar">
         <div class="filter-bar">
         <button class="filter-button active" data-filter="all">הכל</button>
@@ -256,7 +261,6 @@ header h1 {
         </div>
     </aside>
 
-    <!-- CONTENT -->
     <main class="container">
 
         <div class="category" data-filter="attacks">התקפות</div>
@@ -369,7 +373,7 @@ header h1 {
         <li class="exercise"><a href="https://youtu.be/qdJD5I5Yeso?t=7" target="_blank">3. פנים</a></li>
         <li class="exercise"><a href="https://youtu.be/qdJD5I5Yeso?t=11" target="_blank">4. Kobi Nage</a></li>
         <li class="exercise"><a href="https://youtu.be/6q9bqqt6tNI?t=57" target="_blank">5. פתיחה 1 Tai Sabaki</a></li>
-        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 6. פתיחה 2 מנוף **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="" target="_blank">6. פתיחה 2 מנוף **(קישור חסר)**</a></li>
         <li class="exercise"><a href="https://youtu.be/6q9bqqt6tNI?t=1" target="_blank">7. פתיחה 3 (הטלה ממנוף)</a></li>
         <li class="exercise"><a href="https://youtu.be/6q9bqqt6tNI?t=18" target="_blank">8. פתיחה 4 Ouchi gari</a></li>
         <li class="exercise"><a href="https://youtu.be/LsPAmPpI6AQ" target="_blank">9. קלאסי</a></li>
@@ -447,7 +451,7 @@ header h1 {
         <li class="exercise"><a href="https://youtu.be/s3AFt1hX3yY?t=20" target="_blank">2. Tani-Otoshi (ספה)</a></li>
         <li class="exercise"><a href="https://youtu.be/s3AFt1hX3yY?t=35" target="_blank">3. לקיחת יד והפלה קדימה + שבירות</a></li>
         <li class="exercise"><a href="https://youtu.be/s3AFt1hX3yY?t=56" target="_blank">4. גלגול בין הרגלים בסיבוב</a></li>
-        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 5. קלאסי **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="" target="_blank">5. קלאסי **(קישור חסר)**</a></li>
     </ul>
    <div class="category" data-filter="clothing-grabs">תפיסות בגדים</div>
     <div class="series">תפיסת בגדים כתף<i class="fa-solid fa-chevron-down"></i></div>
@@ -538,12 +542,12 @@ header h1 {
     <div class="series">סדרת חניקות<i class="fa-solid fa-chevron-down"></i></div>
     <ul class="exercise-list">
         <li class="exercise"><a href="https://youtu.be/t3tQriIPdlI?t=50" target="_blank">1. חניקת איקס Gyaku-juji-jime</a></li>
-        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 2. קרקע - חניקת דש **(קישור חסר)**</a></li>
-        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 3. קרקע - חניקת x  בנפילה **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="" target="_blank">2. קרקע - חניקת דש **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="" target="_blank">3. קרקע - חניקת x  בנפילה **(קישור חסר)**</a></li>
         <li class="exercise"><a href="https://youtu.be/9f0n8jez7iA?t=4" target="_blank">4. חניקת אמה Hadaka Jime</a></li>
         <li class="exercise"><a href="https://youtu.be/EiqyoVcIAi8?t=5" target="_blank">5. חניקת דש Okuri Eri Jime</a></li>
         <li class="exercise"><a href="https://youtu.be/yaTGgRjnwB8?t=6" target="_blank">6. חניקה יד על הראש Kataha-jime</a></li>
-        <li class="exercise"><a href="" target="_blank"><i class="fas fa-exclamation-circle"></i> 7. חניקה קלאסית **(קישור חסר)**</a></li>
+        <li class="exercise"><a href="" target="_blank">7. חניקה קלאסית **(קישור חסר)**</a></li>
     </ul>
    
     <div class="category" data-filter="Weapons_Defense">הגנה מכלי נשק</div>
@@ -717,8 +721,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
-
-
-
-
-
