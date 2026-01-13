@@ -1,9 +1,10 @@
-const CACHE_NAME = 'ijja-syllabus-v1';
+const CACHE_NAME = 'ijja-syllabus-v2'; // העלינו גרסה
 const ASSETS = [
-'./', 
+  './', 
   './index.html', 
   './manifest.json', 
-  './Logo.png' // הוספת הלוגו למטמון
+  './Logo.png',
+  './Black_belt_syllabus_IJJA.csv' // חובה להוסיף את הקובץ הזה!
 ];
 
 // התקנה ושמירת הקבצים בזיכרון המטמון
@@ -37,5 +38,6 @@ self.addEventListener('fetch', (event) => {
   );
 
 });
+
 
 
