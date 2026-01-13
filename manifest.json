@@ -1,21 +1,32 @@
 {
   "short_name": "סילבוס IJJA",
-  "name": "Syllabus for Black Belts in Ju-Jitsu - IJJA",
+  "name": "סילבוס חגורה שחורה - IJJA",
+  "description": "סילבוס תרגילים דינמי לחגורות שחורות בג'ו-ג'יטסו",
   "icons": [
     {
       "src": "Logo.png",
       "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "Logo.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "Logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#0056a6",
-  "background_color": "#f7f9fb"
-
+  "background_color": "#f7f9fb",
+  "lang": "he",
+  "dir": "rtl"
 }
-
-
-
-
