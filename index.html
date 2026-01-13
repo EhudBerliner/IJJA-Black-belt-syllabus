@@ -31,7 +31,6 @@
             padding-top: var(--header-height);
         }
 
-        /* ---------- HEADER ---------- */
         header {
             position: fixed;
             top: 0;
@@ -55,7 +54,6 @@
             line-height: 1.2;
         }
 
-        /* ---------- LAYOUT ---------- */
         .layout {
             display: flex;
             flex-direction: row;
@@ -65,7 +63,6 @@
             gap: 20px;
         }
 
-        /* ---------- SIDEBAR ---------- */
         .filter-sidebar {
             width: 230px;
             position: sticky;
@@ -94,6 +91,7 @@
             cursor: pointer;
             text-align: right;
             font-family: 'Heebo', sans-serif;
+            transition: all 0.2s;
         }
 
         .filter-button.active {
@@ -102,14 +100,12 @@
             border-color: var(--primary);
         }
 
-        /* ---------- CONTENT ---------- */
         .container {
             flex: 1;
             max-width: 900px;
             padding-bottom: 53vh;
         }
 
-        /* ---------- CATEGORY ---------- */
         .category {
             margin-top: 40px;
             background: var(--primary);
@@ -126,7 +122,6 @@
 
         .category:first-of-type { margin-top: 0; }
 
-        /* ---------- SERIES ---------- */
         .series {
             background: white;
             padding: 15px 20px;
@@ -148,7 +143,6 @@
         .series.active { border-radius: 8px 8px 0 0; box-shadow: none; }
         .series.active i { transform: rotate(180deg); }
 
-        /* ---------- LIST ---------- */
         .exercise-list {
             list-style: none;
             padding: 0;
@@ -167,10 +161,7 @@
         .exercise {
             padding: 12px 20px;
             border-bottom: 1px solid var(--border);
-            transition: background 0.2s;
         }
-
-        .exercise:last-child { border-bottom: none; }
 
         .exercise a {
             text-decoration: none;
@@ -181,27 +172,22 @@
             gap: 12px;
         }
 
-        /* הוספת האייקון באופן אוטומטי דרך ה-CSS */
         .exercise a::before {
-            content: "\f144"; /* אייקון Play Circle */
+            content: "\f144"; 
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             font-size: 1.1em;
             color: var(--secondary);
         }
 
-        .exercise:hover { background: #f8fbff; }
-
-        /* ---------- HELPERS ---------- */
         .hidden { display: none !important; }
 
-        /* ---------- MOBILE ---------- */
         @media (max-width: 900px) {
             .layout { flex-direction: column; }
             .filter-sidebar { width: 100%; position: static; }
             .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .filter-button { width: auto; font-size: 0.9em; }
             header h1 { font-size: 20px; }
+            .filter-button { width: auto; font-size: 0.85em; }
         }
     </style>
 </head>
@@ -214,187 +200,154 @@
 
 <div class="layout">
     <aside class="filter-sidebar">
-        <div class="filter-bar">
+        <div class="filter-bar" id="filterBar">
             <button class="filter-button active" data-filter="all">הכל</button>
-            <button class="filter-button" data-filter="attacks">התקפות</button>
-            <button class="filter-button" data-filter="hand-grabs">תפיסות ידים</button>
-            <button class="filter-button" data-filter="chokes">חניקות</button>
-            <button class="filter-button" data-filter="holds">חביקות</button>
-            <button class="filter-button" data-filter="clothing-grabs">תפיסות בגדים</button>
-            <button class="filter-button" data-filter="series">סדרות</button>
-            <button class="filter-button" data-filter="Weapons_Defense">הגנה מכלי נשק</button>
-            <button class="filter-button" data-filter="Kicks_Defense">הגנה מבעיטה</button>
-            <button class="filter-button" data-filter="Judo">ג'ודו</button>
-            <button class="filter-button" data-filter="Sequels&fractures">שבירות והמשכים</button>
-        </div>
+            </div>
     </aside>
 
-    <main class="container">
-        <div class="category" data-filter="attacks">התקפות</div>
-        
-        <div class="series">סטירה <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/rJkTpu48iwE?t=39" target="_blank">1. קלאסי שבירה על הבטן</a></li>
-            <li class="exercise"><a href="https://youtu.be/zwUKVRC9N4U?t=117" target="_blank">2. Kubi-Nage</a></li>
-            <li class="exercise"><a href="https://youtu.be/mMZXg3AvoiM" target="_blank">3. מנוף (למעלה)</a></li>
-            <li class="exercise"><a href="https://youtu.be/mMZXg3AvoiM?t=45" target="_blank">4. Tai Sabaki (למטה)</a></li>
-            <li class="exercise"><a href="https://youtu.be/qZh8Q4ObTIY" target="_blank">5. Ippon-seoi-nage</a></li>
-            <li class="exercise"><a href="https://youtu.be/qZh8Q4ObTIY?t=51" target="_blank">6. גליוטינה + גלגול</a></li>
-            <li class="exercise"><a href="https://youtu.be/TRfU-ssP7cM?t=2" target="_blank">7. הטלת בית שחי Yoko Wakare</a></li>
-        </ul>
-
-        <div class="series">שתי סטירות <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=12" target="_blank">1. נגיחה</a></li>
-            <li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=15" target="_blank">2. Osoto Gari</a></li>
-            <li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=24" target="_blank">3. Kubi-Nage</a></li>
-            <li class="exercise"><a href="https://youtu.be/bAFH1y5GTbI?t=33" target="_blank">4. Tai-otoshi</a></li>
-            <li class="exercise"><a href="https://youtu.be/iZRjXQCBrU4?t=6" target="_blank">5. פרפר</a></li>
-            <li class="exercise"><a href="https://youtu.be/iZRjXQCBrU4?t=37" target="_blank">6. בייגלה</a></li>
-        </ul>
-
-        <div class="series">גב יד <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/85DkKh8wxug" target="_blank">1. גריפת עקב</a></li>
-            <li class="exercise"><a href="https://youtu.be/85DkKh8wxug?t=9" target="_blank">2. דריכה על הברך</a></li>
-            <li class="exercise"><a href="https://youtu.be/85DkKh8wxug?t=21" target="_blank">3. הפלה מהעקב</a></li>
-            <li class="exercise"><a href="https://youtu.be/dDJA4gFRX6g?t=1" target="_blank">4. מריצה</a></li>
-            <li class="exercise"><a href="https://youtu.be/dDJA4gFRX6g?t=29" target="_blank">5. Tai Sabaki מהמרפק</a></li>
-            <li class="exercise"><a href="https://youtu.be/9ynvwuT7Wbg?t=1" target="_blank">6. Kani-basami (מספריים)</a></li>
-            <li class="exercise"><a href="https://youtu.be/9ynvwuT7Wbg?t=21" target="_blank">7. מספריים הפוכים</a></li>
-        </ul>
-
-        <div class="category" data-filter="hand-grabs">תפיסות ידים</div>
-        <div class="series">מלפנים <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ" target="_blank">1. משיכת ידים</a></li>
-            <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ?t=12" target="_blank">2. משיכת יד שמאל + אגרוף</a></li>
-            <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ?t=21" target="_blank">3. שמש</a></li>
-            <li class="exercise"><a href="https://youtu.be/eOQBv3EmorQ?t=36" target="_blank">4. Tani-Otoshi (ספה)</a></li>
-            <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=2" target="_blank">5. Tai Sabaki</a></li>
-            <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=63" target="_blank">6. מנוף ממטוטלת</a></li>
-            <li class="exercise"><a href="https://youtu.be/wjYkbQK7pDw?t=167" target="_blank">7. חרב ממטוטלת</a></li>
-            <li class="exercise"><a href="https://youtu.be/rJkTpu48iwE?t=1" target="_blank">8. בורג</a></li>
-            <li class="exercise"><a href="https://youtu.be/fzGJeR-BMe4?t=1" target="_blank">9. כניסה שמאל + הוק ברגל</a></li>
-            <li class="exercise"><a href="https://youtu.be/fzGJeR-BMe4?t=42" target="_blank">10. כניסה ימין + גלגול</a></li>
-            <li class="exercise"><a href="https://youtu.be/RxbUuf-oqOk?t=2" target="_blank">11. שבירת שורש כף יד</a></li>
-        </ul>
-
-        <div class="category" data-filter="chokes">חניקות</div>
-        <div class="series">מלפנים <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/9nQhR6-v4L0?t=1" target="_blank">1. דחיפה</a></li>
-            <li class="exercise"><a href="https://youtu.be/9nQhR6-v4L0?t=11" target="_blank">2. ברך</a></li>
-            <li class="exercise"><a href="https://youtu.be/UAwfPvCjJWQ?t=12" target="_blank">3. קלאסי</a></li>
-            <li class="exercise"><a href="https://youtu.be/-QgHq7dSYn4?t=5" target="_blank">4. פתיחה 1 (Tai Sabaki)</a></li>
-            <li class="exercise"><a href="https://youtu.be/Mkdvf0j19vk?t=1" target="_blank">5. שוטר 1</a></li>
-        </ul>
-
-        <div class="series">מאחור <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=17" target="_blank">1. דריכה</a></li>
-            <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=20" target="_blank">2. אשכים</a></li>
-            <li class="exercise"><a href="https://youtu.be/VIMnpnE8ciI?t=51" target="_blank">3. ריקוד</a></li>
-            <li class="exercise"><a href="https://youtu.be/hF8_KLbpD70?t=7" target="_blank">4. מנוף</a></li>
-        </ul>
-
-        <div class="category" data-filter="series">סדרות</div>
-        <div class="series">סדרה ראשונה - שבירות <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/A7zpd6RHoys?t=3" target="_blank">1. juji-gatame</a></li>
-            <li class="exercise"><a href="https://youtu.be/A7zpd6RHoys?t=16" target="_blank">2. Ude-garami</a></li>
-            <li class="exercise"><a href="https://youtu.be/A7zpd6RHoys?t=28" target="_blank">3. המשך אופנוע (מרפק)</a></li>
-        </ul>
-
-        <div class="category" data-filter="Weapons_Defense">הגנה מכלי נשק</div>
-        <div class="series">סכין קדימה <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/IYFQNjnJ_UI?t=1" target="_blank">1. Tai Sabaki - בלימה ימין</a></li>
-            <li class="exercise"><a href="https://youtu.be/IYFQNjnJ_UI?t=12" target="_blank">2. בלימה ימין ושבירה על הכתף</a></li>
-            <li class="exercise"><a href="https://youtu.be/avu1B5ETs6U?t=32" target="_blank">3. Tai Sabaki - בלימה יד שמאל</a></li>
-        </ul>
-
-        <div class="category" data-filter="Judo">ג'ודו</div>
-        <div class="series">הטלות מותן <i class="fa-solid fa-chevron-down"></i></div>
-        <ul class="exercise-list">
-            <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=1" target="_blank">1. O-Ghosi</a></li>
-            <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=10" target="_blank">2. Kubi-Nage</a></li>
-            <li class="exercise"><a href="https://youtu.be/11ihjTVxb-Q?t=54" target="_blank">3. Harai-goshi</a></li>
-        </ul>
-
+    <main class="container" id="mainContainer">
+        <p style="text-align: center; padding: 20px;">טוען נתונים מהסילבוס...</p>
     </main>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+// פונקציה לפירוק שורות CSV תוך טיפול במרכאות ופסיקים פנימיים
+function parseCSVRow(row) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < row.length; i++) {
+        const char = row[i];
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    result.push(current.trim());
+    return result;
+}
 
-    // פתיחה וסגירה של רשימות
-    document.querySelectorAll('.series').forEach(series => {
-        series.addEventListener('click', () => {
-            const list = series.nextElementSibling;
-            
-            // סגירת רשימות אחרות (אופציונלי - אם רוצים שרק אחת תהיה פתוחה)
-            // document.querySelectorAll('.exercise-list').forEach(l => {
-            //     if(l !== list) {
-            //         l.classList.remove('expanded');
-            //         l.style.maxHeight = '0';
-            //         l.previousElementSibling.classList.remove('active');
-            //     }
-            // });
+async function loadSyllabus() {
+    try {
+        const response = await fetch('Black_belt_syllabus_IJJA.csv');
+        const text = await response.text();
+        
+        const rows = text.split('\n').filter(row => row.trim() !== '');
+        const headers = parseCSVRow(rows[0]);
+        
+        const syllabusData = rows.slice(1).map(row => {
+            const values = parseCSVRow(row);
+            return {
+                category: values[0],
+                series: values[1],
+                num: values[2],
+                name: values[3],
+                link: values[4]
+            };
+        }).filter(item => item.category);
 
-            series.classList.toggle('active');
-            list.classList.toggle('expanded');
-            
-            if (list.classList.contains('expanded')) {
-                list.style.maxHeight = list.scrollHeight + "px";
-            } else {
-                list.style.maxHeight = "0";
-            }
-        });
+        renderUI(syllabusData);
+    } catch (error) {
+        console.error("Error:", error);
+        document.getElementById('mainContainer').innerHTML = "<p>שגיאה בטעינת קובץ ה-CSV.</p>";
+    }
+}
+
+function renderUI(data) {
+    const container = document.getElementById('mainContainer');
+    const filterBar = document.getElementById('filterBar');
+    container.innerHTML = '';
+
+    // 1. חילוץ קטגוריות ייחודיות ליצירת כפתורים
+    const categories = [...new Set(data.map(item => item.category))];
+    
+    categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-button';
+        btn.dataset.filter = cat; // משתמש בשם הקטגוריה כמזהה
+        btn.textContent = cat;
+        btn.onclick = () => applyFilter(cat, btn);
+        filterBar.appendChild(btn);
     });
 
-    // מערכת סינון קטגוריות
-    const buttons = document.querySelectorAll('.filter-button');
-    const categories = document.querySelectorAll('.category');
-    const seriesElements = document.querySelectorAll('.series');
-    const lists = document.querySelectorAll('.exercise-list');
+    // כפתור "הכל" קיים ב-HTML, נוסיף לו את הפונקציה
+    filterBar.querySelector('[data-filter="all"]').onclick = (e) => applyFilter('all', e.target);
 
-    buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const filter = btn.dataset.filter;
+    // 2. בניית התוכן (קטגוריות -> סדרות -> תרגילים)
+    categories.forEach(cat => {
+        const catDiv = document.createElement('div');
+        catDiv.className = 'category';
+        catDiv.dataset.catName = cat;
+        catDiv.textContent = cat;
+        container.appendChild(catDiv);
+
+        const catExercises = data.filter(d => d.category === cat);
+        const seriesInCat = [...new Set(catExercises.map(d => d.series))];
+
+        seriesInCat.forEach(seriesName => {
+            const seriesWrapper = document.createElement('div');
+            seriesWrapper.className = 'series-wrapper';
+            seriesWrapper.dataset.parentCat = cat;
+
+            const seriesDiv = document.createElement('div');
+            seriesDiv.className = 'series';
+            seriesDiv.innerHTML = `${seriesName} <i class="fa-solid fa-chevron-down"></i>`;
             
-            // עדכון כפתור פעיל
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            const listUl = document.createElement('ul');
+            listUl.className = 'exercise-list';
 
-            let currentCategoryMatch = false;
-
-            // מעבר על כל האלמנטים ב-DOM לפי הסדר
-            const allContent = document.querySelectorAll('.category, .series, .exercise-list');
-            
-            allContent.forEach(el => {
-                if (el.classList.contains('category')) {
-                    currentCategoryMatch = (filter === 'all' || el.dataset.filter === filter);
-                    el.classList.toggle('hidden', !currentCategoryMatch);
-                } else {
-                    // שיוך סדרות ורשימות לקטגוריה האחרונה שנבדקה
-                    el.classList.toggle('hidden', !currentCategoryMatch);
-                }
+            const exercises = catExercises.filter(d => d.series === seriesName);
+            exercises.forEach(ex => {
+                const li = document.createElement('li');
+                li.className = 'exercise';
+                li.innerHTML = `<a href="${ex.link}" target="_blank">${ex.num}. ${ex.name}</a>`;
+                listUl.appendChild(li);
             });
-            
-            // גלילה לראש הדף לאחר סינון
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            seriesDiv.onclick = () => {
+                seriesDiv.classList.toggle('active');
+                listUl.classList.toggle('expanded');
+                listUl.style.maxHeight = listUl.classList.contains('expanded') ? listUl.scrollHeight + "px" : "0";
+            };
+
+            seriesWrapper.appendChild(seriesDiv);
+            seriesWrapper.appendChild(listUl);
+            container.appendChild(seriesWrapper);
         });
     });
-});
-</script>
+}
 
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Service Worker Registered'));
-  }
-</script>
+function applyFilter(filterValue, activeBtn) {
+    // עדכון כפתורים
+    document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
+    activeBtn.classList.add('active');
 
+    // סינון אלמנטים
+    const categories = document.querySelectorAll('.category');
+    const seriesWrappers = document.querySelectorAll('.series-wrapper');
+
+    categories.forEach(cat => {
+        const isVisible = (filterValue === 'all' || cat.dataset.catName === filterValue);
+        cat.classList.toggle('hidden', !isVisible);
+    });
+
+    seriesWrappers.forEach(sw => {
+        const isVisible = (filterValue === 'all' || sw.dataset.parentCat === filterValue);
+        sw.classList.toggle('hidden', !isVisible);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', loadSyllabus);
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+}
+</script>
 </body>
 </html>
