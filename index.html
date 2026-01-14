@@ -39,7 +39,7 @@
             background: white;
             border-bottom: 3px solid var(--primary);
             display: flex;
-            flex-direction: column; /* מאפשר הצגת גרסה מעל הכותרת */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
@@ -185,13 +185,21 @@
             .filter-button { width: auto; font-size: 0.85em; }
         }
 
+        /* מודאל צף מותאם לנייד */
         .random-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;
+            padding: 15px; /* מרווח בטיחות מהצדדים בנייד */
         }
         .random-card {
-            background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center;
+            background: white; padding: 30px 20px 25px; border-radius: 20px; width: 100%; max-width: 380px; 
+            text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+        .close-modal {
+            position: absolute; top: 12px; right: 15px; font-size: 1.4rem; 
+            color: #999; cursor: pointer; transition: color 0.2s; border: none; background: none;
+        }
+        .close-modal:hover { color: var(--text-dark); }
     </style>
 </head>
 <body>
@@ -217,11 +225,12 @@
 
 <div id="rndModal" class="random-overlay" onclick="this.style.display='none'">
     <div class="random-card" onclick="event.stopPropagation()">
-        <p id="rCat" style="color:var(--primary); font-weight:900; margin:0;"></p>
-        <p id="rSer" style="margin:5px 0; opacity:0.7;"></p>
-        <h2 id="rName" style="margin:20px 0;"></h2>
-        <a id="rLink" href="#" target="_blank" style="color:#ff0000; font-size:3rem;"><i class="fab fa-youtube"></i></a>
-        <button class="filter-button" onclick="getRandomEx()" style="margin-top:20px; background:var(--primary); color:white; text-align:center;">עוד אחד</button>
+        <button class="close-modal" onclick="document.getElementById('rndModal').style.display='none'"><i class="fas fa-times"></i></button>
+        <p id="rCat" style="color:var(--primary); font-weight:900; margin:0; font-size: 1rem;"></p>
+        <p id="rSer" style="margin:5px 0; opacity:0.7; font-size: 0.9rem;"></p>
+        <h2 id="rName" style="margin:20px 0; font-size: 1.5rem; line-height: 1.3;"></h2>
+        <a id="rLink" href="#" target="_blank" style="color:#ff0000; font-size:3.5rem;"><i class="fab fa-youtube"></i></a>
+        <button class="filter-button" onclick="getRandomEx()" style="margin-top:25px; background:var(--primary); color:white; text-align:center; width: 100%;">עוד אחד</button>
     </div>
 </div>
 
