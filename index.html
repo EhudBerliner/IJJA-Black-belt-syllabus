@@ -185,6 +185,27 @@
         .hidden {
             display: none;
         }
+
+        /* זה החלק היחיד שהוספתי ל-CSS: חלון צף מעל הכל כדי לא להפריע לגלילה */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 85%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -197,30 +218,29 @@
 <main class="container">
     <div class="filter-container" id="filterContainer">
         <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
-        <button class="filter-button" onclick="getRandomExercise()" style="background: #ff9800; color: white; border: none;">
+        <button class="filter-button" onclick="showRandomExercise()" style="background: #ff9800; color: white; border-color: #f57c00;">
             <i class="fas fa-random"></i> אקראי
         </button>
     </div>
 
-    <div id="mainContainer">
-        </div>
+    <div id="mainContainer"></div>
 </main>
 
-<div id="rndModal" style="display:none; position:fixed; z-index:3000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; backdrop-filter:blur(4px);" onclick="this.style.display='none'">
-    <div style="background:white; padding:25px; border-radius:20px; width:85%; max-width:350px; text-align:center;" onclick="event.stopPropagation()">
-        <h3 id="rndCat" style="color:var(--primary); margin:0;"></h3>
-        <p id="rndSer" style="margin:5px 0 15px 0; font-weight:bold;"></p>
-        <h2 id="rndName" style="margin-bottom:20px;"></h2>
-        <a id="rndLink" href="#" target="_blank" class="filter-button" style="background:#ff0000; color:white; display:inline-block; text-decoration:none;">
-            <i class="fab fa-youtube"></i> צפה בוידאו
+<div id="randomModal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+        <p id="mCategory" style="margin:0; color:var(--primary); font-weight:700; font-size:0.9rem;"></p>
+        <p id="mSeries" style="margin:5px 0; color:var(--text-dark); font-weight:700;"></p>
+        <h2 id="mName" style="margin:15px 0; font-weight:900;"></h2>
+        <a id="mLink" href="#" target="_blank" style="color:#ff0000; font-size:3rem; display:block; margin-bottom:20px;">
+            <i class="fab fa-youtube"></i>
         </a>
-        <button class="filter-button" onclick="getRandomExercise()" style="margin-top:15px; width:100%;">תרגיל אחר</button>
-        <button class="filter-button" onclick="document.getElementById('rndModal').style.display='none'" style="margin-top:10px; width:100%; background:#eee;">סגור</button>
+        <button class="filter-button" onclick="showRandomExercise()" style="width:100%; background:var(--primary); color:white; margin-bottom:10px;">תרגיל אחר</button>
+        <button class="filter-button" onclick="closeModal()" style="width:100%; border:none;">סגור</button>
     </div>
 </div>
 
 <script>
-    let globalSyllabusData = []; // מאגר להגרלה אקראית
+    let rawData = []; // משתנה גלובלי לאחסון כל התרגילים
 
     async function loadSyllabus() {
         try {
@@ -239,7 +259,7 @@
                 };
             }).filter(item => item.category);
 
-            globalSyllabusData = syllabusData; // שמירה למשתנה גלובלי
+            rawData = syllabusData; // שומר את הנתונים להגרלה
             renderUI(syllabusData);
             generateFilterButtons(syllabusData);
 
@@ -248,24 +268,17 @@
         }
     }
 
+    // שאר הפונקציות המקוריות שלך בדיוק כפי שהן:
     function parseCSVRow(row) {
         const result = [];
         let cur = '';
         let inQuotes = false;
-
         for (let i = 0; i < row.length; i++) {
             const char = row[i];
-            if (char === '"' && row[i+1] === '"') {
-                cur += '"';
-                i++;
-            } else if (char === '"') {
-                inQuotes = !inQuotes;
-            } else if (char === ',' && !inQuotes) {
-                result.push(cur);
-                cur = '';
-            } else {
-                cur += char;
-            }
+            if (char === '"' && row[i+1] === '"') { cur += '"'; i++; }
+            else if (char === '"') { inQuotes = !inQuotes; }
+            else if (char === ',' && !inQuotes) { result.push(cur); cur = ''; }
+            else { cur += char; }
         }
         result.push(cur);
         return result;
@@ -274,7 +287,6 @@
     function generateFilterButtons(data) {
         const categories = [...new Set(data.map(item => item.category))];
         const container = document.getElementById('filterContainer');
-
         categories.forEach(category => {
             const button = document.createElement('button');
             button.className = 'filter-button';
@@ -287,7 +299,6 @@
     function renderUI(data) {
         const container = document.getElementById('mainContainer');
         container.innerHTML = '';
-
         const groupedData = data.reduce((acc, item) => {
             if (!acc[item.category]) acc[item.category] = {};
             if (!acc[item.category][item.series]) acc[item.category][item.series] = [];
@@ -306,35 +317,22 @@
                 const seriesWrapper = document.createElement('div');
                 seriesWrapper.className = 'series-wrapper';
                 seriesWrapper.dataset.parentCat = category;
-
                 const seriesDiv = document.createElement('div');
                 seriesDiv.className = 'series-header';
-                seriesDiv.innerHTML = `
-                    <span>${series}</span>
-                    <i class="fas fa-chevron-down"></i>
-                `;
-
+                seriesDiv.innerHTML = `<span>${series}</span><i class="fas fa-chevron-down"></i>`;
                 const listUl = document.createElement('ul');
                 listUl.className = 'exercise-list';
-
                 groupedData[category][series].forEach(ex => {
                     const li = document.createElement('li');
                     li.className = 'exercise-item';
-                    li.innerHTML = `
-                        <span class="exercise-name">${ex.num}. ${ex.name}</span>
-                        <a href="${ex.link}" target="_blank" class="video-link">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    `;
+                    li.innerHTML = `<span class="exercise-name">${ex.num}. ${ex.name}</span><a href="${ex.link}" target="_blank" class="video-link"><i class="fab fa-youtube"></i></a>`;
                     listUl.appendChild(li);
                 });
-
                 seriesDiv.onclick = () => {
                     seriesDiv.classList.toggle('active');
                     listUl.classList.toggle('expanded');
                     listUl.style.maxHeight = listUl.classList.contains('expanded') ? listUl.scrollHeight + "px" : "0";
                 };
-
                 seriesWrapper.appendChild(seriesDiv);
                 seriesWrapper.appendChild(listUl);
                 container.appendChild(seriesWrapper);
@@ -345,44 +343,41 @@
     function applyFilter(filterValue, activeBtn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
         activeBtn.classList.add('active');
-
         const categories = document.querySelectorAll('.category');
         const seriesWrappers = document.querySelectorAll('.series-wrapper');
-
         categories.forEach(cat => {
             const isVisible = (filterValue === 'all' || cat.dataset.catName === filterValue);
             cat.classList.toggle('hidden', !isVisible);
         });
-
         seriesWrappers.forEach(sw => {
             const isVisible = (filterValue === 'all' || sw.dataset.parentCat === filterValue);
             sw.classList.toggle('hidden', !isVisible);
         });
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // פונקציית ההגרלה האקראית
-    function getRandomExercise() {
-        if (globalSyllabusData.length === 0) return;
-        const ex = globalSyllabusData[Math.floor(Math.random() * globalSyllabusData.length)];
-        document.getElementById('rndCat').innerText = ex.category;
-        document.getElementById('rndSer').innerText = ex.series;
-        document.getElementById('rndName').innerText = ex.name;
-        document.getElementById('rndLink').href = ex.link;
-        document.getElementById('rndModal').style.display = 'flex';
+    // לוגיקת האקראי החדשה (לא משפיעה על מה שהיה):
+    function showRandomExercise() {
+        if (rawData.length === 0) return;
+        const ex = rawData[Math.floor(Math.random() * rawData.length)];
+        document.getElementById('mCategory').innerText = ex.category;
+        document.getElementById('mSeries').innerText = ex.series;
+        document.getElementById('mName').innerText = ex.name;
+        document.getElementById('mLink').href = ex.link;
+        document.getElementById('randomModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('randomModal').style.display = 'none';
     }
 
     document.addEventListener('DOMContentLoaded', loadSyllabus);
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker Registered'))
-            .catch(err => console.log('Service Worker Error', err));
+            navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW OK')).catch(err => console.log('SW Error', err));
         });
     }
 </script>
-
 </body>
 </html>
