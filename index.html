@@ -186,25 +186,23 @@
             display: none;
         }
 
-        /* זה החלק היחיד שהוספתי ל-CSS: חלון צף מעל הכל כדי לא להפריע לגלילה */
-        .modal-overlay {
+        /* מודאל שצף מעל הכל בלי להשפיע על שאר הדף */
+        .rnd-modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
-            justify-content: center;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
             align-items: center;
-            backdrop-filter: blur(5px);
+            justify-content: center;
         }
-        .modal-card {
+        .rnd-modal-content {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 20px;
             width: 85%;
-            max-width: 400px;
+            max-width: 350px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -218,7 +216,7 @@
 <main class="container">
     <div class="filter-container" id="filterContainer">
         <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
-        <button class="filter-button" onclick="showRandomExercise()" style="background: #ff9800; color: white; border-color: #f57c00;">
+        <button class="filter-button" onclick="getRandomExercise()" style="background: #ff9800; color: white; border: none;">
             <i class="fas fa-random"></i> אקראי
         </button>
     </div>
@@ -226,21 +224,20 @@
     <div id="mainContainer"></div>
 </main>
 
-<div id="randomModal" class="modal-overlay" onclick="closeModal()">
-    <div class="modal-card" onclick="event.stopPropagation()">
-        <p id="mCategory" style="margin:0; color:var(--primary); font-weight:700; font-size:0.9rem;"></p>
-        <p id="mSeries" style="margin:5px 0; color:var(--text-dark); font-weight:700;"></p>
-        <h2 id="mName" style="margin:15px 0; font-weight:900;"></h2>
-        <a id="mLink" href="#" target="_blank" style="color:#ff0000; font-size:3rem; display:block; margin-bottom:20px;">
-            <i class="fab fa-youtube"></i>
+<div id="rndModal" class="rnd-modal-overlay" onclick="this.style.display='none'">
+    <div class="rnd-modal-content" onclick="event.stopPropagation()">
+        <h3 id="rndCat" style="color:var(--primary); margin:0;"></h3>
+        <p id="rndSer" style="margin:5px 0 15px 0; font-weight:bold;"></p>
+        <h2 id="rndName" style="margin-bottom:20px;"></h2>
+        <a id="rndLink" href="#" target="_blank" class="filter-button" style="background:#ff0000; color:white; display:inline-block; text-decoration:none;">
+            <i class="fab fa-youtube"></i> צפה בוידאו
         </a>
-        <button class="filter-button" onclick="showRandomExercise()" style="width:100%; background:var(--primary); color:white; margin-bottom:10px;">תרגיל אחר</button>
-        <button class="filter-button" onclick="closeModal()" style="width:100%; border:none;">סגור</button>
+        <button class="filter-button" onclick="getRandomExercise()" style="margin-top:15px; width:100%;">תרגיל אחר</button>
     </div>
 </div>
 
 <script>
-    let rawData = []; // משתנה גלובלי לאחסון כל התרגילים
+    let globalDataForRandom = []; // משתנה גלובלי להגרלה
 
     async function loadSyllabus() {
         try {
@@ -259,7 +256,7 @@
                 };
             }).filter(item => item.category);
 
-            rawData = syllabusData; // שומר את הנתונים להגרלה
+            globalDataForRandom = syllabusData; // שמירת הנתונים להגרלה
             renderUI(syllabusData);
             generateFilterButtons(syllabusData);
 
@@ -268,7 +265,7 @@
         }
     }
 
-    // שאר הפונקציות המקוריות שלך בדיוק כפי שהן:
+    // פונקציות העזר המקוריות שלך (ללא שינוי)
     function parseCSVRow(row) {
         const result = [];
         let cur = '';
@@ -356,28 +353,25 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // לוגיקת האקראי החדשה (לא משפיעה על מה שהיה):
-    function showRandomExercise() {
-        if (rawData.length === 0) return;
-        const ex = rawData[Math.floor(Math.random() * rawData.length)];
-        document.getElementById('mCategory').innerText = ex.category;
-        document.getElementById('mSeries').innerText = ex.series;
-        document.getElementById('mName').innerText = ex.name;
-        document.getElementById('mLink').href = ex.link;
-        document.getElementById('randomModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-        document.getElementById('randomModal').style.display = 'none';
+    // פונקציית ההגרלה
+    function getRandomExercise() {
+        if (globalDataForRandom.length === 0) return;
+        const ex = globalDataForRandom[Math.floor(Math.random() * globalDataForRandom.length)];
+        document.getElementById('rndCat').innerText = ex.category;
+        document.getElementById('rndSer').innerText = ex.series;
+        document.getElementById('rndName').innerText = ex.name;
+        document.getElementById('rndLink').href = ex.link;
+        document.getElementById('rndModal').style.display = 'flex';
     }
 
     document.addEventListener('DOMContentLoaded', loadSyllabus);
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW OK')).catch(err => console.log('SW Error', err));
+            navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW Registered')).catch(err => console.log('SW Error', err));
         });
     }
 </script>
+
 </body>
 </html>
