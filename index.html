@@ -26,131 +26,122 @@
         body {
             font-family: 'Heebo', sans-serif;
             margin: 0;
-            background-color: #f7f9fb;
+            background: #f7f9fb;
             color: var(--text-dark);
-            line-height: 1.6;
+            padding-top: var(--header-height);
         }
 
         header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 3px solid var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-        }
-
-        header img {
-            height: 40px;
-            width: auto;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         }
 
         header h1 {
             margin: 0;
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: -0.5px;
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 26px;
+            line-height: 1.2;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px 15px;
-        }
-
-        .filter-container {
+        .layout {
             display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 10px 5px;
-            margin-bottom: 20px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            position: sticky;
-            top: 70px;
-            background: #f7f9fb;
-            z-index: 900;
+            flex-direction: row;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            gap: 20px;
         }
 
-        .filter-container::-webkit-scrollbar {
-            display: none;
+        .filter-sidebar {
+            width: 230px;
+            position: sticky;
+            top: calc(var(--header-height) + 10px);
+            height: fit-content;
+        }
+
+        .filter-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
         .filter-button {
-            background: white;
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 20px;
             border: 1px solid var(--border);
-            padding: 8px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            white-space: nowrap;
+            background: #f0f4f8;
             font-weight: 700;
-            color: var(--text-dark);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            text-align: right;
+            font-family: 'Heebo', sans-serif;
+            transition: all 0.2s;
         }
 
         .filter-button.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,86,166,0.2);
         }
 
-        .category-title {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: var(--primary);
-            margin: 30px 0 15px 0;
-            padding-bottom: 10px;
-            border-bottom: 3px solid var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .container {
+            flex: 1;
+            max-width: 900px;
+            padding-bottom: 53vh;
         }
 
-        .series-wrapper {
-            margin-bottom: 12px;
-            background: var(--card-bg);
+        .category {
+            margin-top: 40px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
             border-radius: 12px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            transition: all 0.3s ease;
+            font-size: 1.6em;
+            font-weight: 900;
+            position: sticky;
+            top: calc(var(--header-height) + 1px); 
+            z-index: 500;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .series-header {
-            padding: 16px 20px;
+        .category:first-of-type { margin-top: 0; }
+
+        .series {
+            background: white;
+            padding: 15px 20px;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-top: 15px;
+            border-right: 4px solid var(--secondary);
             cursor: pointer;
+            border-radius: 8px;
+            transition: 0.25s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 700;
-            user-select: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
-        .series-header:hover {
-            background-color: #fafafa;
-        }
-
-        .series-header i {
-            font-size: 0.9rem;
-            color: var(--primary);
-            transition: transform 0.3s ease;
-        }
-
-        .series-header.active {
-            background-color: var(--accent);
-        }
-
-        .series-header.active i {
-            transform: rotate(180deg);
-        }
+        .series:hover { background: var(--accent); }
+        .series i { transition: transform 0.3s ease; }
+        .series.active { border-radius: 8px 8px 0 0; box-shadow: none; }
+        .series.active i { transform: rotate(180deg); }
 
         .exercise-list {
             list-style: none;
@@ -158,220 +149,174 @@
             margin: 0;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.4s ease;
+            border: 1px solid var(--border);
+            border-top: none;
             background: white;
+            border-radius: 0 0 8px 8px;
         }
 
-        .exercise-item {
-            padding: 14px 20px;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .exercise-list.expanded { max-height: 2500px; }
+
+        .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); }
+        .exercise a { text-decoration: none; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 12px; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            .layout { flex-direction: column; }
+            .filter-sidebar { width: 100%; position: static; }
+            .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            header h1 { font-size: 20px; }
+            .filter-button { width: auto; font-size: 0.85em; }
         }
 
-        .exercise-name {
-            font-weight: 400;
-            color: #444;
+        /* מודאל צף (לא משפיע על גלילה) */
+        .random-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;
         }
-
-        .video-link {
-            color: #ff0000;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* מודאל שצף מעל הכל בלי להשפיע על שאר הדף */
-        .rnd-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-        .rnd-modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            width: 85%;
-            max-width: 350px;
-            text-align: center;
+        .random-card {
+            background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="Logo.png" alt="Logo">
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
-<main class="container">
-    <div class="filter-container" id="filterContainer">
-        <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
-        <button class="filter-button" onclick="getRandomExercise()" style="background: #ff9800; color: white; border: none;">
-            <i class="fas fa-random"></i> אקראי
-        </button>
-    </div>
+<div class="layout">
+    <aside class="filter-sidebar">
+        <div class="filter-bar" id="filterContainer">
+            <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
+            <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none; text-align:center;">
+                <i class="fas fa-random"></i> תרגיל אקראי
+            </button>
+        </div>
+    </aside>
 
-    <div id="mainContainer"></div>
-</main>
+    <main class="container" id="mainContainer">
+        </main>
+</div>
 
-<div id="rndModal" class="rnd-modal-overlay" onclick="this.style.display='none'">
-    <div class="rnd-modal-content" onclick="event.stopPropagation()">
-        <h3 id="rndCat" style="color:var(--primary); margin:0;"></h3>
-        <p id="rndSer" style="margin:5px 0 15px 0; font-weight:bold;"></p>
-        <h2 id="rndName" style="margin-bottom:20px;"></h2>
-        <a id="rndLink" href="#" target="_blank" class="filter-button" style="background:#ff0000; color:white; display:inline-block; text-decoration:none;">
-            <i class="fab fa-youtube"></i> צפה בוידאו
-        </a>
-        <button class="filter-button" onclick="getRandomExercise()" style="margin-top:15px; width:100%;">תרגיל אחר</button>
+<div id="rndModal" class="random-overlay" onclick="this.style.display='none'">
+    <div class="random-card" onclick="event.stopPropagation()">
+        <p id="rCat" style="color:var(--primary); font-weight:900; margin:0;"></p>
+        <p id="rSer" style="margin:5px 0; opacity:0.7;"></p>
+        <h2 id="rName" style="margin:20px 0;"></h2>
+        <a id="rLink" href="#" target="_blank" style="color:#ff0000; font-size:3rem;"><i class="fab fa-youtube"></i></a>
+        <button class="filter-button" onclick="getRandomEx()" style="margin-top:20px; background:var(--primary); color:white; text-align:center;">עוד אחד</button>
     </div>
 </div>
 
 <script>
-    let globalDataForRandom = []; // משתנה גלובלי להגרלה
+    let rawData = [];
 
     async function loadSyllabus() {
         try {
-            const response = await fetch('Black_belt_syllabus_IJJA.csv');
-            const text = await response.text();
+            const res = await fetch('Black_belt_syllabus_IJJA.csv');
+            const text = await res.text();
+            const rows = text.split('\n').filter(r => r.trim() !== '');
             
-            const rows = text.split('\n').filter(row => row.trim() !== '');
-            const syllabusData = rows.slice(1).map(row => {
-                const values = parseCSVRow(row);
-                return {
-                    category: values[0],
-                    series: values[1],
-                    num: values[2],
-                    name: values[3],
-                    link: values[4]
-                };
-            }).filter(item => item.category);
+            rawData = rows.slice(1).map(row => {
+                const cols = parseCSV(row);
+                return { cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
+            }).filter(i => i.cat);
 
-            globalDataForRandom = syllabusData; // שמירת הנתונים להגרלה
-            renderUI(syllabusData);
-            generateFilterButtons(syllabusData);
-
-        } catch (error) {
-            console.error("Error loading syllabus:", error);
-        }
+            render(rawData);
+            genFilters(rawData);
+        } catch (e) { console.error(e); }
     }
 
-    // פונקציות העזר המקוריות שלך (ללא שינוי)
-    function parseCSVRow(row) {
-        const result = [];
-        let cur = '';
-        let inQuotes = false;
-        for (let i = 0; i < row.length; i++) {
-            const char = row[i];
-            if (char === '"' && row[i+1] === '"') { cur += '"'; i++; }
-            else if (char === '"') { inQuotes = !inQuotes; }
-            else if (char === ',' && !inQuotes) { result.push(cur); cur = ''; }
-            else { cur += char; }
+    function parseCSV(r) {
+        const res = []; let c = '', q = false;
+        for (let i=0; i<r.length; i++) {
+            if (r[i] === '"') q = !q;
+            else if (r[i] === ',' && !q) { res.push(c); c = ''; }
+            else c += r[i];
         }
-        result.push(cur);
-        return result;
+        res.push(c); return res;
     }
 
-    function generateFilterButtons(data) {
-        const categories = [...new Set(data.map(item => item.category))];
+    function genFilters(data) {
+        const cats = [...new Set(data.map(i => i.cat))];
         const container = document.getElementById('filterContainer');
-        categories.forEach(category => {
-            const button = document.createElement('button');
-            button.className = 'filter-button';
-            button.innerText = category;
-            button.onclick = (e) => applyFilter(category, e.target);
-            container.appendChild(button);
+        cats.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-button';
+            btn.innerText = c;
+            btn.onclick = (e) => applyFilter(c, e.target);
+            container.appendChild(btn);
         });
     }
 
-    function renderUI(data) {
+    function render(data) {
         const container = document.getElementById('mainContainer');
         container.innerHTML = '';
-        const groupedData = data.reduce((acc, item) => {
-            if (!acc[item.category]) acc[item.category] = {};
-            if (!acc[item.category][item.series]) acc[item.category][item.series] = [];
-            acc[item.category][item.series].push(item);
+        const grouped = data.reduce((acc, i) => {
+            if (!acc[i.cat]) acc[i.cat] = {};
+            if (!acc[i.cat][i.ser]) acc[i.cat][i.ser] = [];
+            acc[i.cat][i.ser].push(i);
             return acc;
         }, {});
 
-        Object.keys(groupedData).forEach(category => {
-            const catHeader = document.createElement('div');
-            catHeader.className = 'category';
-            catHeader.dataset.catName = category;
-            catHeader.innerHTML = `<div class="category-title"><i class="fas fa-layer-group"></i> ${category}</div>`;
-            container.appendChild(catHeader);
+        Object.keys(grouped).forEach(cat => {
+            const cDiv = document.createElement('div');
+            cDiv.className = 'category';
+            cDiv.dataset.cat = cat;
+            cDiv.innerText = cat;
+            container.appendChild(cDiv);
 
-            Object.keys(groupedData[category]).forEach(series => {
-                const seriesWrapper = document.createElement('div');
-                seriesWrapper.className = 'series-wrapper';
-                seriesWrapper.dataset.parentCat = category;
-                const seriesDiv = document.createElement('div');
-                seriesDiv.className = 'series-header';
-                seriesDiv.innerHTML = `<span>${series}</span><i class="fas fa-chevron-down"></i>`;
-                const listUl = document.createElement('ul');
-                listUl.className = 'exercise-list';
-                groupedData[category][series].forEach(ex => {
+            Object.keys(grouped[cat]).forEach(ser => {
+                const sWrap = document.createElement('div');
+                sWrap.className = 'series-wrapper';
+                sWrap.dataset.pcat = cat;
+                
+                const sDiv = document.createElement('div');
+                sDiv.className = 'series';
+                sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+                
+                const list = document.createElement('ul');
+                list.className = 'exercise-list';
+                grouped[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
-                    li.className = 'exercise-item';
-                    li.innerHTML = `<span class="exercise-name">${ex.num}. ${ex.name}</span><a href="${ex.link}" target="_blank" class="video-link"><i class="fab fa-youtube"></i></a>`;
-                    listUl.appendChild(li);
+                    li.className = 'exercise';
+                    li.innerHTML = `<a href="${ex.link}" target="_blank">${ex.num}. ${ex.name}</a>`;
+                    list.appendChild(li);
                 });
-                seriesDiv.onclick = () => {
-                    seriesDiv.classList.toggle('active');
-                    listUl.classList.toggle('expanded');
-                    listUl.style.maxHeight = listUl.classList.contains('expanded') ? listUl.scrollHeight + "px" : "0";
+
+                sDiv.onclick = () => {
+                    sDiv.classList.toggle('active');
+                    list.classList.toggle('expanded');
                 };
-                seriesWrapper.appendChild(seriesDiv);
-                seriesWrapper.appendChild(listUl);
-                container.appendChild(seriesWrapper);
+
+                sWrap.appendChild(sDiv);
+                sWrap.appendChild(list);
+                container.appendChild(sWrap);
             });
         });
     }
 
-    function applyFilter(filterValue, activeBtn) {
+    function applyFilter(val, btn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
-        activeBtn.classList.add('active');
-        const categories = document.querySelectorAll('.category');
-        const seriesWrappers = document.querySelectorAll('.series-wrapper');
-        categories.forEach(cat => {
-            const isVisible = (filterValue === 'all' || cat.dataset.catName === filterValue);
-            cat.classList.toggle('hidden', !isVisible);
-        });
-        seriesWrappers.forEach(sw => {
-            const isVisible = (filterValue === 'all' || sw.dataset.parentCat === filterValue);
-            sw.classList.toggle('hidden', !isVisible);
-        });
+        btn.classList.add('active');
+        document.querySelectorAll('.category').forEach(c => c.classList.toggle('hidden', val!=='all' && c.dataset.cat!==val));
+        document.querySelectorAll('.series-wrapper').forEach(s => s.classList.toggle('hidden', val!=='all' && s.dataset.pcat!==val));
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // פונקציית ההגרלה
-    function getRandomExercise() {
-        if (globalDataForRandom.length === 0) return;
-        const ex = globalDataForRandom[Math.floor(Math.random() * globalDataForRandom.length)];
-        document.getElementById('rndCat').innerText = ex.category;
-        document.getElementById('rndSer').innerText = ex.series;
-        document.getElementById('rndName').innerText = ex.name;
-        document.getElementById('rndLink').href = ex.link;
+    function getRandomEx() {
+        const ex = rawData[Math.floor(Math.random() * rawData.length)];
+        document.getElementById('rCat').innerText = ex.cat;
+        document.getElementById('rSer').innerText = ex.ser;
+        document.getElementById('rName').innerText = ex.name;
+        document.getElementById('rLink').href = ex.link;
         document.getElementById('rndModal').style.display = 'flex';
     }
 
     document.addEventListener('DOMContentLoaded', loadSyllabus);
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW Registered')).catch(err => console.log('SW Error', err));
-        });
-    }
 </script>
-
 </body>
 </html>
