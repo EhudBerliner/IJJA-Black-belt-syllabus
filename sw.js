@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ijja-syllabus-v5';
+const CACHE_NAME = 'ijja-syllabus-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -51,4 +51,5 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
 
