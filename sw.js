@@ -1,3 +1,4 @@
+// עדכון גרסה ל-v6 כדי שהדפדפן ירענן את הנגן החדש והעיצוב אצל המשתמש
 const CACHE_NAME = 'ijja-syllabus-v6';
 const ASSETS = [
   './',
@@ -11,15 +12,14 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('PWA: Caching assets');
+      console.log('PWA: Caching assets v6');
       return cache.addAll(ASSETS);
     })
   );
-  // גורם ל-Service Worker החדש להיכנס לפעולה מיד
   self.skipWaiting();
 });
 
-// הפעלה: מחיקת מטמון ישן (חשוב מאוד כדי שהשינויים יופיעו)
+// הפעלה: מחיקת מטמון ישן
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -29,7 +29,6 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-  // משתלט על הדף מיד ללא צורך בריענון נוסף
   return self.clients.claim();
 });
 
@@ -39,17 +38,13 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
-          const cacheCopy = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, cacheCopy);
+            cache.put(event.request, networkResponse.clone());
           });
         }
         return networkResponse;
-      }).catch(() => cachedResponse);
-
+      });
       return cachedResponse || fetchPromise;
     })
   );
 });
-
-
