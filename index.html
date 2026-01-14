@@ -61,6 +61,7 @@
         .filter-button {
             width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
             background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: right; font-family: 'Heebo';
+            transition: 0.2s;
         }
 
         .filter-button.active { background: var(--primary); color: white; }
@@ -77,6 +78,7 @@
             background: white; padding: 15px 20px; font-weight: 700; margin-top: 15px;
             border-right: 4px solid var(--secondary); cursor: pointer; border-radius: 8px;
             display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .exercise-list {
@@ -85,21 +87,21 @@
         }
         .exercise-list.expanded { max-height: 2500px; border: 1px solid var(--border); border-top: none; }
 
-        .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
-        .exercise span { color: var(--primary); font-weight: 600; cursor: pointer; flex-grow: 1; }
+        .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .exercise .ex-name { color: var(--primary); font-weight: 600; cursor: pointer; flex-grow: 1; text-decoration: underline; }
 
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 5px; }
         .fav-star.active { color: var(--fav-color); }
 
-        /* Video Modal Styles */
+        /* Video Modal */
         .video-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center;
         }
-        .video-container { width: 95%; max-width: 800px; position: relative; aspect-ratio: 16/9; }
-        .video-container iframe { width: 100%; height: 100%; border-radius: 8px; }
+        .video-container { width: 95%; max-width: 800px; position: relative; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
         .close-video {
-            position: absolute; top: -40px; right: 0; color: white; font-size: 2rem; cursor: pointer;
+            position: absolute; top: 10px; left: 15px; color: white; font-size: 2.5rem; cursor: pointer; z-index: 10001; text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
         .hidden { display: none !important; }
@@ -108,14 +110,14 @@
             .layout { flex-direction: column; }
             .filter-sidebar { width: 100%; position: static; }
             .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .filter-button { width: auto; }
+            .filter-button { width: auto; font-size: 0.9em; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.0.6</div>
+    <div class="version-tag">Version 1.0.7</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
@@ -144,7 +146,7 @@
 <div id="videoModal" class="video-overlay" onclick="closeVideo()">
     <div class="video-container" onclick="event.stopPropagation()">
         <span class="close-video" onclick="closeVideo()">&times;</span>
-        <iframe id="mainPlayer" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="mainPlayer" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
     </div>
 </div>
 
@@ -164,17 +166,17 @@
             }).filter(i => i.cat);
             render(rawData);
             genFilters(rawData);
-        } catch (e) { console.error(e); }
+        } catch (e) { console.error("Error loading CSV:", e); }
     }
 
     function parseCSV(r) {
         const res = []; let c = '', q = false;
         for (let i=0; i<r.length; i++) {
             if (r[i] === '"') q = !q;
-            else if (r[i] === ',' && !q) { res.push(c); c = ''; }
+            else if (r[i] === ',' && !q) { res.push(c.trim()); c = ''; }
             else c += r[i];
         }
-        res.push(c); return res;
+        res.push(c.trim()); return res;
     }
 
     function render(data) {
@@ -196,7 +198,7 @@
                 const sWrap = document.createElement('div');
                 sWrap.className = 'series-wrapper'; sWrap.dataset.pcat = cat;
                 const sDiv = document.createElement('div');
-                sDiv.className = 'series'; sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+                sDiv.className = 'series active'; sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
                 const list = document.createElement('ul');
                 list.className = 'exercise-list expanded';
                 
@@ -204,7 +206,7 @@
                     const li = document.createElement('li');
                     li.className = 'exercise';
                     li.innerHTML = `
-                        <span onclick="openVideo('${ex.link}')">${ex.num}. ${ex.name}</span>
+                        <span class="ex-name" onclick="openVideo('${ex.link}')">${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
                     `;
                     list.appendChild(li);
@@ -217,16 +219,34 @@
     }
 
     function openVideo(url) {
+        if (!url) return;
         let videoId = "";
-        if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-        else if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-        
-        const timestamp = url.includes("t=") ? url.split("t=")[1] : "0";
-        const embedUrl = `https://www.youtube.com/embed/${videoId}?start=${timestamp}&autoplay=1`;
-        
-        document.getElementById('mainPlayer').src = embedUrl;
-        document.getElementById('videoModal').style.display = 'flex';
-        document.body.classList.add('modal-open');
+        let start = 0;
+
+        try {
+            if (url.includes("youtu.be/")) {
+                videoId = url.split("youtu.be/")[1].split("?")[0];
+            } else if (url.includes("v=")) {
+                videoId = url.split("v=")[1].split("&")[0];
+            }
+
+            if (url.includes("t=")) {
+                const tParam = url.split("t=")[1].split("&")[0];
+                start = parseInt(tParam.replace('s', '')) || 0;
+            }
+
+            if (videoId) {
+                const embedUrl = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
+                document.getElementById('mainPlayer').src = embedUrl;
+                document.getElementById('videoModal').style.display = 'flex';
+                document.body.classList.add('modal-open');
+            } else {
+                window.open(url, '_blank'); // Fallback אם לא זיהה יוטיוב
+            }
+        } catch (e) {
+            console.error("Link parsing error:", e);
+            window.open(url, '_blank');
+        }
     }
 
     function closeVideo() {
@@ -270,6 +290,7 @@
     }
 
     function getRandomEx() {
+        if (rawData.length === 0) return;
         const ex = rawData[Math.floor(Math.random() * rawData.length)];
         openVideo(ex.link);
     }
@@ -278,6 +299,7 @@
         const cats = [...new Set(data.map(i => i.cat))];
         const container = document.getElementById('filterContainer');
         cats.forEach(c => {
+            if (!c) return;
             const btn = document.createElement('button');
             btn.className = 'filter-button'; btn.innerText = c;
             btn.onclick = (e) => applyFilter(c, e.target);
