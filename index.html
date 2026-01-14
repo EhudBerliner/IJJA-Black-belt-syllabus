@@ -26,222 +26,371 @@
         body {
             font-family: 'Heebo', sans-serif;
             margin: 0;
-            background-color: #f7f9fb;
+            background: #f7f9fb;
             color: var(--text-dark);
-            line-height: 1.6;
+            padding-top: var(--header-height);
         }
 
         header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 3px solid var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         }
 
-        header img { height: 40px; width: auto; }
-        header h1 { margin: 0; font-size: 1.2rem; font-weight: 900; }
+        header h1 {
+            margin: 0;
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 26px;
+            line-height: 1.2;
+        }
 
-        .container { max-width: 600px; margin: 0 auto; padding: 20px 15px; }
-
-        .filter-container {
+        .layout {
             display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 10px 5px;
-            margin-bottom: 20px;
+            flex-direction: row;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .filter-sidebar {
+            width: 230px;
             position: sticky;
-            top: 70px;
-            background: #f7f9fb;
-            z-index: 900;
+            top: calc(var(--header-height) + 10px);
+            height: fit-content;
+        }
+
+        .filter-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
         .filter-button {
-            background: white;
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 20px;
             border: 1px solid var(--border);
-            padding: 8px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            white-space: nowrap;
+            background: #f0f4f8;
             font-weight: 700;
+            cursor: pointer;
+            text-align: right;
+            font-family: 'Heebo', sans-serif;
             transition: all 0.2s;
         }
 
-        .filter-button.active { background: var(--primary); color: white; }
-
-        /* סגנון למודאל הרנדומלי - לא משפיע על גלילת הדף */
-        .rnd-modal {
-            display: none;
-            position: fixed;
-            z-index: 3000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            align-items: center; justify-content: center;
+        .filter-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
-        .rnd-content {
-            background: white; padding: 30px; border-radius: 20px;
-            width: 80%; max-width: 400px; text-align: center; position: relative;
-        }
-        .close-rnd { position: absolute; top: 10px; left: 15px; font-size: 24px; cursor: pointer; }
 
-        /* עיצובים מקוריים של התוכן */
-        .category-title { font-size: 1.4rem; font-weight: 900; color: var(--primary); margin: 30px 0 15px 0; border-bottom: 3px solid var(--accent); }
-        .series-wrapper { margin-bottom: 12px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
-        .series-header { padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
-        .series-header.active { background-color: var(--accent); }
-        .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .exercise-item { padding: 14px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .video-link { color: #ff0000; font-size: 1.4rem; }
-        .hidden { display: none; }
+        .container {
+            flex: 1;
+            max-width: 900px;
+            padding-bottom: 53vh;
+        }
+
+        .category {
+            margin-top: 40px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.6em;
+            font-weight: 900;
+            position: sticky;
+            top: calc(var(--header-height) + 1px); 
+            z-index: 500;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .category:first-of-type { margin-top: 0; }
+
+        .series {
+            background: white;
+            padding: 15px 20px;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-top: 15px;
+            border-right: 4px solid var(--secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.25s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .series:hover { background: var(--accent); }
+        .series i { transition: transform 0.3s ease; }
+        .series.active { border-radius: 8px 8px 0 0; box-shadow: none; }
+        .series.active i { transform: rotate(180deg); }
+
+        .exercise-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            border: 1px solid var(--border);
+            border-top: none;
+            background: white;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .exercise-list.expanded { max-height: 2500px; }
+
+        .exercise {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .exercise a {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .exercise a::before {
+            content: "\f144"; 
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 1.1em;
+            color: var(--secondary);
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            .layout { flex-direction: column; }
+            .filter-sidebar { width: 100%; position: static; }
+            .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            header h1 { font-size: 20px; }
+            .filter-button { width: auto; font-size: 0.85em; }
+        }
+
+        /* אנימציה לנקודות הטעינה - הוסף את זה בסוף רשימת העיצובים */
+        /* אנימציה לנקודות טעינה - תנועה מימין לשמאל */
+        .dots {
+            display: inline-block;
+            min-width: 25px; /* שומר מקום לנקודות שלא יקפיצו את הטקסט */
+            text-align: right;
+            direction: rtl; /* גורם לנקודות להצטבר בכיוון הנכון */
+        }
+        
+        .dots::after {
+            content: '';
+            animation: loading-dots-rtl 1.5s infinite;
+        }
+        
+        @keyframes loading-dots-rtl {
+            0%   { content: ''; }
+            25%  { content: '.'; }
+            50%  { content: '..'; }
+            75%  { content: '...'; }
+            100% { content: ''; }
+        }
     </style>
 </head>
+
 <body>
 
 <header>
-    <img src="Logo.png" alt="Logo">
-    <h1>סילבוס חגורה שחורה - IJJA</h1>
+    <h1>סילבוס חגורה שחורה<br>Ju-Jitsu</h1>
 </header>
 
-<main class="container">
-    <div class="filter-container" id="filterContainer">
-        <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
-        <button class="filter-button" onclick="showRandom()" style="background: #ff9800; color: white; border: none;">
-            <i class="fas fa-random"></i> אקראי
-        </button>
+<div class="layout">
+    <aside class="filter-sidebar">
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-button active" data-filter="all">הכל</button>
+            </div>
+    </aside>
+
+<main class="container" id="mainContainer">
+    <div style="text-align: center; padding: 50px; color: var(--primary);">
+        <i class="fas fa-circle-notch fa-spin fa-2x"></i>
+        <p style="margin-top: 15px; font-weight: 700;">רק רגע, קושר את החגורה, כבר מתחילים...<span class="dots"></span></p>
     </div>
-    <div id="mainContainer"></div>
 </main>
 
-<div id="rndModal" class="rnd-modal">
-    <div class="rnd-content">
-        <span class="close-rnd" onclick="closeRnd()">&times;</span>
-        <div id="rndData"></div>
-        <button class="filter-button" onclick="showRandom()" style="margin-top: 20px; width: 100%;">תרגיל אחר</button>
-    </div>
-</div>
-
 <script>
-let allData = [];
-
-async function loadSyllabus() {
-    try {
-        const response = await fetch('Black_belt_syllabus_IJJA.csv');
-        const text = await response.text();
-        const rows = text.split('\n').filter(row => row.trim() !== '');
-        
-        allData = rows.slice(1).map(row => {
-            const values = parseCSVRow(row);
-            return { category: values[0], series: values[1], num: values[2], name: values[3], link: values[4] };
-        }).filter(item => item.category);
-
-        renderUI(allData);
-        generateFilterButtons(allData);
-    } catch (error) { console.error(error); }
-}
-
+// פונקציה לפירוק שורות CSV תוך טיפול במרכאות ופסיקים פנימיים
 function parseCSVRow(row) {
     const result = [];
-    let cur = '', inQuotes = false;
+    let current = '';
+    let inQuotes = false;
     for (let i = 0; i < row.length; i++) {
         const char = row[i];
-        if (char === '"' && row[i+1] === '"') { cur += '"'; i++; }
-        else if (char === '"') inQuotes = !inQuotes;
-        else if (char === ',' && !inQuotes) { result.push(cur); cur = ''; }
-        else cur += char;
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
     }
-    result.push(cur);
+    result.push(current.trim());
     return result;
 }
 
-function generateFilterButtons(data) {
-    const categories = [...new Set(data.map(item => item.category))];
-    const container = document.getElementById('filterContainer');
-    categories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-button';
-        btn.innerText = cat;
-        btn.onclick = (e) => applyFilter(cat, e.target);
-        container.appendChild(btn);
-    });
+async function loadSyllabus() {
+    try {
+        // טעינת הנתונים והמתנה של 3 שניות במקביל
+        const dataPromise = fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now()).then(res => res.text());
+        const timerPromise = new Promise(resolve => setTimeout(resolve, 3000));
+
+        const [text] = await Promise.all([dataPromise, timerPromise]);
+        
+        // ... המשך עיבוד הנתונים כפי שמופיע בקוד שלך ...
+        const rows = text.split('\n').filter(row => row.trim() !== '');
+        // (שאר הלוגיקה של parse ו-renderUI)
+        const syllabusData = rows.slice(1).map(row => {
+            const values = parseCSVRow(row);
+            return {
+                category: values[0],
+                series: values[1],
+                num: values[2],
+                name: values[3],
+                link: values[4]
+            };
+        }).filter(item => item.category);
+
+        renderUI(syllabusData);
+    } catch (error) {
+        console.error("Error:", error);
+        document.getElementById('mainContainer').innerHTML = "<p>שגיאה בטעינת הנתונים.</p>";
+    }
 }
 
 function renderUI(data) {
     const container = document.getElementById('mainContainer');
+    const filterBar = document.getElementById('filterBar');
     container.innerHTML = '';
-    const grouped = data.reduce((acc, item) => {
-        if (!acc[item.category]) acc[item.category] = {};
-        if (!acc[item.category][item.series]) acc[item.category][item.series] = [];
-        acc[item.category][item.series].push(item);
-        return acc;
-    }, {});
 
-    Object.keys(grouped).forEach(cat => {
+    // 1. חילוץ קטגוריות ייחודיות ליצירת כפתורים
+    const categories = [...new Set(data.map(item => item.category))];
+    
+    categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-button';
+        btn.dataset.filter = cat; // משתמש בשם הקטגוריה כמזהה
+        btn.textContent = cat;
+        btn.onclick = () => applyFilter(cat, btn);
+        filterBar.appendChild(btn);
+    });
+
+    // כפתור "הכל" קיים ב-HTML, נוסיף לו את הפונקציה
+    filterBar.querySelector('[data-filter="all"]').onclick = (e) => applyFilter('all', e.target);
+
+    // 2. בניית התוכן (קטגוריות -> סדרות -> תרגילים)
+    categories.forEach(cat => {
         const catDiv = document.createElement('div');
         catDiv.className = 'category';
         catDiv.dataset.catName = cat;
-        catDiv.innerHTML = `<div class="category-title">${cat}</div>`;
+        catDiv.textContent = cat;
         container.appendChild(catDiv);
 
-        Object.keys(grouped[cat]).forEach(ser => {
-            const sw = document.createElement('div');
-            sw.className = 'series-wrapper';
-            sw.dataset.parentCat = cat;
-            const sh = document.createElement('div');
-            sh.className = 'series-header';
-            sh.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
-            const ul = document.createElement('ul');
-            ul.className = 'exercise-list';
-            grouped[cat][ser].forEach(ex => {
+        const catExercises = data.filter(d => d.category === cat);
+        const seriesInCat = [...new Set(catExercises.map(d => d.series))];
+
+        seriesInCat.forEach(seriesName => {
+            const seriesWrapper = document.createElement('div');
+            seriesWrapper.className = 'series-wrapper';
+            seriesWrapper.dataset.parentCat = cat;
+
+            const seriesDiv = document.createElement('div');
+            seriesDiv.className = 'series';
+            seriesDiv.innerHTML = `${seriesName} <i class="fa-solid fa-chevron-down"></i>`;
+            
+            const listUl = document.createElement('ul');
+            listUl.className = 'exercise-list';
+
+            const exercises = catExercises.filter(d => d.series === seriesName);
+            exercises.forEach(ex => {
                 const li = document.createElement('li');
-                li.className = 'exercise-item';
-                li.innerHTML = `<span>${ex.num}. ${ex.name}</span><a href="${ex.link}" target="_blank" class="video-link"><i class="fab fa-youtube"></i></a>`;
-                ul.appendChild(li);
+                li.className = 'exercise';
+                li.innerHTML = `<a href="${ex.link}" target="_blank">${ex.num}. ${ex.name}</a>`;
+                listUl.appendChild(li);
             });
-            sh.onclick = () => {
-                sh.classList.toggle('active');
-                ul.style.maxHeight = ul.style.maxHeight === "0px" || ul.style.maxHeight === "" ? ul.scrollHeight + "px" : "0px";
+
+            seriesDiv.onclick = () => {
+                seriesDiv.classList.toggle('active');
+                listUl.classList.toggle('expanded');
+                listUl.style.maxHeight = listUl.classList.contains('expanded') ? listUl.scrollHeight + "px" : "0";
             };
-            sw.appendChild(sh);
-            sw.appendChild(ul);
-            container.appendChild(sw);
+
+            seriesWrapper.appendChild(seriesDiv);
+            seriesWrapper.appendChild(listUl);
+            container.appendChild(seriesWrapper);
         });
     });
 }
 
-function applyFilter(val, btn) {
+function applyFilter(filterValue, activeBtn) {
+    // עדכון כפתורים
     document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.category').forEach(c => c.classList.toggle('hidden', val !== 'all' && c.dataset.catName !== val));
-    document.querySelectorAll('.series-wrapper').forEach(s => s.classList.toggle('hidden', val !== 'all' && s.dataset.parentCat !== val));
-}
+    activeBtn.classList.add('active');
 
-function showRandom() {
-    const ex = allData[Math.floor(Math.random() * allData.length)];
-    document.getElementById('rndData').innerHTML = `
-        <h3 style="color:var(--primary)">${ex.category}</h3>
-        <p>${ex.series}</p>
-        <h2>${ex.name}</h2>
-        <a href="${ex.link}" target="_blank" style="color:red; font-size:2rem;"><i class="fab fa-youtube"></i></a>
-    `;
-    document.getElementById('rndModal').style.display = 'flex';
-}
+    // סינון אלמנטים
+    const categories = document.querySelectorAll('.category');
+    const seriesWrappers = document.querySelectorAll('.series-wrapper');
 
-function closeRnd() { document.getElementById('rndModal').style.display = 'none'; }
+    categories.forEach(cat => {
+        const isVisible = (filterValue === 'all' || cat.dataset.catName === filterValue);
+        cat.classList.toggle('hidden', !isVisible);
+    });
+
+    seriesWrappers.forEach(sw => {
+        const isVisible = (filterValue === 'all' || sw.dataset.parentCat === filterValue);
+        sw.classList.toggle('hidden', !isVisible);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 document.addEventListener('DOMContentLoaded', loadSyllabus);
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW OK')).catch(err => console.log('SW Error', err));
+        navigator.serviceWorker.register('./sw.js') // הוספת ./ לפני השם
+        .then(reg => console.log('Service Worker Registered', reg))
+        .catch(err => console.log('Service Worker Failed', err));
     });
 }
+    
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
