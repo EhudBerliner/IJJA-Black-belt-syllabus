@@ -236,8 +236,8 @@
             <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none; text-align:center;">
                 <i class="fas fa-trash-alt"></i> בטל מועדפים
             </button>
-            <button class="filter-button" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none; text-align:center;">
-                <i class="fas fa-arrows-alt-v"></i> פתח/סגור הכל
+            <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none; text-align:center;">
+                <i class="fas fa-arrows-alt-v"></i> סגור הכל
             </button>
             
             <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
@@ -262,7 +262,8 @@
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let allExpanded = false;
+    // מוגדר כ-true כדי שהלחיצה הראשונה תבצע סגירה (false)
+    let allExpanded = true; 
 
     async function loadSyllabus() {
         try {
@@ -370,7 +371,6 @@
             favorites = [];
             localStorage.setItem('ijja_favs', JSON.stringify(favorites));
             document.querySelectorAll('.fav-star').forEach(star => star.classList.remove('active'));
-            // אם המשתמש נמצא במסנן מועדפים, רענן את התצוגה
             const favBtn = document.querySelector('button[onclick*="favs"]');
             if(favBtn.classList.contains('active')) {
                 applyFilter('favs', favBtn);
@@ -382,9 +382,14 @@
         allExpanded = !allExpanded;
         const series = document.querySelectorAll('.series');
         const lists = document.querySelectorAll('.exercise-list');
+        const btn = document.getElementById('toggleAllBtn');
         
         series.forEach(s => s.classList.toggle('active', allExpanded));
         lists.forEach(l => l.classList.toggle('expanded', allExpanded));
+        
+        btn.innerHTML = allExpanded ? 
+            '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : 
+            '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
     }
 
     function applyFilter(val, btn) {
