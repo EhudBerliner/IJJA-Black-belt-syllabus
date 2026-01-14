@@ -22,7 +22,6 @@
             --border: #d2dce5;
             --header-height: 70px;
             --fav-color: #ffc107;
-            /* שינוי ה-offset כך שייצמד בדיוק ל-Header */
             --sticky-offset: var(--header-height); 
         }
 
@@ -41,7 +40,7 @@
             top: 0; width: 100%; height: var(--header-height);
             background: white; border-bottom: 3px solid var(--primary);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1100; /* גבוה יותר מהקטגוריות */
+            z-index: 1100;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         }
 
@@ -63,7 +62,7 @@
 
         .filter-button {
             width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
-            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: center; font-family: 'Heebo';
+            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: right; font-family: 'Heebo';
             transition: 0.2s;
         }
 
@@ -71,7 +70,6 @@
 
         .container { flex: 1; padding-bottom: 50vh; }
 
-        /* תיקון הגלילה: הצמדה מלאה ל-Header */
         .category {
             margin-top: 0; background: var(--primary); color: white; padding: 15px 20px;
             border-radius: 12px; font-size: 1.6em; font-weight: 900; position: sticky;
@@ -79,10 +77,9 @@
             box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1);
         }
 
-        /* מניעת ה"רווח" השקוף בזמן גלילה */
         .category::before {
             content: ""; position: absolute; top: -20px; left: 0; width: 100%; height: 20px;
-            background: #f7f9fb; /* צבע הרקע של הדף כדי להסתיר את מה שמתחת */
+            background: #f7f9fb;
         }
 
         .category:not(:first-child) { margin-top: 40px; }
@@ -109,9 +106,30 @@
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 5px; }
         .fav-star.active { color: var(--fav-color); }
 
+        /* מודאלים */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 1200; justify-content: center; align-items: center;
+        }
+
+        .modal-content {
+            background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .modal-content h2 { color: var(--primary); margin-bottom: 5px; }
+        .modal-content h4 { color: #666; margin: 5px 0 20px 0; font-weight: 400; }
+        .modal-content .ex-title { font-size: 1.4em; font-weight: 900; margin-bottom: 25px; display: block; }
+
+        .modal-btns { display: flex; gap: 10px; flex-direction: column; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1em; }
+        .btn-sub { background: #f0f4f8; color: var(--text-dark); border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .btn-close { color: #888; background: none; border: none; margin-top: 10px; cursor: pointer; text-decoration: underline; }
+
+        /* שכבת הוידאו מעל הכל */
         .video-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.9); z-index: 1300; justify-content: center; align-items: center;
         }
         .video-container { width: 95%; max-width: 800px; position: relative; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; }
         .video-container iframe { width: 100%; height: 100%; border: none; }
@@ -131,7 +149,7 @@
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.0</div>
+    <div class="version-tag">Version 1.1.2</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
@@ -157,6 +175,19 @@
     <main class="container" id="mainContainer"></main>
 </div>
 
+<div id="rndModal" class="modal-overlay" onclick="closeRndModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 id="rCat">קטגוריה</h2>
+        <h4 id="rSer">סדרה</h4>
+        <span class="ex-title" id="rName">שם התרגיל</span>
+        <div class="modal-btns">
+            <button class="btn-main" onclick="playCurrentRnd()">צפה בוידיאו <i class="fas fa-play"></i></button>
+            <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר <i class="fas fa-redo"></i></button>
+            <button class="btn-close" onclick="closeRndModal()">סגור</button>
+        </div>
+    </div>
+</div>
+
 <div id="videoModal" class="video-overlay" onclick="closeVideo()">
     <div class="video-container" onclick="event.stopPropagation()">
         <span class="close-video" onclick="closeVideo()">&times;</span>
@@ -166,6 +197,7 @@
 
 <script>
     let rawData = [];
+    let currentRandomEx = null;
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
     let allExpanded = false;
 
@@ -233,6 +265,30 @@
         });
     }
 
+    // פונקציות תרגיל אקראי
+    function getRandomEx() {
+        if (rawData.length === 0) return;
+        currentRandomEx = rawData[Math.floor(Math.random() * rawData.length)];
+        
+        document.getElementById('rCat').innerText = currentRandomEx.cat;
+        document.getElementById('rSer').innerText = currentRandomEx.ser;
+        document.getElementById('rName').innerText = currentRandomEx.name;
+        
+        document.getElementById('rndModal').style.display = 'flex';
+        document.body.classList.add('modal-open');
+    }
+
+    function playCurrentRnd() {
+        if (currentRandomEx) openVideo(currentRandomEx.link);
+    }
+
+    function closeRndModal() {
+        document.getElementById('rndModal').style.display = 'none';
+        if (!document.getElementById('videoModal').style.display === 'flex') {
+            document.body.classList.remove('modal-open');
+        }
+    }
+
     function openVideo(url) {
         if (!url) return;
         let videoId = "", start = 0;
@@ -254,7 +310,10 @@
     function closeVideo() {
         document.getElementById('mainPlayer').src = "";
         document.getElementById('videoModal').style.display = 'none';
-        document.body.classList.remove('modal-open');
+        // אם מודאל האקראי לא פתוח, נחזיר את הגלילה
+        if (document.getElementById('rndModal').style.display !== 'flex') {
+            document.body.classList.remove('modal-open');
+        }
     }
 
     function toggleFav(id, el) {
@@ -291,12 +350,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function getRandomEx() {
-        if (rawData.length === 0) return;
-        const ex = rawData[Math.floor(Math.random() * rawData.length)];
-        openVideo(ex.link);
-    }
-
     function genFilters(data) {
         const cats = [...new Set(data.map(i => i.cat))];
         const container = document.getElementById('filterContainer');
@@ -317,7 +370,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadSyllabus);
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW registered'));
+        });
+    }
 </script>
 </body>
 </html>
-
