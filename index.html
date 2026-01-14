@@ -257,9 +257,9 @@ function parseCSVRow(row) {
 
 async function loadSyllabus() {
     try {
-        // טעינת הנתונים והמתנה של 2 שניות במקביל
+        // טעינת הנתונים והמתנה של 3 שניות במקביל
         const dataPromise = fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now()).then(res => res.text());
-        const timerPromise = new Promise(resolve => setTimeout(resolve, 2000));
+        const timerPromise = new Promise(resolve => setTimeout(resolve, 3000));
 
         const [text] = await Promise.all([dataPromise, timerPromise]);
         
@@ -378,6 +378,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
