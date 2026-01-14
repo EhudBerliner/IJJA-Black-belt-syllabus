@@ -252,16 +252,15 @@ function parseCSVRow(row) {
 
 async function loadSyllabus() {
     try {
-        // אנחנו יוצרים שני "הבטחות" (Promises): 
-        // 1. טעינת הנתונים
-        // 2. טיימר של 2000 מילישניות (2 שניות)
+        // טעינת הנתונים והמתנה של 2 שניות במקביל
         const dataPromise = fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now()).then(res => res.text());
         const timerPromise = new Promise(resolve => setTimeout(resolve, 2000));
 
-        // ה-await ימתין עד ששניהם יסתיימו
         const [text] = await Promise.all([dataPromise, timerPromise]);
         
+        // ... המשך עיבוד הנתונים כפי שמופיע בקוד שלך ...
         const rows = text.split('\n').filter(row => row.trim() !== '');
+        // (שאר הלוגיקה של parse ו-renderUI)
         const syllabusData = rows.slice(1).map(row => {
             const values = parseCSVRow(row);
             return {
@@ -276,7 +275,7 @@ async function loadSyllabus() {
         renderUI(syllabusData);
     } catch (error) {
         console.error("Error:", error);
-        document.getElementById('mainContainer').innerHTML = "<p>שגיאה בטעינת קובץ ה-CSV.</p>";
+        document.getElementById('mainContainer').innerHTML = "<p>שגיאה בטעינת הנתונים.</p>";
     }
 }
 
@@ -374,6 +373,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
