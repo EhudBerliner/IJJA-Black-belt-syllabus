@@ -22,6 +22,7 @@
             --border: #d2dce5;
             --header-height: 70px;
             --fav-color: #ffc107;
+            --sticky-offset: 80px; /* המרחק מהקצה העליון של המסך */
         }
 
         body {
@@ -45,11 +46,11 @@
         .version-tag { font-size: 10px; color: #888; margin-bottom: -4px; }
         header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 26px; }
 
-        .layout { display: flex; max-width: 900px; margin: auto; padding: 20px; gap: 20px; }
+        .layout { display: flex; max-width: 900px; margin: auto; padding: 20px; gap: 20px; align-items: flex-start; }
 
         .filter-sidebar {
-            width: 230px; position: sticky; top: calc(var(--header-height) + 10px);
-            max-height: calc(100vh - var(--header-height) - 40px); overflow-y: auto; scrollbar-width: none;
+            width: 230px; position: sticky; top: var(--sticky-offset);
+            max-height: calc(100vh - var(--sticky-offset) - 20px); overflow-y: auto; scrollbar-width: none;
         }
 
         .filter-bar {
@@ -60,7 +61,7 @@
 
         .filter-button {
             width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
-            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: center; font-family: 'Heebo';
+            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: right; font-family: 'Heebo';
             transition: 0.2s;
         }
 
@@ -68,11 +69,15 @@
 
         .container { flex: 1; padding-bottom: 50vh; }
 
+        /* יישור כותרת הקטגוריה הראשונה עם הסידבר */
         .category {
-            margin-top: 40px; background: var(--primary); color: white; padding: 15px 20px;
+            margin-top: 0; background: var(--primary); color: white; padding: 15px 20px;
             border-radius: 12px; font-size: 1.6em; font-weight: 900; position: sticky;
-            top: calc(var(--header-height) + 1px); z-index: 500;
+            top: var(--sticky-offset); z-index: 500;
         }
+
+        /* מרווח בין קטגוריות עוקבות */
+        .category:not(:first-child) { margin-top: 40px; }
 
         .series {
             background: white; padding: 15px 20px; font-weight: 700; margin-top: 15px;
@@ -102,24 +107,24 @@
         }
         .video-container { width: 95%; max-width: 800px; position: relative; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; }
         .video-container iframe { width: 100%; height: 100%; border: none; }
-        .close-video {
-            position: absolute; top: 10px; left: 15px; color: white; font-size: 2.5rem; cursor: pointer; z-index: 10001;
-        }
+        .close-video { position: absolute; top: 10px; left: 15px; color: white; font-size: 2.5rem; cursor: pointer; z-index: 10001; }
 
         .hidden { display: none !important; }
 
         @media (max-width: 900px) {
-            .layout { flex-direction: column; }
-            .filter-sidebar { width: 100%; position: static; }
-            .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            .filter-button { width: auto; font-size: 0.9em; }
+            :root { --sticky-offset: 71px; }
+            .layout { flex-direction: column; padding: 10px; }
+            .filter-sidebar { width: 100%; position: static; max-height: none; }
+            .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 10px; }
+            .filter-button { width: auto; font-size: 0.85em; padding: 8px 12px; }
+            .category { margin-top: 20px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.0.8</div>
+    <div class="version-tag">Version 1.0.9</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
@@ -155,7 +160,7 @@
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let allExpanded = false; // ברירת מחדל: הכל סגור
+    let allExpanded = false;
 
     async function loadSyllabus() {
         try {
@@ -168,7 +173,7 @@
             }).filter(i => i.cat);
             render(rawData);
             genFilters(rawData);
-        } catch (e) { console.error("Error loading CSV:", e); }
+        } catch (e) { console.error(e); }
     }
 
     function parseCSV(r) {
@@ -200,10 +205,10 @@
                 const sWrap = document.createElement('div');
                 sWrap.className = 'series-wrapper'; sWrap.dataset.pcat = cat;
                 const sDiv = document.createElement('div');
-                sDiv.className = 'series'; // התחלה במצב סגור
+                sDiv.className = 'series';
                 sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
                 const list = document.createElement('ul');
-                list.className = 'exercise-list'; // התחלה במצב סגור
+                list.className = 'exercise-list';
                 
                 grouped[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
@@ -223,8 +228,7 @@
 
     function openVideo(url) {
         if (!url) return;
-        let videoId = "";
-        let start = 0;
+        let videoId = "", start = 0;
         try {
             if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
             else if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
@@ -233,8 +237,7 @@
                 start = parseInt(tParam.replace('s', '')) || 0;
             }
             if (videoId) {
-                const embedUrl = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
-                document.getElementById('mainPlayer').src = embedUrl;
+                document.getElementById('mainPlayer').src = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
                 document.getElementById('videoModal').style.display = 'flex';
                 document.body.classList.add('modal-open');
             } else window.open(url, '_blank');
@@ -310,4 +313,3 @@
 </script>
 </body>
 </html>
-
