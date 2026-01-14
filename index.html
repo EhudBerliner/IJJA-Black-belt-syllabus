@@ -233,12 +233,16 @@ function parseCSVRow(row) {
 
 async function loadSyllabus() {
     try {
-        const response = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());        
-        const text = await response.text();
+        // אנחנו יוצרים שני "הבטחות" (Promises): 
+        // 1. טעינת הנתונים
+        // 2. טיימר של 2000 מילישניות (2 שניות)
+        const dataPromise = fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now()).then(res => res.text());
+        const timerPromise = new Promise(resolve => setTimeout(resolve, 2000));
+
+        // ה-await ימתין עד ששניהם יסתיימו
+        const [text] = await Promise.all([dataPromise, timerPromise]);
         
         const rows = text.split('\n').filter(row => row.trim() !== '');
-        const headers = parseCSVRow(rows[0]);
-        
         const syllabusData = rows.slice(1).map(row => {
             const values = parseCSVRow(row);
             return {
@@ -351,5 +355,6 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
