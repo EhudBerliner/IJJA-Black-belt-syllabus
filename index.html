@@ -21,6 +21,7 @@
             --card-bg: #ffffff;
             --border: #d2dce5;
             --header-height: 70px;
+            --fav-color: #ffc107;
         }
 
         body {
@@ -172,8 +173,23 @@
 
         .exercise-list.expanded { max-height: 2500px; }
 
-        .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); }
-        .exercise a { text-decoration: none; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        .exercise { 
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .exercise a { text-decoration: none; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 12px; flex-grow: 1; }
+        
+        .fav-star {
+            cursor: pointer;
+            color: #ccc;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+            padding: 5px;
+        }
+        .fav-star.active { color: var(--fav-color); }
 
         .hidden { display: none !important; }
 
@@ -185,11 +201,10 @@
             .filter-button { width: auto; font-size: 0.85em; }
         }
 
-        /* מודאל צף מותאם לנייד */
         .random-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;
-            padding: 15px; /* מרווח בטיחות מהצדדים בנייד */
+            padding: 15px;
         }
         .random-card {
             background: white; padding: 30px 20px 25px; border-radius: 20px; width: 100%; max-width: 380px; 
@@ -205,7 +220,7 @@
 <body>
 
 <header>
-    <div class="version-tag">Version 1.0.4</div>
+    <div class="version-tag">Version 1.0.5</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
@@ -214,6 +229,9 @@
         <div class="filter-bar" id="filterContainer">
             <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none; text-align:center;">
                 <i class="fas fa-random"></i> תרגיל אקראי
+            </button>
+            <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none; text-align:center;">
+                <i class="fas fa-star"></i> מועדפים
             </button>
             <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
         </div>
@@ -236,6 +254,7 @@
 
 <script>
     let rawData = [];
+    let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
 
     async function loadSyllabus() {
         try {
@@ -243,9 +262,9 @@
             const text = await res.text();
             const rows = text.split('\n').filter(r => r.trim() !== '');
             
-            rawData = rows.slice(1).map(row => {
+            rawData = rows.slice(1).map((row, idx) => {
                 const cols = parseCSV(row);
-                return { cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
+                return { id: idx, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
             }).filter(i => i.cat);
 
             render(rawData);
@@ -304,9 +323,14 @@
                 const list = document.createElement('ul');
                 list.className = 'exercise-list';
                 grouped[cat][ser].forEach(ex => {
+                    const isFav = favorites.includes(ex.id);
                     const li = document.createElement('li');
                     li.className = 'exercise';
-                    li.innerHTML = `<a href="${ex.link}" target="_blank">${ex.num}. ${ex.name}</a>`;
+                    li.dataset.exId = ex.id;
+                    li.innerHTML = `
+                        <a href="${ex.link}" target="_blank">${ex.num}. ${ex.name}</a>
+                        <i class="fas fa-star fav-star ${isFav ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
+                    `;
                     list.appendChild(li);
                 });
 
@@ -322,11 +346,41 @@
         });
     }
 
+    function toggleFav(id, el) {
+        if (favorites.includes(id)) {
+            favorites = favorites.filter(f => f !== id);
+            el.classList.remove('active');
+        } else {
+            favorites.push(id);
+            el.classList.add('active');
+        }
+        localStorage.setItem('ijja_favs', JSON.stringify(favorites));
+    }
+
     function applyFilter(val, btn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        document.querySelectorAll('.category').forEach(c => c.classList.toggle('hidden', val!=='all' && c.dataset.cat!==val));
-        document.querySelectorAll('.series-wrapper').forEach(s => s.classList.toggle('hidden', val!=='all' && s.dataset.pcat!==val));
+        
+        const categories = document.querySelectorAll('.category');
+        const wrappers = document.querySelectorAll('.series-wrapper');
+
+        if (val === 'favs') {
+            categories.forEach(c => c.classList.add('hidden'));
+            wrappers.forEach(w => {
+                const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
+                w.classList.toggle('hidden', !hasFav);
+                // הסתרת תרגילים ספציפיים שאינם במועדפים בתוך הסדרה
+                w.querySelectorAll('.exercise').forEach(ex => {
+                    ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
+                });
+            });
+        } else {
+            categories.forEach(c => c.classList.toggle('hidden', val !== 'all' && c.dataset.cat !== val));
+            wrappers.forEach(w => {
+                w.classList.toggle('hidden', val !== 'all' && w.dataset.pcat !== val);
+                w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
+            });
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
