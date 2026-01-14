@@ -1,4 +1,5 @@
-const CACHE_NAME = 'ijja-syllabus-v3';
+// עדכון גרסה ל-v4 כדי שהדפדפן ירענן את הקבצים אצל המשתמש
+const CACHE_NAME = 'ijja-syllabus-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -7,19 +8,19 @@ const ASSETS = [
   './Black_belt_syllabus_IJJA.csv'
 ];
 
-// התקנה: שמירת הנכסים הבסיסיים במטמון
+// התקנה: שמירת הנכסים במטמון
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('PWA: Caching critical assets');
+      console.log('PWA: Caching assets');
       return cache.addAll(ASSETS);
     })
   );
-  // גורם ל-SW החדש להיכנס לפעולה מיד ללא צורך בסגירת הדפדפן
+  // גורם ל-Service Worker החדש להיכנס לפעולה מיד
   self.skipWaiting();
 });
 
-// הפעלה: ניקוי גרסאות מטמון ישנות
+// הפעלה: מחיקת מטמון ישן (חשוב מאוד כדי שהשינויים יופיעו)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -29,28 +30,24 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  // משתלט על הדף מיד ללא צורך בריענון נוסף
   return self.clients.claim();
 });
 
-// אסטרטגיית Stale-While-Revalidate:
-// מציג מהמטמון מיד, ומעדכן מהרשת ברקע.
+// אסטרטגיית טעינה: מציג מהמטמון ומעדכן מהרשת ברקע
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
-        // אם התגובה תקינה, נשמור עותק מעודכן במטמון
         if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
+          const cacheCopy = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, cacheCopy);
           });
         }
         return networkResponse;
-      }).catch(() => {
-        // במקרה של ניתוק מוחלט מהאינטרנט ואין במטמון - פשוט נכשל בשקט
-      });
+      }).catch(() => cachedResponse);
 
-      // מחזיר את המטמון אם קיים, אחרת מחכה לרשת
       return cachedResponse || fetchPromise;
     })
   );
