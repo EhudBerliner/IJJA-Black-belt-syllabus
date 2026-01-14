@@ -1,5 +1,4 @@
-// עדכון גרסה ל-v4 כדי שהדפדפן ירענן את הקבצים אצל המשתמש
-const CACHE_NAME = 'ijja-syllabus-v4';
+const CACHE_NAME = 'ijja-syllabus-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -52,3 +51,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
