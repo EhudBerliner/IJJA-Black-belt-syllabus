@@ -373,11 +373,17 @@ function applyFilter(filterValue, activeBtn) {
 document.addEventListener('DOMContentLoaded', loadSyllabus);
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js') // הוספת ./ לפני השם
+        .then(reg => console.log('Service Worker Registered', reg))
+        .catch(err => console.log('Service Worker Failed', err));
+    });
 }
+    
 </script>
 </body>
 </html>
+
 
 
 
