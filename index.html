@@ -39,11 +39,19 @@
             background: white;
             border-bottom: 3px solid var(--primary);
             display: flex;
+            flex-direction: column; /* מאפשר הצגת גרסה מעל הכותרת */
             align-items: center;
             justify-content: center;
             text-align: center;
             z-index: 1000;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .version-tag {
+            font-size: 10px;
+            color: #888;
+            margin-bottom: -4px;
+            font-weight: 400;
         }
 
         header h1 {
@@ -67,14 +75,13 @@
             width: 230px;
             position: sticky;
             top: calc(var(--header-height) + 10px);
-            /* השינוי כאן: מאפשר גלילה פנימית לכפתורים */
             max-height: calc(100vh - var(--header-height) - 40px);
             overflow-y: auto;
-            scrollbar-width: none; /* מסתיר פס גלילה ב-Firefox */
+            scrollbar-width: none;
         }
         
         .filter-sidebar::-webkit-scrollbar {
-            display: none; /* מסתיר פס גלילה ב-Chrome/Safari */
+            display: none;
         }
 
         .filter-bar {
@@ -190,6 +197,7 @@
 <body>
 
 <header>
+    <div class="version-tag">Version 1.0.4</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
