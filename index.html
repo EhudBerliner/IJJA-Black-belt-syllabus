@@ -32,195 +32,90 @@
             padding-top: var(--header-height);
         }
 
+        body.modal-open { overflow: hidden; }
+
         header {
             position: fixed;
-            top: 0;
-            width: 100%;
-            height: var(--header-height);
-            background: white;
-            border-bottom: 3px solid var(--primary);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            z-index: 1000;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            top: 0; width: 100%; height: var(--header-height);
+            background: white; border-bottom: 3px solid var(--primary);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         }
 
-        .version-tag {
-            font-size: 10px;
-            color: #888;
-            margin-bottom: -4px;
-            font-weight: 400;
-        }
+        .version-tag { font-size: 10px; color: #888; margin-bottom: -4px; }
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 26px; }
 
-        header h1 {
-            margin: 0;
-            font-weight: 800;
-            color: var(--primary);
-            font-size: 26px;
-            line-height: 1.2;
-        }
-
-        .layout {
-            display: flex;
-            flex-direction: row;
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
-            gap: 20px;
-        }
+        .layout { display: flex; max-width: 900px; margin: auto; padding: 20px; gap: 20px; }
 
         .filter-sidebar {
-            width: 230px;
-            position: sticky;
-            top: calc(var(--header-height) + 10px);
-            max-height: calc(100vh - var(--header-height) - 40px);
-            overflow-y: auto;
-            scrollbar-width: none;
-        }
-        
-        .filter-sidebar::-webkit-scrollbar {
-            display: none;
+            width: 230px; position: sticky; top: calc(var(--header-height) + 10px);
+            max-height: calc(100vh - var(--header-height) - 40px); overflow-y: auto; scrollbar-width: none;
         }
 
         .filter-bar {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 14px; padding: 15px; display: flex; flex-direction: column; gap: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
         .filter-button {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: #f0f4f8;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: right;
-            font-family: 'Heebo', sans-serif;
-            transition: all 0.2s;
+            width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
+            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: right; font-family: 'Heebo';
         }
 
-        .filter-button.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+        .filter-button.active { background: var(--primary); color: white; }
 
-        .container {
-            flex: 1;
-            max-width: 900px;
-            padding-bottom: 53vh;
-        }
+        .container { flex: 1; padding-bottom: 50vh; }
 
         .category {
-            margin-top: 40px;
-            background: var(--primary);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 1.6em;
-            font-weight: 900;
-            position: sticky;
-            top: calc(var(--header-height) + 1px); 
-            z-index: 500;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+            margin-top: 40px; background: var(--primary); color: white; padding: 15px 20px;
+            border-radius: 12px; font-size: 1.6em; font-weight: 900; position: sticky;
+            top: calc(var(--header-height) + 1px); z-index: 500;
         }
-
-        .category:first-of-type { margin-top: 0; }
 
         .series {
-            background: white;
-            padding: 15px 20px;
-            font-weight: 700;
-            font-size: 1.2em;
-            margin-top: 15px;
-            border-right: 4px solid var(--secondary);
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.25s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            background: white; padding: 15px 20px; font-weight: 700; margin-top: 15px;
+            border-right: 4px solid var(--secondary); cursor: pointer; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .series:hover { background: var(--accent); }
-        .series i { transition: transform 0.3s ease; }
-        .series.active { border-radius: 8px 8px 0 0; box-shadow: none; }
-        .series.active i { transform: rotate(180deg); }
 
         .exercise-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-            border: 1px solid var(--border);
-            border-top: none;
-            background: white;
-            border-radius: 0 0 8px 8px;
+            list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden;
+            transition: max-height 0.4s ease; background: white; border-radius: 0 0 8px 8px;
         }
+        .exercise-list.expanded { max-height: 2500px; border: 1px solid var(--border); border-top: none; }
 
-        .exercise-list.expanded { max-height: 2500px; }
+        .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+        .exercise span { color: var(--primary); font-weight: 600; cursor: pointer; flex-grow: 1; }
 
-        .exercise { 
-            padding: 12px 20px; 
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .exercise a { text-decoration: none; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 12px; flex-grow: 1; }
-        
-        .fav-star {
-            cursor: pointer;
-            color: #ccc;
-            font-size: 1.2rem;
-            transition: color 0.2s;
-            padding: 5px;
-        }
+        .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 5px; }
         .fav-star.active { color: var(--fav-color); }
+
+        /* Video Modal Styles */
+        .video-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center;
+        }
+        .video-container { width: 95%; max-width: 800px; position: relative; aspect-ratio: 16/9; }
+        .video-container iframe { width: 100%; height: 100%; border-radius: 8px; }
+        .close-video {
+            position: absolute; top: -40px; right: 0; color: white; font-size: 2rem; cursor: pointer;
+        }
 
         .hidden { display: none !important; }
 
         @media (max-width: 900px) {
             .layout { flex-direction: column; }
-            .filter-sidebar { width: 100%; position: static; max-height: none; overflow-y: visible; }
+            .filter-sidebar { width: 100%; position: static; }
             .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-            header h1 { font-size: 20px; }
-            .filter-button { width: auto; font-size: 0.85em; }
+            .filter-button { width: auto; }
         }
-
-        .random-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;
-            padding: 15px;
-        }
-        .random-card {
-            background: white; padding: 30px 20px 25px; border-radius: 20px; width: 100%; max-width: 380px; 
-            text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .close-modal {
-            position: absolute; top: 12px; right: 15px; font-size: 1.4rem; 
-            color: #999; cursor: pointer; transition: color 0.2s; border: none; background: none;
-        }
-        .close-modal:hover { color: var(--text-dark); }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.0.5</div>
+    <div class="version-tag">Version 1.0.6</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
@@ -239,43 +134,34 @@
             <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none; text-align:center;">
                 <i class="fas fa-arrows-alt-v"></i> סגור הכל
             </button>
-            
             <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
         </div>
     </aside>
 
-    <main class="container" id="mainContainer">
-    </main>
+    <main class="container" id="mainContainer"></main>
 </div>
 
-<div id="rndModal" class="random-overlay" onclick="this.style.display='none'">
-    <div class="random-card" onclick="event.stopPropagation()">
-        <button class="close-modal" onclick="document.getElementById('rndModal').style.display='none'"><i class="fas fa-times"></i></button>
-        <p id="rCat" style="color:var(--primary); font-weight:900; margin:0; font-size: 1rem;"></p>
-        <p id="rSer" style="margin:5px 0; opacity:0.7; font-size: 0.9rem;"></p>
-        <h2 id="rName" style="margin:20px 0; font-size: 1.5rem; line-height: 1.3;"></h2>
-        <a id="rLink" href="#" target="_blank" style="color:#ff0000; font-size:3.5rem;"><i class="fab fa-youtube"></i></a>
-        <button class="filter-button" onclick="getRandomEx()" style="margin-top:25px; background:var(--primary); color:white; text-align:center; width: 100%;">עוד אחד</button>
+<div id="videoModal" class="video-overlay" onclick="closeVideo()">
+    <div class="video-container" onclick="event.stopPropagation()">
+        <span class="close-video" onclick="closeVideo()">&times;</span>
+        <iframe id="mainPlayer" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 </div>
 
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    // מוגדר כ-true כדי שהלחיצה הראשונה תבצע סגירה (false)
-    let allExpanded = true; 
+    let allExpanded = true;
 
     async function loadSyllabus() {
         try {
             const res = await fetch('Black_belt_syllabus_IJJA.csv');
             const text = await res.text();
             const rows = text.split('\n').filter(r => r.trim() !== '');
-            
             rawData = rows.slice(1).map((row, idx) => {
                 const cols = parseCSV(row);
                 return { id: idx, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
             }).filter(i => i.cat);
-
             render(rawData);
             genFilters(rawData);
         } catch (e) { console.error(e); }
@@ -291,18 +177,6 @@
         res.push(c); return res;
     }
 
-    function genFilters(data) {
-        const cats = [...new Set(data.map(i => i.cat))];
-        const container = document.getElementById('filterContainer');
-        cats.forEach(c => {
-            const btn = document.createElement('button');
-            btn.className = 'filter-button';
-            btn.innerText = c;
-            btn.onclick = (e) => applyFilter(c, e.target);
-            container.appendChild(btn);
-        });
-    }
-
     function render(data) {
         const container = document.getElementById('mainContainer');
         container.innerHTML = '';
@@ -315,116 +189,107 @@
 
         Object.keys(grouped).forEach(cat => {
             const cDiv = document.createElement('div');
-            cDiv.className = 'category';
-            cDiv.dataset.cat = cat;
-            cDiv.innerText = cat;
+            cDiv.className = 'category'; cDiv.dataset.cat = cat; cDiv.innerText = cat;
             container.appendChild(cDiv);
 
             Object.keys(grouped[cat]).forEach(ser => {
                 const sWrap = document.createElement('div');
-                sWrap.className = 'series-wrapper';
-                sWrap.dataset.pcat = cat;
-                
+                sWrap.className = 'series-wrapper'; sWrap.dataset.pcat = cat;
                 const sDiv = document.createElement('div');
-                sDiv.className = 'series';
-                sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
-                
+                sDiv.className = 'series'; sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
                 const list = document.createElement('ul');
-                list.className = 'exercise-list';
+                list.className = 'exercise-list expanded';
+                
                 grouped[cat][ser].forEach(ex => {
-                    const isFav = favorites.includes(ex.id);
                     const li = document.createElement('li');
                     li.className = 'exercise';
-                    li.dataset.exId = ex.id;
                     li.innerHTML = `
-                        <a href="${ex.link}" target="_blank">${ex.num}. ${ex.name}</a>
-                        <i class="fas fa-star fav-star ${isFav ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
+                        <span onclick="openVideo('${ex.link}')">${ex.num}. ${ex.name}</span>
+                        <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
                     `;
                     list.appendChild(li);
                 });
 
-                sDiv.onclick = () => {
-                    sDiv.classList.toggle('active');
-                    list.classList.toggle('expanded');
-                };
-
-                sWrap.appendChild(sDiv);
-                sWrap.appendChild(list);
-                container.appendChild(sWrap);
+                sDiv.onclick = () => { sDiv.classList.toggle('active'); list.classList.toggle('expanded'); };
+                sWrap.appendChild(sDiv); sWrap.appendChild(list); container.appendChild(sWrap);
             });
         });
     }
 
-    function toggleFav(id, el) {
-        if (favorites.includes(id)) {
-            favorites = favorites.filter(f => f !== id);
-            el.classList.remove('active');
-        } else {
-            favorites.push(id);
-            el.classList.add('active');
-        }
-        localStorage.setItem('ijja_favs', JSON.stringify(favorites));
+    function openVideo(url) {
+        let videoId = "";
+        if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
+        else if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
+        
+        const timestamp = url.includes("t=") ? url.split("t=")[1] : "0";
+        const embedUrl = `https://www.youtube.com/embed/${videoId}?start=${timestamp}&autoplay=1`;
+        
+        document.getElementById('mainPlayer').src = embedUrl;
+        document.getElementById('videoModal').style.display = 'flex';
+        document.body.classList.add('modal-open');
     }
 
-    function clearAllFavs() {
-        if(confirm("האם אתה בטוח שברצונך לבטל את כל התרגילים המועדפים?")) {
-            favorites = [];
-            localStorage.setItem('ijja_favs', JSON.stringify(favorites));
-            document.querySelectorAll('.fav-star').forEach(star => star.classList.remove('active'));
-            const favBtn = document.querySelector('button[onclick*="favs"]');
-            if(favBtn.classList.contains('active')) {
-                applyFilter('favs', favBtn);
-            }
-        }
+    function closeVideo() {
+        document.getElementById('mainPlayer').src = "";
+        document.getElementById('videoModal').style.display = 'none';
+        document.body.classList.remove('modal-open');
+    }
+
+    function toggleFav(id, el) {
+        if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
+        else favorites.push(id);
+        el.classList.toggle('active');
+        localStorage.setItem('ijja_favs', JSON.stringify(favorites));
     }
 
     function toggleAllAccordions() {
         allExpanded = !allExpanded;
-        const series = document.querySelectorAll('.series');
-        const lists = document.querySelectorAll('.exercise-list');
-        const btn = document.getElementById('toggleAllBtn');
-        
-        series.forEach(s => s.classList.toggle('active', allExpanded));
-        lists.forEach(l => l.classList.toggle('expanded', allExpanded));
-        
-        btn.innerHTML = allExpanded ? 
-            '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : 
-            '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
+        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
+        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
+        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
     }
 
     function applyFilter(val, btn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
-        const categories = document.querySelectorAll('.category');
-        const wrappers = document.querySelectorAll('.series-wrapper');
-
-        if (val === 'favs') {
-            categories.forEach(c => c.classList.add('hidden'));
-            wrappers.forEach(w => {
-                const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
+        document.querySelectorAll('.category').forEach(c => {
+            if (val === 'favs') c.classList.add('hidden');
+            else c.classList.toggle('hidden', val !== 'all' && c.dataset.cat !== val);
+        });
+        document.querySelectorAll('.series-wrapper').forEach(w => {
+            if (val === 'favs') {
+                const hasFav = w.querySelector('.fav-star.active');
                 w.classList.toggle('hidden', !hasFav);
-                w.querySelectorAll('.exercise').forEach(ex => {
-                    ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
-                });
-            });
-        } else {
-            categories.forEach(c => c.classList.toggle('hidden', val !== 'all' && c.dataset.cat !== val));
-            wrappers.forEach(w => {
+                w.querySelectorAll('.exercise').forEach(ex => ex.classList.toggle('hidden', !ex.querySelector('.fav-star.active')));
+            } else {
                 w.classList.toggle('hidden', val !== 'all' && w.dataset.pcat !== val);
                 w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
-            });
-        }
+            }
+        });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function getRandomEx() {
         const ex = rawData[Math.floor(Math.random() * rawData.length)];
-        document.getElementById('rCat').innerText = ex.cat;
-        document.getElementById('rSer').innerText = ex.ser;
-        document.getElementById('rName').innerText = ex.name;
-        document.getElementById('rLink').href = ex.link;
-        document.getElementById('rndModal').style.display = 'flex';
+        openVideo(ex.link);
+    }
+
+    function genFilters(data) {
+        const cats = [...new Set(data.map(i => i.cat))];
+        const container = document.getElementById('filterContainer');
+        cats.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-button'; btn.innerText = c;
+            btn.onclick = (e) => applyFilter(c, e.target);
+            container.appendChild(btn);
+        });
+    }
+
+    function clearAllFavs() {
+        if(confirm("למחוק את כל המועדפים?")) {
+            favorites = []; localStorage.setItem('ijja_favs', "[]");
+            document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
+        }
     }
 
     document.addEventListener('DOMContentLoaded', loadSyllabus);
