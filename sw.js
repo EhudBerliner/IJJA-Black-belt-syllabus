@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ijja-syllabus-v3';
+const CACHE_NAME = 'ijja-syllabus-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -7,50 +7,34 @@ const ASSETS = [
   './Black_belt_syllabus_IJJA.csv'
 ];
 
-// התקנה: שמירת הנכסים הבסיסיים במטמון
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('PWA: Caching critical assets');
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
-  // גורם ל-SW החדש להיכנס לפעולה מיד ללא צורך בסגירת הדפדפן
   self.skipWaiting();
 });
 
-// הפעלה: ניקוי גרסאות מטמון ישנות
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME)
-            .map((key) => caches.delete(key))
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       );
     })
   );
   return self.clients.claim();
 });
 
-// אסטרטגיית Stale-While-Revalidate:
-// מציג מהמטמון מיד, ומעדכן מהרשת ברקע.
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
-        // אם התגובה תקינה, נשמור עותק מעודכן במטמון
         if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+          const cacheCopy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cacheCopy));
         }
         return networkResponse;
-      }).catch(() => {
-        // במקרה של ניתוק מוחלט מהאינטרנט ואין במטמון - פשוט נכשל בשקט
-      });
-
-      // מחזיר את המטמון אם קיים, אחרת מחכה לרשת
+      }).catch(() => cachedResponse);
       return cachedResponse || fetchPromise;
     })
   );
