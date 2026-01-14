@@ -233,7 +233,7 @@ function parseCSVRow(row) {
 
 async function loadSyllabus() {
     try {
-        const response = await fetch('Black_belt_syllabus_IJJA.csv');
+        const response = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());        
         const text = await response.text();
         
         const rows = text.split('\n').filter(row => row.trim() !== '');
@@ -351,3 +351,4 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
