@@ -22,7 +22,7 @@
       "purpose": "maskable"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": ".",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0056a6",
@@ -30,3 +30,4 @@
   "lang": "he",
   "dir": "rtl"
 }
+
