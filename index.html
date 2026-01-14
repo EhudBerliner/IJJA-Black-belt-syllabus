@@ -190,16 +190,21 @@
             .filter-button { width: auto; font-size: 0.85em; }
         }
 
-                /* אנימציה לנקודות הטעינה - הוסף את זה בסוף רשימת העיצובים */
-        .dots::after {
-            content: '';
+        /* אנימציה לנקודות הטעינה - הוסף את זה בסוף רשימת העיצובים */
+        /* אנימציה לנקודות טעינה - תנועה מימין לשמאל */
+        .dots {
             display: inline-block;
-            width: 2em;
-            text-align: left;
-            animation: loading-dots 1.5s infinite;
+            min-width: 25px; /* שומר מקום לנקודות שלא יקפיצו את הטקסט */
+            text-align: right;
+            direction: ltr; /* גורם לנקודות להצטבר בכיוון הנכון */
         }
         
-        @keyframes loading-dots {
+        .dots::after {
+            content: '';
+            animation: loading-dots-rtl 1.5s infinite;
+        }
+        
+        @keyframes loading-dots-rtl {
             0%   { content: ''; }
             25%  { content: '.'; }
             50%  { content: '..'; }
@@ -373,6 +378,7 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
 
 
