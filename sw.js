@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ijja-syllabus-v3';
+const CACHE_NAME = 'ijja-syllabus-v4'; // עדכון גרסה לריענון המערכת
 const ASSETS = [
   './',
   './index.html',
@@ -15,11 +15,11 @@ self.addEventListener('install', (event) => {
       return cache.addAll(ASSETS);
     })
   );
-  // גורם ל-SW החדש להיכנס לפעולה מיד ללא צורך בסגירת הדפדפן
+  // גורם ל-Service Worker החדש להיכנס לפעולה מיד
   self.skipWaiting();
 });
 
-// הפעלה: ניקוי גרסאות מטמון ישנות
+// הפעלה: ניקוי גרסאות מטמון ישנות (חשוב מאוד להופעת הודעת ההתקנה)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -33,24 +33,27 @@ self.addEventListener('activate', (event) => {
 });
 
 // אסטרטגיית Stale-While-Revalidate:
-// מציג מהמטמון מיד, ומעדכן מהרשת ברקע.
+// מציג מהמטמון מיד למהירות מקסימלית, ומעדכן מהרשת ברקע.
 self.addEventListener('fetch', (event) => {
+  // אנחנו מטפלים רק בבקשות GET (לא כולל פונקציות חיצוניות אם יש)
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
         // אם התגובה תקינה, נשמור עותק מעודכן במטמון
         if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
+          const cacheCopy = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, cacheCopy);
           });
         }
         return networkResponse;
       }).catch(() => {
-        // במקרה של ניתוק מוחלט מהאינטרנט ואין במטמון - פשוט נכשל בשקט
+        // במקרה של חוסר אינטרנט מוחלט ואין במטמון
+        return cachedResponse;
       });
 
-      // מחזיר את המטמון אם קיים, אחרת מחכה לרשת
       return cachedResponse || fetchPromise;
     })
   );
