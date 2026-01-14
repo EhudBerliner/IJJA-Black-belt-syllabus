@@ -233,6 +233,13 @@
             <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none; text-align:center;">
                 <i class="fas fa-star"></i> מועדפים
             </button>
+            <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none; text-align:center;">
+                <i class="fas fa-trash-alt"></i> בטל מועדפים
+            </button>
+            <button class="filter-button" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none; text-align:center;">
+                <i class="fas fa-arrows-alt-v"></i> פתח/סגור הכל
+            </button>
+            
             <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
         </div>
     </aside>
@@ -255,6 +262,7 @@
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
+    let allExpanded = false;
 
     async function loadSyllabus() {
         try {
@@ -357,6 +365,28 @@
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
     }
 
+    function clearAllFavs() {
+        if(confirm("האם אתה בטוח שברצונך לבטל את כל התרגילים המועדפים?")) {
+            favorites = [];
+            localStorage.setItem('ijja_favs', JSON.stringify(favorites));
+            document.querySelectorAll('.fav-star').forEach(star => star.classList.remove('active'));
+            // אם המשתמש נמצא במסנן מועדפים, רענן את התצוגה
+            const favBtn = document.querySelector('button[onclick*="favs"]');
+            if(favBtn.classList.contains('active')) {
+                applyFilter('favs', favBtn);
+            }
+        }
+    }
+
+    function toggleAllAccordions() {
+        allExpanded = !allExpanded;
+        const series = document.querySelectorAll('.series');
+        const lists = document.querySelectorAll('.exercise-list');
+        
+        series.forEach(s => s.classList.toggle('active', allExpanded));
+        lists.forEach(l => l.classList.toggle('expanded', allExpanded));
+    }
+
     function applyFilter(val, btn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -369,7 +399,6 @@
             wrappers.forEach(w => {
                 const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
                 w.classList.toggle('hidden', !hasFav);
-                // הסתרת תרגילים ספציפיים שאינם במועדפים בתוך הסדרה
                 w.querySelectorAll('.exercise').forEach(ex => {
                     ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
                 });
