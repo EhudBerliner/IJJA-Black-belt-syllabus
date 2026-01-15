@@ -17,7 +17,7 @@
             --primary: #0056a6;
             --secondary: #009be5;
             --border: #d2dce5;
-            --header-h: 110px;
+            --header-h: 90px;
             --fav-color: #ffc107;
         }
 
@@ -34,35 +34,64 @@
             background: white;
             border-bottom: 3px solid var(--primary);
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 20px;
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1200;
+            box-sizing: border-box;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+        }
+
+        .title-area {
+            display: flex;
+            flex-direction: column;
+        }
+
+        header h1 { 
+            margin: 0; 
+            font-weight: 800; 
+            color: var(--primary); 
+            font-size: 1.3em;
+            line-height: 1.1;
+        }
+
+        .version-text {
+            font-size: 0.7em;
+            color: #666;
+            margin-top: 2px;
         }
 
         .action-bar {
             display: flex;
-            gap: 8px;
-            padding: 5px 10px 10px 10px;
-            width: 100%;
-            justify-content: center;
+            gap: 6px;
         }
 
         .action-button {
-            height: 32px;
-            padding: 0 12px;
-            border-radius: 16px;
+            width: 42px;
+            height: 42px;
+            border-radius: 6px; /* מרובע עם עיגול קל בפינות */
             border: 1px solid var(--border);
             background: #f0f4f8;
-            font-weight: 700;
+            color: var(--primary);
             cursor: pointer;
-            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.2s;
         }
 
         .action-button.active { background: var(--primary); color: white; }
@@ -115,42 +144,50 @@
 
         .hidden { display: none !important; }
 
-        /* מודאל וידיאו עם ניווט */
+        /* מודאל וידיאו */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 600px; text-align: center; position: relative; }
         
         .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
-        .nav-btn { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 700; }
+        .nav-btn { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; font-weight: 700; }
         .nav-btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
         
         .video-counter { font-size: 0.85em; font-weight: 700; color: #666; background: #f0f4f8; padding: 3px 10px; border-radius: 10px; display: inline-block; margin-top: 4px; }
-
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
         .close-x { position: absolute; top: -45px; left: 0; color: white; font-size: 30px; cursor: pointer; }
 
         @media (max-width: 600px) {
-            .nav-btn span { display: none; }
+            header { padding: 0 10px; }
+            header h1 { font-size: 1.1em; }
+            .action-button { width: 36px; height: 36px; font-size: 1em; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1 style="margin:0; color:var(--primary); font-size: 1.4em;">סילבוס חגורה שחורה - IJJA</h1>
+    <div class="header-right">
+        <img src="Logo.png" alt="Logo" class="logo-img">
+        <div class="title-area">
+            <h1>סילבוס IJJA</h1>
+            <span class="version-text">גרסה 1.2.4</span>
+        </div>
+    </div>
+    
     <div class="action-bar">
-        <button class="action-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
-            <i class="fas fa-random"></i> אקראי
+        <button class="action-button" onclick="getRandomEx()" title="אקראי" style="background:#ff9800; color:white; border:none;">
+            <i class="fas fa-random"></i>
         </button>
-        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
-            <i class="fas fa-arrows-alt-v"></i> פתח הכל
+        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" title="פתח/סגור הכל" style="background:#4caf50; color:white; border:none;">
+            <i class="fas fa-arrows-alt-v"></i>
         </button>
-        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()">
-            <i class="fas fa-star" style="color:var(--fav-color)"></i> מועדפים
+        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים">
+            <i class="fas fa-star" style="color:var(--fav-color)"></i>
         </button>
-        <button class="action-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
-            <i class="fas fa-trash"></i> נקה
+        <button class="action-button" onclick="clearAllFavs()" title="נקה מועדפים" style="background:#f44336; color:white; border:none;">
+            <i class="fas fa-trash"></i>
         </button>
     </div>
 </header>
@@ -165,14 +202,14 @@
         
         <div class="nav-header">
             <button id="prevBtn" class="nav-btn" onclick="navigateEx(-1)">
-                <i class="fas fa-chevron-right"></i><span>הקודם</span>
+                <i class="fas fa-chevron-right"></i>
             </button>
             <div style="flex:1">
                 <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.1em; line-height:1.2;"></h3>
                 <div id="mCounter" class="video-counter"></div>
             </div>
             <button id="nextBtn" class="nav-btn" onclick="navigateEx(1)">
-                <span>הבא</span><i class="fas fa-chevron-left"></i>
+                <i class="fas fa-chevron-left"></i>
             </button>
         </div>
         
@@ -320,7 +357,6 @@
         allExpanded = !allExpanded;
         document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
         document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
     }
 
     function getRandomEx() {
