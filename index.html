@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.3.0</title>
+    <title>Syllabus IJJA - v1.3.1</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,6 +19,7 @@
             --border: #d2dce5;
             --header-h: 90px;
             --fav-color: #ffc107;
+            --danger: #d32f2f;
         }
 
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
@@ -32,52 +33,57 @@
         .header-right { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 45px; width: auto; }
         header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
-        .version-tag { font-size: 0.7em; color: #888; }
 
-        .action-bar { display: flex; gap: 8px; }
+        .action-bar { display: flex; gap: 6px; }
         .btn {
-            width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border);
+            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
             background: white; color: var(--primary); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1.1em;
+            display: flex; align-items: center; justify-content: center; font-size: 1em;
         }
         .btn.active { background: var(--primary); color: white; }
+        .btn-danger { color: var(--danger); border-color: #f8d7da; }
 
         #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; box-sizing: border-box; }
         .main-content { max-width: 800px; margin: 0 auto; padding: 15px; }
         
         .cat-group { margin-bottom: 25px; }
         .cat-header {
-            background: var(--primary); color: white; padding: 12px 18px;
-            border-radius: 10px; font-size: 1.3em; font-weight: 900;
-            position: sticky; top: 10px; z-index: 100; margin-bottom: 10px;
+            background: var(--primary); color: white; padding: 10px 15px;
+            border-radius: 10px; font-size: 1.2em; font-weight: 900;
+            position: sticky; top: 10px; z-index: 100; margin-bottom: 8px;
         }
 
         .ser-item {
-            background: white; padding: 15px; font-weight: 700;
+            background: white; padding: 12px; font-weight: 700;
             border-right: 4px solid var(--secondary); border-radius: 6px;
             display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; margin-bottom: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .ex-list { list-style: none; padding: 0; margin: 0 0 10px 0; display: none; background: white; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; }
-        .ex-list.open { display: block; }
-        .ex-row { padding: 12px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); border-top: none; }
+        .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
+        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .ex-row.hidden { display: none; }
         
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
-        .ex-no-link { color: #666; font-weight: 400; flex: 1; }
-        
-        .star { cursor: pointer; color: #ccc; font-size: 1.3rem; transition: color 0.2s; }
+        .ex-no-link { color: #888; flex: 1; cursor: default; }
+        .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 15px; border-radius: 15px; width: 92%; max-width: 550px; position: relative; }
-        .video-box { position: relative; padding-bottom: 56.25%; height: 0; margin: 10px 0; background: #000; border-radius: 8px; overflow: hidden; }
+        /* Modal Enhanced */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 550px; position: relative; }
+        .video-box { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
         .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
+        .modal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .nav-btn { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+        .nav-btn:disabled { background: #ccc; cursor: not-allowed; }
+
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .rand-btn-top { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
+        .rand-top-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -87,13 +93,14 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס IJJA</h1>
-            <div class="version-tag">גרסה 1.3.0</div>
+            <small style="color:#888">v1.3.1</small>
         </div>
     </div>
     <div class="action-bar">
-        <button class="btn" onclick="playRandom()" title="תרגיל אקראי"><i class="fas fa-random"></i></button>
-        <button class="btn" id="favToggle" onclick="toggleFavs()"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="expandAll()"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="btn" onclick="playRandom(true)" title="אקראי"><i class="fas fa-random"></i></button>
+        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
+        <button class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
     </div>
 </header>
 
@@ -104,11 +111,17 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <i class="fas fa-random rand-btn-top" onclick="playRandom()"></i>
-        <div style="text-align: center;">
-            <small id="vPath" style="color: var(--secondary); font-weight: bold;"></small>
-            <h3 id="vName" style="margin: 5px 0; color: var(--primary);"></h3>
+        <i id="randBtnModal" class="fas fa-random rand-top-btn hidden" onclick="playRandom(true)"></i>
+        
+        <div class="modal-nav" id="modalNav">
+            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
+            <div style="text-align: center; flex: 1;">
+                <small id="vPath" style="display:block; color:var(--secondary); font-weight:bold;"></small>
+                <strong id="vName" style="color:var(--primary); font-size:1.1em;"></strong>
+            </div>
+            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
+
         <div class="video-box">
             <iframe id="vFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
@@ -118,15 +131,14 @@
 <script>
     let db = [];
     let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let showOnlyFavs = false;
+    let isFavOnly = false;
+    let currentEx = null;
 
-    // פונקציית CSV חזקה
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
         const result = [];
         for(let i=1; i<lines.length; i++) {
-            const row = [];
-            let cur = '', inQ = false;
+            let row = [], cur = '', inQ = false;
             for(let char of lines[i]) {
                 if(char === '"') inQ = !inQ;
                 else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
@@ -144,13 +156,12 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("Load error"); }
+        } catch(e) { console.error("Data error"); }
     }
 
     function render() {
         const app = document.getElementById('app');
         app.innerHTML = '';
-        
         const groups = db.reduce((acc, x) => {
             if(!acc[x.cat]) acc[x.cat] = {};
             if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
@@ -172,19 +183,14 @@
                 list.className = 'ex-list';
                 
                 groups[cat][ser].forEach(ex => {
-                    const isF = favs.includes(ex.id);
                     const li = document.createElement('li');
                     li.className = 'ex-row';
                     li.dataset.id = ex.id;
+                    const name = ex.link 
+                        ? `<span class="ex-link" onclick='openV(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>`
+                        : `<span class="ex-no-link">${ex.num}. ${ex.name}</span>`;
                     
-                    const nameSpan = ex.link 
-                        ? `<span class="ex-link" onclick='openV(${JSON.stringify(ex)})'>${ex.num}. ${ex.name}</span>`
-                        : `<span class="ex-no-link">${ex.num}. ${ex.name} (אין סרטון)</span>`;
-                    
-                    li.innerHTML = `
-                        ${nameSpan}
-                        <i class="fas fa-star star ${isF ? 'active' : ''}" onclick="toggleStar(${ex.id}, this)"></i>
-                    `;
+                    li.innerHTML = `${name} <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
 
@@ -199,18 +205,56 @@
         }
     }
 
-    function openV(ex) {
-        let id = "";
-        if(ex.link.includes("youtu.be/")) id = ex.link.split("youtu.be/")[1].split(/[?#]/)[0];
-        else if(ex.link.includes("v=")) id = new URL(ex.link).searchParams.get("v");
+    function openV(ex, isRandom) {
+        currentEx = ex;
+        const navBar = document.getElementById('modalNav');
+        const randBtn = document.getElementById('randBtnModal');
         
-        const t = ex.link.match(/[?&]t=(\d+)/);
-        const start = t ? t[1] : 0;
-        
+        if (isRandom) {
+            navBar.classList.add('hidden');
+            randBtn.classList.remove('hidden');
+        } else {
+            navBar.classList.remove('hidden');
+            randBtn.classList.add('hidden');
+            updateNavButtons();
+        }
+
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
-        document.getElementById('vFrame').src = `https://www.youtube.com/embed/${id}?start=${start}&autoplay=1`;
+        
+        let vidId = "";
+        try {
+            if(ex.link.includes("youtu.be/")) {
+                vidId = ex.link.split("youtu.be/")[1].split(/[?#]/)[0];
+            } else {
+                vidId = new URL(ex.link).searchParams.get("v");
+            }
+            const t = ex.link.match(/[?&]t=(\d+)/);
+            const start = t ? t[1] : 0;
+            document.getElementById('vFrame').src = `https://www.youtube.com/embed/${vidId}?start=${start}&autoplay=1`;
+        } catch(e) { document.getElementById('vFrame').src = ""; }
+
         document.getElementById('vModal').style.display = 'flex';
+    }
+
+    function updateNavButtons() {
+        const series = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+        const idx = series.findIndex(x => x.id === currentEx.id);
+        document.getElementById('prevBtn').disabled = (idx <= 0);
+        document.getElementById('nextBtn').disabled = (idx >= series.length - 1);
+    }
+
+    function nav(dir) {
+        const series = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+        const idx = series.findIndex(x => x.id === currentEx.id);
+        const target = series[idx + dir];
+        if(target && target.link) openV(target, false);
+    }
+
+    function playRandom(force) {
+        const pool = db.filter(x => x.link);
+        const r = pool[Math.floor(Math.random()*pool.length)];
+        openV(r, true);
     }
 
     function closeV() {
@@ -218,27 +262,29 @@
         document.getElementById('vFrame').src = "";
     }
 
-    function playRandom() {
-        const pool = db.filter(x => x.link);
-        const r = pool[Math.floor(Math.random()*pool.length)];
-        openV(r);
-    }
-
     function toggleStar(id, el) {
         if(favs.includes(id)) favs = favs.filter(f => f !== id);
         else favs.push(id);
         el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        if(showOnlyFavs) updateFilters();
+        if(isFavOnly) applyFilters();
     }
 
-    function toggleFavs() {
-        showOnlyFavs = !showOnlyFavs;
-        document.getElementById('favToggle').classList.toggle('active', showOnlyFavs);
-        updateFilters();
+    function clearFavs() {
+        if(confirm("למחוק את כל המועדפים?")) {
+            favs = [];
+            localStorage.setItem('ijja_favs', "[]");
+            render();
+        }
     }
 
-    function updateFilters() {
+    function toggleFavFilter() {
+        isFavOnly = !isFavOnly;
+        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
+        applyFilters();
+    }
+
+    function applyFilters() {
         document.querySelectorAll('.cat-group').forEach(c => {
             let catHas = false;
             c.querySelectorAll('.ser-item').forEach(s => {
@@ -246,19 +292,19 @@
                 let serHas = false;
                 list.querySelectorAll('.ex-row').forEach(row => {
                     const isF = favs.includes(parseInt(row.dataset.id));
-                    const hide = showOnlyFavs && !isF;
+                    const hide = isFavOnly && !isF;
                     row.classList.toggle('hidden', hide);
                     if(!hide) serHas = true;
                 });
-                s.classList.toggle('hidden', showOnlyFavs && !serHas);
-                list.classList.toggle('hidden', showOnlyFavs && !serHas);
+                s.classList.toggle('hidden', isFavOnly && !serHas);
+                list.classList.toggle('hidden', isFavOnly && !serHas);
                 if(serHas) catHas = true;
             });
-            c.classList.toggle('hidden', showOnlyFavs && !catHas);
+            c.classList.toggle('hidden', isFavOnly && !catHas);
         });
     }
 
-    function expandAll() {
+    function toggleAll() {
         const lists = document.querySelectorAll('.ex-list');
         const anyClosed = Array.from(lists).some(l => !l.classList.contains('open'));
         lists.forEach(l => l.classList.toggle('open', anyClosed));
