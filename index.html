@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.4.2</title>
+    <title>Syllabus IJJA - v1.4.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -41,11 +41,288 @@
             display: flex; align-items: center; justify-content: center; font-size: 1em;
         }
         .btn.active { background: var(--primary); color: white; }
-        .btn-danger { color: var(--danger); border-color: #f8d7da; }
 
         #scrollContainer { 
-            height: 100vh; 
-            padding-top: var(--header-h); 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
-            box-sizing: border-box;
+            height: 100vh; padding-top: var(--header-h); 
+            overflow-y: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; 
+        }
+        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
+        
+        .cat-group { margin-bottom: 25px; }
+        .cat-header {
+            background: var(--primary); color: white; padding: 10px 15px;
+            border-radius: 10px; font-size: 1.2em; font-weight: 900;
+            position: sticky; top: 10px; z-index: 100; margin-bottom: 8px;
+        }
+
+        .ser-item {
+            background: white; padding: 12px; font-weight: 700;
+            border-right: 4px solid var(--secondary); border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
+        .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
+        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-row.hidden { display: none; }
+        
+        .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
+        .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
+        .star.active { color: var(--fav-color); }
+
+        /* Modal & Video Box */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; text-align: center; }
+        
+        .video-container { display: none; position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 8px; overflow: hidden; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        .watch-btn { 
+            background: var(--primary); color: white; border: none; padding: 12px 25px; 
+            border-radius: 30px; font-size: 1.1em; font-weight: 700; cursor: pointer; 
+            margin-top: 20px; display: inline-flex; align-items: center; gap: 8px;
+        }
+        
+        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
+        .rand-next-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
+
+        .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .nav-btn:disabled { background: #eee !important; color: #bbb; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-right">
+        <img src="Logo.png" alt="IJJA" class="logo-img">
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.3</small></div>
+    </div>
+    <div class="action-bar">
+        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
+        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
+        <button class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
+    </div>
+</header>
+
+<div id="scrollContainer">
+    <main class="main-content" id="app"></main>
+</div>
+
+<div id="vModal" class="modal" onclick="closeV()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <i class="fas fa-times close-btn" onclick="closeV()"></i>
+        <i id="randBtnModal" class="fas fa-random rand-next-btn hidden" onclick="playRandom()"></i>
+        
+        <div class="modal-nav">
+            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
+            <div style="flex: 1;">
+                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em;"></div>
+                <div id="vName" style="color:var(--primary); font-size:1.2em; font-weight: 800; margin-top:5px;"></div>
+                <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top: 4px;"></div>
+            </div>
+            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
+        </div>
+
+        <button id="watchBtn" class="watch-btn" onclick="startVideo()">
+            <i class="fas fa-play-circle"></i> צפה בסרטון
+        </button>
+
+        <div id="videoContainer" class="video-container">
+            <iframe id="vFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    let db = [];
+    let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
+    let isFavOnly = false;
+    let currentEx = null;
+
+    function getEmbedUrl(url) {
+        if (!url) return '';
+        let cleanUrl = url.trim();
+        if (cleanUrl.includes("/shorts/")) return cleanUrl.replace("/shorts/", "/embed/").split("?")[0];
+        let embedUrl = cleanUrl.replace("watch?v=", "embed/");
+        if (cleanUrl.includes("youtu.be/")) {
+            const videoId = cleanUrl.split("youtu.be/")[1].split("?")[0];
+            const timeParam = cleanUrl.split("?t=")[1] || cleanUrl.split("&t=")[1];
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            if (timeParam) embedUrl += `?start=${timeParam.replace(/[^0-9]/g, '')}`;
+        }
+        return embedUrl;
+    }
+
+    async function init() {
+        try {
+            const r = await fetch('Black_belt_syllabus_IJJA.csv');
+            const txt = await r.text();
+            db = parseCSV(txt);
+            render();
+        } catch(e) { console.error("Data error"); }
+    }
+
+    function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
+        const result = [];
+        for(let i=1; i<lines.length; i++) {
+            let row = [], cur = '', inQ = false;
+            for(let char of lines[i]) {
+                if(char === '"') inQ = !inQ;
+                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
+                else cur += char;
+            }
+            row.push(cur.trim());
+            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" });
+        }
+        return result;
+    }
+
+    function render() {
+        const app = document.getElementById('app');
+        app.innerHTML = '';
+        const groups = db.reduce((acc, x) => {
+            if(!acc[x.cat]) acc[x.cat] = {};
+            if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
+            acc[x.cat][x.ser].push(x);
+            return acc;
+        }, {});
+
+        for(let cat in groups) {
+            const cDiv = document.createElement('div');
+            cDiv.className = 'cat-group';
+            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
+            for(let ser in groups[cat]) {
+                const sBtn = document.createElement('div');
+                sBtn.className = 'ser-item';
+                sBtn.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+                const list = document.createElement('ul');
+                list.className = 'ex-list';
+                groups[cat][ser].forEach(ex => {
+                    const li = document.createElement('li');
+                    li.className = 'ex-row';
+                    const isLink = ex.link && ex.link.length > 5;
+                    li.innerHTML = `
+                        <span class="${isLink?'ex-link':'ex-no-link'}" onclick="${isLink?`openV(${JSON.stringify(ex)}, false)` : ''}">${ex.num}. ${ex.name}</span>
+                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>
+                    `;
+                    list.appendChild(li);
+                });
+                sBtn.onclick = () => {
+                    const isOpen = list.classList.toggle('open');
+                    sBtn.querySelector('i').className = isOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                };
+                cDiv.appendChild(sBtn);
+                cDiv.appendChild(list);
+            }
+            app.appendChild(cDiv);
+        }
+    }
+
+    function openV(ex, isRandom) {
+        currentEx = ex;
+        // איפוס תצוגה
+        document.getElementById('videoContainer').style.display = 'none';
+        document.getElementById('vFrame').src = "";
+        document.getElementById('watchBtn').style.display = 'inline-flex';
+        
+        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
+        document.getElementById('vName').innerText = ex.name;
+
+        const seriesItems = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
+        const currentIdx = seriesItems.findIndex(x => x.id === ex.id) + 1;
+        
+        if(isRandom) {
+            document.getElementById('prevBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('randBtnModal').classList.remove('hidden');
+            document.getElementById('vCounter').innerText = "";
+        } else {
+            document.getElementById('prevBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            document.getElementById('randBtnModal').classList.add('hidden');
+            document.getElementById('vCounter').innerText = `תרגיל ${currentIdx} מתוך ${seriesItems.length}`;
+            document.getElementById('prevBtn').disabled = (currentIdx === 1);
+            document.getElementById('nextBtn').disabled = (currentIdx === seriesItems.length);
+        }
+
+        document.getElementById('vModal').style.display = 'flex';
+    }
+
+    function startVideo() {
+        if(!currentEx || !currentEx.link) return;
+        const embed = getEmbedUrl(currentEx.link);
+        document.getElementById('vFrame').src = embed + (embed.includes('?') ? '&' : '?') + "autoplay=1";
+        document.getElementById('watchBtn').style.display = 'none';
+        document.getElementById('videoContainer').style.display = 'block';
+    }
+
+    function playRandom() {
+        const pool = db.filter(x => x.link && x.link.length > 5);
+        if(pool.length > 0) {
+            const r = pool[Math.floor(Math.random()*pool.length)];
+            openV(r, true);
+        }
+    }
+
+    function nav(dir) {
+        const series = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+        const idx = series.findIndex(x => x.id === currentEx.id);
+        const target = series[idx + dir];
+        if(target && target.link) openV(target, false);
+    }
+
+    function closeV() {
+        document.getElementById('vModal').style.display = 'none';
+        document.getElementById('vFrame').src = "";
+    }
+
+    function toggleStar(id, el) {
+        if(favs.includes(id)) favs = favs.filter(f => f !== id);
+        else favs.push(id);
+        el.classList.toggle('active');
+        localStorage.setItem('ijja_favs', JSON.stringify(favs));
+        if(isFavOnly) applyFilters();
+    }
+
+    function toggleFavFilter() {
+        isFavOnly = !isFavOnly;
+        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
+        applyFilters();
+    }
+
+    function applyFilters() {
+        document.querySelectorAll('.cat-group').forEach(c => {
+            let catHas = false;
+            c.querySelectorAll('.ser-item').forEach(s => {
+                const list = s.nextElementSibling;
+                let serHas = false;
+                list.querySelectorAll('.ex-row').forEach(row => {
+                    const id = parseInt(row.querySelector('.star').getAttribute('onclick').match(/\d+/)[0]);
+                    const isF = favs.includes(id);
+                    const hide = isFavOnly && !isF;
+                    row.classList.toggle('hidden', hide);
+                    if(!hide) serHas = true;
+                });
+                s.classList.toggle('hidden', isFavOnly && !serHas);
+                list.classList.toggle('hidden', isFavOnly && !serHas);
+                if(serHas) catHas = true;
+            });
+            c.classList.toggle('hidden', isFavOnly && !catHas);
+        });
+    }
+
+    function toggleAll() {
+        const lists = document.querySelectorAll('.ex-list');
+        const anyClosed = Array.from(lists).some(l => !l.classList.contains('open'));
+        lists.forEach(l => l.classList.toggle('open', anyClosed));
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
