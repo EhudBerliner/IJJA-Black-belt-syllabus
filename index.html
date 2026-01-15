@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.3.7</title>
+    <title>Syllabus IJJA - v1.3.8</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -70,6 +70,7 @@
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 550px; position: relative; }
         .video-box { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
@@ -93,7 +94,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס IJJA</h1>
-            <small style="color:#888">v1.3.7</small>
+            <small style="color:#888">v1.3.8</small>
         </div>
     </div>
     <div class="action-bar">
@@ -135,6 +136,22 @@
     let isFavOnly = false;
     let currentEx = null;
 
+    // --- מנגנון ניגון וידאו "As Is" מהגרסה התקינה שצירפת ---
+    function getEmbedUrl(url) {
+        if (!url) return '';
+        let embedUrl = url.replace("watch?v=", "embed/");
+        if (url.includes("youtu.be/")) {
+            const videoId = url.split("youtu.be/")[1].split("?")[0];
+            const timeParam = url.split("?t=")[1] || url.split("&t=")[1];
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            if (timeParam) embedUrl += `?start=${timeParam}`;
+        } else if (url.includes("embed/")) {
+            embedUrl = url;
+        }
+        return embedUrl;
+    }
+    // ------------------------------------------------------
+
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
         const result = [];
@@ -146,14 +163,7 @@
                 else cur += char;
             }
             row.push(cur.trim());
-            if(row[0]) result.push({ 
-                id: i, 
-                cat: row[0], 
-                ser: row[1], 
-                num: row[2], 
-                name: row[3], 
-                link: row[4] ? row[4].trim() : "" 
-            });
+            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" });
         }
         return result;
     }
@@ -164,7 +174,7 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV Load Error"); }
+        } catch(e) { console.error("Data error"); }
     }
 
     function render() {
@@ -209,34 +219,6 @@
         }
     }
 
-    // פונקציית טעינה מתוקנת לחלוטין שתואמת ל-CSV ולגרסה הישנה
-    function loadVideo(url) {
-        const frame = document.getElementById('vFrame');
-        if (!url || url.length < 5) { frame.src = ""; return; }
-        
-        let videoId = '';
-        // הסרת רווחים וניקוי הכתובת
-        const cleanUrl = url.trim();
-
-        if (cleanUrl.includes('youtu.be/')) {
-            // טיפול ב-youtu.be/ID?t=...
-            videoId = cleanUrl.split('youtu.be/')[1].split('?')[0];
-        } else if (cleanUrl.includes('v=')) {
-            // טיפול ב-youtube.com/watch?v=ID...
-            videoId = cleanUrl.split('v=')[1].split('&')[0];
-        }
-        
-        const timeMatch = cleanUrl.match(/[?&]t=(\d+)/);
-        const start = timeMatch ? timeMatch[1] : 0;
-        
-        if (videoId) {
-            frame.src = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
-        } else {
-            // אם לא מצאנו ID בשיטות הרגילות, ננסה לבדוק אם כל הלינק הוא ה-ID (למקרה קיצון)
-            frame.src = "";
-        }
-    }
-
     function openV(ex, isRandom) {
         currentEx = ex;
         const prevBtn = document.getElementById('prevBtn');
@@ -262,7 +244,8 @@
             updateNavButtons(seriesItems);
         }
         
-        loadVideo(ex.link);
+        const embed = getEmbedUrl(ex.link);
+        document.getElementById('vFrame').src = embed ? embed + (embed.includes('?') ? '&' : '?') + "autoplay=1" : "";
         document.getElementById('vModal').style.display = 'flex';
     }
 
