@@ -17,8 +17,10 @@
             --primary: #0056a6;
             --secondary: #009be5;
             --border: #d2dce5;
-            --header-h: 110px;
+            --header-h: 65px;
+            --filter-h: 55px;
             --fav-color: #ffc107;
+            --sidebar-width: 260px;
         }
 
         html, body {
@@ -34,7 +36,6 @@
             background: white;
             border-bottom: 3px solid var(--primary);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             position: fixed;
@@ -43,126 +44,82 @@
             z-index: 1200;
         }
 
-        .action-bar {
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 20px; }
+
+        .layout { display: flex; height: 100vh; padding-top: var(--header-h); box-sizing: border-box; }
+
+        /* החזרת סרגל הצד / פילטרים */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-left: 1px solid var(--border);
             display: flex;
-            gap: 8px;
-            padding: 5px 10px 10px 10px;
-            width: 100%;
-            justify-content: center;
+            flex-direction: column;
+            padding: 15px;
+            overflow-y: auto;
+            scrollbar-gutter: stable;
         }
 
-        .action-button {
-            height: 32px;
-            padding: 0 12px;
-            border-radius: 16px;
+        .filter-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .side-btn {
+            height: 40px;
+            border-radius: 8px;
             border: 1px solid var(--border);
             background: #f0f4f8;
             font-weight: 700;
             cursor: pointer;
-            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            padding: 0 15px;
+            gap: 10px;
+            font-family: 'Heebo';
         }
+        .side-btn.active { background: var(--primary); color: white; }
 
-        .action-button.active { background: var(--primary); color: white; }
-
-        #scrollContainer {
-            height: 100vh;
-            padding-top: var(--header-h);
-            overflow-y: auto;
-            box-sizing: border-box;
-            scrollbar-gutter: stable;
-        }
-
-        .main-content { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .main-view { flex: 1; overflow-y: auto; scrollbar-gutter: stable; }
+        .content-wrap { max-width: 800px; margin: 0 auto; padding: 20px; }
 
         .category {
-            background: var(--primary);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 1.5em;
-            font-weight: 900;
-            margin: 20px 0 10px 0;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
+            background: var(--primary); color: white; padding: 12px 18px;
+            border-radius: 10px; font-size: 1.4em; font-weight: 900;
+            margin: 20px 0 10px 0; position: sticky; top: 0; z-index: 10;
         }
 
         .series {
-            background: white;
-            padding: 15px;
-            font-weight: 700;
-            margin-top: 10px;
-            border-right: 4px solid var(--secondary);
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            cursor: pointer;
+            background: white; padding: 15px; font-weight: 700; margin-top: 10px;
+            border-right: 4px solid var(--secondary); border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
         }
 
-        .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-        .exercise-list.expanded { max-height: 3000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; }
-        .exercise { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        
+        .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+        .exercise-list.expanded { max-height: 2000px; border: 1px solid var(--border); border-top: none; }
+        .exercise { padding: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
         .ex-name { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
-        .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
+        .fav-star { cursor: pointer; color: #ccc; }
         .fav-star.active { color: var(--fav-color); }
 
-        .hidden { display: none !important; }
-
-        /* מודאל וידיאו משופר עם ניווט */
+        /* מודאל וידיאו משופר */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 600px; text-align: center; position: relative; }
         
-        .video-wrapper { 
-            position: relative; 
-            padding-bottom: 56.25%; 
-            height: 0; 
-            overflow: hidden; 
-            margin: 15px 0;
-            background: #000;
-            border-radius: 8px;
-        }
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .nav-btn { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .nav-btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .video-counter { font-size: 0.85em; font-weight: 700; color: #555; background: #eef2f6; padding: 2px 8px; border-radius: 10px; margin-top: 5px; display: inline-block; }
+
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        .close-x { position: absolute; top: -40px; left: 0; color: white; font-size: 28px; cursor: pointer; }
 
-        .nav-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            gap: 10px;
-        }
+        .hidden { display: none !important; }
 
-        .nav-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: opacity 0.2s;
-        }
-
-        .nav-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-sub { flex: 1; background: #f0f4f8; color: #233142; border: none; padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-        .close-x { position: absolute; top: -40px; right: 0; color: white; font-size: 24px; cursor: pointer; }
-
-        @media (max-width: 600px) {
-            .nav-btn span { display: none; } /* במובייל נראה רק חצים */
+        @media (max-width: 800px) {
+            .layout { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; border-left: none; border-bottom: 1px solid var(--border); padding: 10px; }
+            .filter-group { flex-direction: row; overflow-x: auto; padding-bottom: 5px; }
+            .side-btn { white-space: nowrap; }
         }
     </style>
 </head>
@@ -170,24 +127,31 @@
 
 <header>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
-    <div class="action-bar">
-        <button class="action-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
-            <i class="fas fa-random"></i> אקראי
-        </button>
-        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
-            <i class="fas fa-arrows-alt-v"></i> פתח הכל
-        </button>
-        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()">
-            <i class="fas fa-star" style="color:var(--fav-color)"></i> מועדפים
-        </button>
-        <button class="action-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
-            <i class="fas fa-trash"></i> נקה
-        </button>
-    </div>
 </header>
 
-<div id="scrollContainer">
-    <main class="main-content" id="mainContainer"></main>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="filter-group">
+            <button class="side-btn" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
+                <i class="fas fa-random"></i> אקראי
+            </button>
+            <button id="toggleAllBtn" class="side-btn" onclick="toggleAllAccordions()">
+                <i class="fas fa-arrows-alt-v"></i> <span>פתח הכל</span>
+            </button>
+            <button id="favFilterBtn" class="side-btn" onclick="toggleFavFilter()">
+                <i class="fas fa-star" style="color:var(--fav-color)"></i> מועדפים
+            </button>
+            <button class="side-btn" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
+                <i class="fas fa-trash"></i> נקה
+            </button>
+        </div>
+        <div id="categoryFilters" class="filter-group">
+            </div>
+    </aside>
+
+    <main class="main-view" id="scrollContainer">
+        <div class="content-wrap" id="mainContainer"></div>
+    </main>
 </div>
 
 <div id="videoModal" class="modal-overlay" onclick="closeModal()">
@@ -195,25 +159,16 @@
         <i class="fas fa-times close-x" onclick="closeModal()"></i>
         
         <div class="nav-controls">
-            <button id="prevBtn" class="nav-btn" onclick="navigateEx(-1)">
-                <i class="fas fa-chevron-right"></i> <span>הקודם</span>
-            </button>
+            <button id="prevBtn" class="nav-btn" onclick="navigateEx(-1)"><i class="fas fa-chevron-right"></i></button>
             <div style="flex:1">
                 <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.1em;"></h3>
-                <p id="mSub" style="margin: 0; font-size: 0.8em; color: #666;"></p>
+                <div id="mCounter" class="video-counter"></div>
             </div>
-            <button id="nextBtn" class="nav-btn" onclick="navigateEx(1)">
-                <span>הבא</span> <i class="fas fa-chevron-left"></i>
-            </button>
+            <button id="nextBtn" class="nav-btn" onclick="navigateEx(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
         
         <div class="video-wrapper">
             <iframe id="videoFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-
-        <div class="modal-btns">
-            <button class="btn-sub" onclick="getRandomEx()">תרגיל אקראי</button>
-            <button class="btn-sub" onclick="closeModal()">סגור</button>
         </div>
     </div>
 </div>
@@ -221,9 +176,9 @@
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let allExpanded = false;
+    let currentEx = null;
     let isFavFilterActive = false;
-    let currentEx = null; // שמירת התרגיל הנוכחי שפתוח במודאל
+    let allExpanded = false;
 
     async function loadSyllabus() {
         try {
@@ -234,7 +189,9 @@
                 const cols = parseCSV(row);
                 return { id: idx, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
             }).filter(i => i.cat);
+            
             render(rawData);
+            genCategoryButtons();
         } catch (e) { console.error(e); }
     }
 
@@ -259,19 +216,21 @@
         }, {});
 
         Object.keys(grouped).forEach(cat => {
-            const cDiv = document.createElement('div');
-            cDiv.className = 'category'; cDiv.innerText = cat;
-            container.appendChild(cDiv);
-
+            const catEl = document.createElement('div');
+            catEl.className = 'category-section';
+            catEl.dataset.cat = cat;
+            catEl.innerHTML = `<div class="category">${cat}</div>`;
+            
             Object.keys(grouped[cat]).forEach(ser => {
                 const sWrap = document.createElement('div');
                 sWrap.className = 'series-wrapper';
-                const sDiv = document.createElement('div');
-                sDiv.className = 'series';
-                sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
-                const list = document.createElement('ul');
-                list.className = 'exercise-list';
-                
+                sWrap.innerHTML = `
+                    <div class="series" onclick="toggleAccordion(this)">
+                        <span>${ser}</span><i class="fas fa-chevron-down"></i>
+                    </div>
+                    <ul class="exercise-list"></ul>
+                `;
+                const list = sWrap.querySelector('ul');
                 grouped[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
                     li.className = 'exercise';
@@ -281,55 +240,60 @@
                     `;
                     list.appendChild(li);
                 });
-
-                sDiv.onclick = () => { sDiv.classList.toggle('active'); list.classList.toggle('expanded'); };
-                sWrap.appendChild(sDiv); sWrap.appendChild(list); container.appendChild(sWrap);
+                catEl.appendChild(sWrap);
             });
+            container.appendChild(catEl);
         });
     }
 
-    function getEmbedUrl(url) {
-        if (!url) return "";
-        let vidId = "";
-        try {
-            if (url.includes("youtu.be/")) {
-                vidId = url.split("youtu.be/")[1].split("?")[0];
-            } else {
-                vidId = new URL(url).searchParams.get("v");
-            }
-            const time = new URL(url).searchParams.get("t") || 0;
-            return `https://www.youtube.com/embed/${vidId}?start=${parseInt(time)}&autoplay=1`;
-        } catch(e) { return ""; }
+    function genCategoryButtons() {
+        const cats = [...new Set(rawData.map(i => i.cat))];
+        const container = document.getElementById('categoryFilters');
+        cats.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'side-btn';
+            btn.innerText = c;
+            btn.onclick = () => filterByCategory(c, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function filterByCategory(cat, btn) {
+        const wasActive = btn.classList.contains('active');
+        document.querySelectorAll('#categoryFilters .side-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.category-section').forEach(s => {
+            s.classList.toggle('hidden', !wasActive && s.dataset.cat !== cat);
+        });
+        if (!wasActive) btn.classList.add('active');
+        document.getElementById('scrollContainer').scrollTop = 0;
     }
 
     function openVideo(ex) {
         currentEx = ex;
+        const seriesData = rawData.filter(i => i.cat === ex.cat && i.ser === ex.ser);
+        const idx = seriesData.findIndex(i => i.id === ex.id);
+
         document.getElementById('mTitle').innerText = ex.name;
-        document.getElementById('mSub').innerText = `${ex.cat} > ${ex.ser}`;
+        document.getElementById('mCounter').innerText = `תרגיל ${idx + 1} מתוך ${seriesData.length}`;
         document.getElementById('videoFrame').src = getEmbedUrl(ex.link);
         document.getElementById('videoModal').style.display = 'flex';
-        updateNavButtons();
-    }
-
-    // פונקציית ניווט בין תרגילים באותה סדרה
-    function navigateEx(direction) {
-        const seriesData = rawData.filter(i => i.cat === currentEx.cat && i.ser === currentEx.ser);
-        const currentIndex = seriesData.findIndex(i => i.id === currentEx.id);
-        const nextItem = seriesData[currentIndex + direction];
-        if (nextItem) openVideo(nextItem);
-    }
-
-    function updateNavButtons() {
-        const seriesData = rawData.filter(i => i.cat === currentEx.cat && i.ser === currentEx.ser);
-        const currentIndex = seriesData.findIndex(i => i.id === currentEx.id);
         
-        document.getElementById('prevBtn').disabled = (currentIndex === 0);
-        document.getElementById('nextBtn').disabled = (currentIndex === seriesData.length - 1);
+        document.getElementById('prevBtn').disabled = (idx === 0);
+        document.getElementById('nextBtn').disabled = (idx === seriesData.length - 1);
     }
 
-    function getRandomEx() {
-        const ex = rawData[Math.floor(Math.random() * rawData.length)];
-        openVideo(ex);
+    function getEmbedUrl(url) {
+        try {
+            let vidId = url.includes("youtu.be/") ? url.split("youtu.be/")[1].split("?")[0] : new URL(url).searchParams.get("v");
+            let t = new URL(url).searchParams.get("t") || 0;
+            return `https://www.youtube.com/embed/${vidId}?start=${parseInt(t)}&autoplay=1`;
+        } catch(e) { return ""; }
+    }
+
+    function navigateEx(dir) {
+        const seriesData = rawData.filter(i => i.cat === currentEx.cat && i.ser === currentEx.ser);
+        const idx = seriesData.findIndex(i => i.id === currentEx.id);
+        if (seriesData[idx + dir]) openVideo(seriesData[idx + dir]);
     }
 
     function closeModal() {
@@ -337,48 +301,43 @@
         document.getElementById('videoFrame').src = "";
     }
 
-    function toggleFav(id, el) {
-        if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
-        else favorites.push(id);
+    function toggleAccordion(el) {
         el.classList.toggle('active');
-        localStorage.setItem('ijja_favs', JSON.stringify(favorites));
-        if(isFavFilterActive) applyFavFilter();
-    }
-
-    function toggleFavFilter() {
-        isFavFilterActive = !isFavFilterActive;
-        document.getElementById('favFilterBtn').classList.toggle('active', isFavFilterActive);
-        applyFavFilter();
-    }
-
-    function applyFavFilter() {
-        document.querySelectorAll('.category').forEach(c => c.classList.toggle('hidden', isFavFilterActive));
-        document.querySelectorAll('.series-wrapper').forEach(w => {
-            if (isFavFilterActive) {
-                const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
-                w.classList.toggle('hidden', !hasFav);
-                w.querySelectorAll('.exercise').forEach(ex => {
-                    ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
-                });
-            } else {
-                w.classList.remove('hidden');
-                w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
-            }
-        });
+        el.nextElementSibling.classList.toggle('expanded');
     }
 
     function toggleAllAccordions() {
         allExpanded = !allExpanded;
         document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
         document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
+        document.getElementById('toggleAllBtn').querySelector('span').innerText = allExpanded ? "סגור הכל" : "פתח הכל";
+    }
+
+    function toggleFavFilter() {
+        isFavFilterActive = !isFavFilterActive;
+        document.getElementById('favFilterBtn').classList.toggle('active', isFavFilterActive);
+        document.querySelectorAll('.series-wrapper').forEach(w => {
+            const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
+            w.classList.toggle('hidden', isFavFilterActive && !hasFav);
+        });
+    }
+
+    function toggleFav(id, el) {
+        if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
+        else favorites.push(id);
+        el.classList.toggle('active');
+        localStorage.setItem('ijja_favs', JSON.stringify(favorites));
+    }
+
+    function getRandomEx() {
+        const ex = rawData[Math.floor(Math.random() * rawData.length)];
+        openVideo(ex);
     }
 
     function clearAllFavs() {
         if(confirm("למחוק את כל המועדפים?")) {
             favorites = []; localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
-            if(isFavFilterActive) applyFavFilter();
         }
     }
 
