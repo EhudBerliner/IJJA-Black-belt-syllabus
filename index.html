@@ -2,11 +2,11 @@
 <html lang="he" dir="rtl">
 <head>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007aff">
+    <meta name="theme-color" content="#0056a6">
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syllabus for black belts in ju-jitsu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Syllabus IJJA - v1.3.5</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,367 +16,318 @@
         :root {
             --primary: #0056a6;
             --secondary: #009be5;
-            --accent: #e3f2fd;
-            --text-dark: #233142;
-            --card-bg: #ffffff;
             --border: #d2dce5;
-            --header-height: 70px;
+            --header-h: 90px;
             --fav-color: #ffc107;
-            --sticky-offset: var(--header-height); 
+            --danger: #d32f2f;
         }
 
-        body {
-            font-family: 'Heebo', sans-serif;
-            margin: 0;
-            background: #f7f9fb;
-            color: var(--text-dark);
-            padding-top: var(--header-height);
-        }
-
-        body.modal-open { overflow: hidden; }
+        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
 
         header {
-            position: fixed;
-            top: 0; width: 100%; height: var(--header-height);
-            background: white; border-bottom: 3px solid var(--primary);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1100;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
         }
 
-        .version-tag { font-size: 10px; color: #888; margin-bottom: -4px; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 26px; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 45px; width: auto; }
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
 
-        .layout { display: flex; max-width: 900px; margin: auto; padding: 20px; gap: 20px; align-items: flex-start; }
+        .action-bar { display: flex; gap: 6px; }
+        .btn {
+            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
+            background: white; color: var(--primary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1em;
+        }
+        .btn.active { background: var(--primary); color: white; }
+        .btn-danger { color: var(--danger); border-color: #f8d7da; }
 
-        .filter-sidebar {
-            width: 230px; position: sticky; top: calc(var(--sticky-offset) + 20px);
-            max-height: calc(100vh - var(--sticky-offset) - 40px); overflow-y: auto; scrollbar-width: none;
+        #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; box-sizing: border-box; }
+        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; }
+        
+        .cat-group { margin-bottom: 25px; }
+        .cat-header {
+            background: var(--primary); color: white; padding: 10px 15px;
+            border-radius: 10px; font-size: 1.2em; font-weight: 900;
+            position: sticky; top: 10px; z-index: 100; margin-bottom: 8px;
         }
 
-        .filter-bar {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 14px; padding: 15px; display: flex; flex-direction: column; gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-
-        .filter-button {
-            width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
-            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: center; font-family: 'Heebo';
-            transition: 0.2s;
-        }
-
-        .filter-button.active { background: var(--primary); color: white; }
-
-        .container { flex: 1; padding-bottom: 50vh; }
-
-        .category {
-            margin-top: 0; background: var(--primary); color: white; padding: 15px 20px;
-            border-radius: 12px; font-size: 1.6em; font-weight: 900; position: sticky;
-            top: var(--sticky-offset); z-index: 1000;
-            box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1);
-        }
-
-        .category::before {
-            content: ""; position: absolute; top: -20px; left: 0; width: 100%; height: 20px;
-            background: #f7f9fb;
-        }
-
-        .category:not(:first-child) { margin-top: 40px; }
-
-        .series {
-            background: white; padding: 15px 20px; font-weight: 700; margin-top: 15px;
-            border-right: 4px solid var(--secondary); cursor: pointer; border-radius: 8px;
+        .ser-item {
+            background: white; padding: 12px; font-weight: 700;
+            border-right: 4px solid var(--secondary); border-radius: 6px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .series.active i { transform: rotate(180deg); }
-        .series i { transition: transform 0.3s; }
+        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); border-top: none; }
+        .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
+        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-row.hidden { display: none; }
+        
+        .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
+        .ex-no-link { color: #888; flex: 1; cursor: default; }
+        .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
+        .star.active { color: var(--fav-color); }
 
-        .exercise-list {
-            list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden;
-            transition: max-height 0.4s ease; background: white; border-radius: 0 0 8px 8px;
-        }
-        .exercise-list.expanded { max-height: 2500px; border: 1px solid var(--border); border-top: none; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 550px; position: relative; }
+        .video-box { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
+        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        .modal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
+        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .nav-btn:disabled { background: #eee !important; color: #bbb; cursor: not-allowed; }
 
-        .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .exercise .ex-name { color: var(--primary); font-weight: 600; cursor: pointer; flex-grow: 1; text-decoration: underline; }
-
-        .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 5px; }
-        .fav-star.active { color: var(--fav-color); }
-
-        /* מודאלים */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 1200; justify-content: center; align-items: center;
-        }
-
-        .modal-content {
-            background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .modal-content h2 { color: var(--primary); margin-bottom: 5px; }
-        .modal-content h4 { color: #666; margin: 5px 0 20px 0; font-weight: 400; }
-        .modal-content .ex-title { font-size: 1.4em; font-weight: 900; margin-bottom: 25px; display: block; }
-
-        .modal-btns { display: flex; gap: 10px; flex-direction: column; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1em; }
-        .btn-sub { background: #f0f4f8; color: var(--text-dark); border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-        .btn-close { color: #888; background: none; border: none; margin-top: 10px; cursor: pointer; text-decoration: underline; }
-
-        /* שכבת הוידאו מעל הכל */
-        .video-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 1300; justify-content: center; align-items: center;
-        }
-        .video-container { width: 95%; max-width: 800px; position: relative; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; }
-        .video-container iframe { width: 100%; height: 100%; border: none; }
-        .close-video { position: absolute; top: 10px; left: 15px; color: white; font-size: 2.5rem; cursor: pointer; z-index: 10001; }
-
+        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
+        .rand-top-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
+        
+        #vCounter { font-size: 0.85em; color: #666; display: block; margin-top: 2px; }
         .hidden { display: none !important; }
-
-        @media (max-width: 900px) {
-            .layout { flex-direction: column; padding: 10px; }
-            .filter-sidebar { width: 100%; position: static; max-height: none; }
-            .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 10px; }
-            .filter-button { width: auto; font-size: 0.85em; padding: 8px 12px; }
-            .category { margin-top: 20px; top: var(--header-height); }
-        }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.2</div>
-    <h1>סילבוס חגורה שחורה - IJJA</h1>
-</header>
-
-<div class="layout">
-    <aside class="filter-sidebar">
-        <div class="filter-bar" id="filterContainer">
-            <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none; text-align:center;">
-                <i class="fas fa-random"></i> תרגיל אקראי
-            </button>
-            <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none; text-align:center;">
-                <i class="fas fa-star"></i> מועדפים
-            </button>
-            <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none; text-align:center;">
-                <i class="fas fa-trash-alt"></i> בטל מועדפים
-            </button>
-            <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none; text-align:center;">
-                <i class="fas fa-arrows-alt-v"></i> פתח הכל
-            </button>
-            <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
-        </div>
-    </aside>
-
-    <main class="container" id="mainContainer"></main>
-</div>
-
-<div id="rndModal" class="modal-overlay" onclick="closeRndModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 id="rCat">קטגוריה</h2>
-        <h4 id="rSer">סדרה</h4>
-        <span class="ex-title" id="rName">שם התרגיל</span>
-        <div class="modal-btns">
-            <button class="btn-main" onclick="playCurrentRnd()">צפה בוידיאו <i class="fas fa-play"></i></button>
-            <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר <i class="fas fa-redo"></i></button>
-            <button class="btn-close" onclick="closeRndModal()">סגור</button>
+    <div class="header-right">
+        <img src="Logo.png" alt="IJJA" class="logo-img">
+        <div>
+            <h1>סילבוס IJJA</h1>
+            <small style="color:#888">v1.3.5</small>
         </div>
     </div>
+    <div class="action-bar">
+        <button class="btn" onclick="playRandom(true)" title="אקראי"><i class="fas fa-random"></i></button>
+        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
+        <button class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
+    </div>
+</header>
+
+<div id="scrollContainer">
+    <main class="main-content" id="app"></main>
 </div>
 
-<div id="videoModal" class="video-overlay" onclick="closeVideo()">
-    <div class="video-container" onclick="event.stopPropagation()">
-        <span class="close-video" onclick="closeVideo()">&times;</span>
-        <iframe id="mainPlayer" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+<div id="vModal" class="modal" onclick="closeV()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <i class="fas fa-times close-btn" onclick="closeV()"></i>
+        <i id="randBtnModal" class="fas fa-random rand-top-btn hidden" onclick="playRandom(true)"></i>
+        
+        <div class="modal-nav">
+            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
+            <div style="text-align: center; flex: 1; overflow: hidden;">
+                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                <div id="vName" style="color:var(--primary); font-size:1.05em; font-weight: 800; line-height: 1.2;"></div>
+                <div id="vCounter"></div>
+            </div>
+            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
+        </div>
+
+        <div class="video-box">
+            <iframe id="vFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
     </div>
 </div>
 
 <script>
-    let rawData = [];
-    let currentRandomEx = null;
-    let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let allExpanded = false;
+    let db = [];
+    let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
+    let isFavOnly = false;
+    let currentEx = null;
 
-    async function loadSyllabus() {
-        try {
-            const res = await fetch('Black_belt_syllabus_IJJA.csv');
-            const text = await res.text();
-            const rows = text.split('\n').filter(r => r.trim() !== '');
-            rawData = rows.slice(1).map((row, idx) => {
-                const cols = parseCSV(row);
-                return { id: idx, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
-            }).filter(i => i.cat);
-            render(rawData);
-            genFilters(rawData);
-        } catch (e) { console.error(e); }
-    }
-
-    function parseCSV(r) {
-        const res = []; let c = '', q = false;
-        for (let i=0; i<r.length; i++) {
-            if (r[i] === '"') q = !q;
-            else if (r[i] === ',' && !q) { res.push(c.trim()); c = ''; }
-            else c += r[i];
+    function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
+        const result = [];
+        for(let i=1; i<lines.length; i++) {
+            let row = [], cur = '', inQ = false;
+            for(let char of lines[i]) {
+                if(char === '"') inQ = !inQ;
+                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
+                else cur += char;
+            }
+            row.push(cur.trim());
+            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" });
         }
-        res.push(c.trim()); return res;
+        return result;
     }
 
-    function render(data) {
-        const container = document.getElementById('mainContainer');
-        container.innerHTML = '';
-        const grouped = data.reduce((acc, i) => {
-            if (!acc[i.cat]) acc[i.cat] = {};
-            if (!acc[i.cat][i.ser]) acc[i.cat][i.ser] = [];
-            acc[i.cat][i.ser].push(i);
+    async function init() {
+        try {
+            const r = await fetch('Black_belt_syllabus_IJJA.csv');
+            const txt = await r.text();
+            db = parseCSV(txt);
+            render();
+        } catch(e) { console.error("Error loading CSV"); }
+    }
+
+    function render() {
+        const app = document.getElementById('app');
+        app.innerHTML = '';
+        const groups = db.reduce((acc, x) => {
+            if(!acc[x.cat]) acc[x.cat] = {};
+            if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
+            acc[x.cat][x.ser].push(x);
             return acc;
         }, {});
 
-        Object.keys(grouped).forEach(cat => {
+        for(let cat in groups) {
             const cDiv = document.createElement('div');
-            cDiv.className = 'category'; cDiv.dataset.cat = cat; cDiv.innerText = cat;
-            container.appendChild(cDiv);
-
-            Object.keys(grouped[cat]).forEach(ser => {
-                const sWrap = document.createElement('div');
-                sWrap.className = 'series-wrapper'; sWrap.dataset.pcat = cat;
-                const sDiv = document.createElement('div');
-                sDiv.className = 'series';
-                sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+            cDiv.className = 'cat-group';
+            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
+            for(let ser in groups[cat]) {
+                const sBtn = document.createElement('div');
+                sBtn.className = 'ser-item';
+                sBtn.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
                 const list = document.createElement('ul');
-                list.className = 'exercise-list';
-                
-                grouped[cat][ser].forEach(ex => {
+                list.className = 'ex-list';
+                groups[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
-                    li.className = 'exercise';
-                    li.innerHTML = `
-                        <span class="ex-name" onclick="openVideo('${ex.link}')">${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
-                    `;
+                    li.className = 'ex-row';
+                    li.dataset.id = ex.id;
+                    const isLink = ex.link && ex.link.length > 5;
+                    const nameHtml = isLink 
+                        ? `<span class="ex-link" onclick='openV(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>`
+                        : `<span class="ex-no-link">${ex.num}. ${ex.name}</span>`;
+                    li.innerHTML = `${nameHtml} <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
-
-                sDiv.onclick = () => { sDiv.classList.toggle('active'); list.classList.toggle('expanded'); };
-                sWrap.appendChild(sDiv); sWrap.appendChild(list); container.appendChild(sWrap);
-            });
-        });
-    }
-
-    // פונקציות תרגיל אקראי
-    function getRandomEx() {
-        if (rawData.length === 0) return;
-        currentRandomEx = rawData[Math.floor(Math.random() * rawData.length)];
-        
-        document.getElementById('rCat').innerText = currentRandomEx.cat;
-        document.getElementById('rSer').innerText = currentRandomEx.ser;
-        document.getElementById('rName').innerText = currentRandomEx.name;
-        
-        document.getElementById('rndModal').style.display = 'flex';
-        document.body.classList.add('modal-open');
-    }
-
-    function playCurrentRnd() {
-        if (currentRandomEx) openVideo(currentRandomEx.link);
-    }
-
-    function closeRndModal() {
-        document.getElementById('rndModal').style.display = 'none';
-        if (!document.getElementById('videoModal').style.display === 'flex') {
-            document.body.classList.remove('modal-open');
-        }
-    }
-
-    function openVideo(url) {
-        if (!url) return;
-        let videoId = "", start = 0;
-        try {
-            if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-            else if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-            if (url.includes("t=")) {
-                const tParam = url.split("t=")[1].split("&")[0];
-                start = parseInt(tParam.replace('s', '')) || 0;
+                sBtn.onclick = () => {
+                    const isOpen = list.classList.toggle('open');
+                    sBtn.querySelector('i').className = isOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                };
+                cDiv.appendChild(sBtn);
+                cDiv.appendChild(list);
             }
-            if (videoId) {
-                document.getElementById('mainPlayer').src = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
-                document.getElementById('videoModal').style.display = 'flex';
-                document.body.classList.add('modal-open');
-            } else window.open(url, '_blank');
-        } catch (e) { window.open(url, '_blank'); }
-    }
-
-    function closeVideo() {
-        document.getElementById('mainPlayer').src = "";
-        document.getElementById('videoModal').style.display = 'none';
-        // אם מודאל האקראי לא פתוח, נחזיר את הגלילה
-        if (document.getElementById('rndModal').style.display !== 'flex') {
-            document.body.classList.remove('modal-open');
+            app.appendChild(cDiv);
         }
     }
 
-    function toggleFav(id, el) {
-        if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
-        else favorites.push(id);
+    // פונקציית טעינת הוידאו מהגרסה הישנה והתקינה
+    function loadVideo(url) {
+        const frame = document.getElementById('vFrame');
+        if (!url) { frame.src = ""; return; }
+        
+        let videoId = '';
+        if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('v=')) {
+            videoId = url.split('v=')[1].split('&')[0];
+        }
+        
+        const timeMatch = url.match(/[?&]t=(\d+)/);
+        const start = timeMatch ? timeMatch[1] : 0;
+        
+        if (videoId) {
+            frame.src = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
+        } else {
+            frame.src = "";
+        }
+    }
+
+    function openV(ex, isRandom) {
+        currentEx = ex;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const randBtn = document.getElementById('randBtnModal');
+        const counter = document.getElementById('vCounter');
+        
+        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
+        document.getElementById('vName').innerText = ex.name;
+
+        if (isRandom) {
+            prevBtn.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            randBtn.classList.remove('hidden');
+            counter.innerText = "תרגיל אקראי";
+        } else {
+            prevBtn.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+            randBtn.classList.add('hidden');
+            const seriesItems = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
+            const currentIdx = seriesItems.findIndex(x => x.id === ex.id) + 1;
+            counter.innerText = `תרגיל ${currentIdx} מתוך ${seriesItems.length}`;
+            updateNavButtons(seriesItems);
+        }
+        
+        loadVideo(ex.link);
+        document.getElementById('vModal').style.display = 'flex';
+    }
+
+    function updateNavButtons(series) {
+        const idx = series.findIndex(x => x.id === currentEx.id);
+        document.getElementById('prevBtn').disabled = (idx <= 0);
+        document.getElementById('nextBtn').disabled = (idx >= series.length - 1);
+    }
+
+    function nav(dir) {
+        const series = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+        const idx = series.findIndex(x => x.id === currentEx.id);
+        const target = series[idx + dir];
+        if(target && target.link) openV(target, false);
+    }
+
+    function playRandom() {
+        const pool = db.filter(x => x.link && x.link.length > 5);
+        if(pool.length > 0) {
+            const r = pool[Math.floor(Math.random()*pool.length)];
+            openV(r, true);
+        }
+    }
+
+    function closeV() {
+        document.getElementById('vModal').style.display = 'none';
+        document.getElementById('vFrame').src = "";
+    }
+
+    function toggleStar(id, el) {
+        if(favs.includes(id)) favs = favs.filter(f => f !== id);
+        else favs.push(id);
         el.classList.toggle('active');
-        localStorage.setItem('ijja_favs', JSON.stringify(favorites));
+        localStorage.setItem('ijja_favs', JSON.stringify(favs));
+        if(isFavOnly) applyFilters();
     }
 
-    function toggleAllAccordions() {
-        allExpanded = !allExpanded;
-        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
-        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
-    }
-
-    function applyFilter(val, btn) {
-        document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.category').forEach(c => {
-            if (val === 'favs') c.classList.add('hidden');
-            else c.classList.toggle('hidden', val !== 'all' && c.dataset.cat !== val);
-        });
-        document.querySelectorAll('.series-wrapper').forEach(w => {
-            if (val === 'favs') {
-                const hasFav = w.querySelector('.fav-star.active');
-                w.classList.toggle('hidden', !hasFav);
-                w.querySelectorAll('.exercise').forEach(ex => ex.classList.toggle('hidden', !ex.querySelector('.fav-star.active')));
-            } else {
-                w.classList.toggle('hidden', val !== 'all' && w.dataset.pcat !== val);
-                w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
-            }
-        });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function genFilters(data) {
-        const cats = [...new Set(data.map(i => i.cat))];
-        const container = document.getElementById('filterContainer');
-        cats.forEach(c => {
-            if (!c) return;
-            const btn = document.createElement('button');
-            btn.className = 'filter-button'; btn.innerText = c;
-            btn.onclick = (e) => applyFilter(c, e.target);
-            container.appendChild(btn);
-        });
-    }
-
-    function clearAllFavs() {
+    function clearFavs() {
         if(confirm("למחוק את כל המועדפים?")) {
-            favorites = []; localStorage.setItem('ijja_favs', "[]");
-            document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
+            favs = [];
+            localStorage.setItem('ijja_favs', "[]");
+            render();
         }
     }
 
-    document.addEventListener('DOMContentLoaded', loadSyllabus);
+    function toggleFavFilter() {
+        isFavOnly = !isFavOnly;
+        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
+        applyFilters();
+    }
 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW registered'));
+    function applyFilters() {
+        document.querySelectorAll('.cat-group').forEach(c => {
+            let catHas = false;
+            c.querySelectorAll('.ser-item').forEach(s => {
+                const list = s.nextElementSibling;
+                let serHas = false;
+                list.querySelectorAll('.ex-row').forEach(row => {
+                    const isF = favs.includes(parseInt(row.dataset.id));
+                    const hide = isFavOnly && !isF;
+                    row.classList.toggle('hidden', hide);
+                    if(!hide) serHas = true;
+                });
+                s.classList.toggle('hidden', isFavOnly && !serHas);
+                list.classList.toggle('hidden', isFavOnly && !serHas);
+                if(serHas) catHas = true;
+            });
+            c.classList.toggle('hidden', isFavOnly && !catHas);
         });
     }
+
+    function toggleAll() {
+        const lists = document.querySelectorAll('.ex-list');
+        const anyClosed = Array.from(lists).some(l => !l.classList.contains('open'));
+        lists.forEach(l => l.classList.toggle('open', anyClosed));
+    }
+
+    window.onload = init;
 </script>
 </body>
 </html>
-
