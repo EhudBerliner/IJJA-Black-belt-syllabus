@@ -19,6 +19,7 @@
             --border: #d2dce5;
             --header-h: 90px;
             --fav-color: #ffc107;
+            --danger: #d32f2f;
         }
 
         html, body {
@@ -42,6 +43,7 @@
             width: 100%;
             z-index: 1200;
             box-sizing: border-box;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
@@ -50,15 +52,19 @@
         header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.3em; line-height: 1.1; }
         .version-text { font-size: 0.7em; color: #666; margin-top: 2px; }
 
-        .action-bar { display: flex; gap: 6px; }
+        .action-bar { display: flex; gap: 8px; }
         .action-button {
-            width: 42px; height: 42px; border-radius: 6px;
-            border: 1px solid var(--border); background: #f0f4f8;
+            width: 42px; height: 42px; border-radius: 8px;
+            border: 1px solid var(--border); background: white;
             color: var(--primary); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2em; transition: all 0.2s;
+            font-size: 1.2em; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .action-button.active { background: var(--primary); color: white; }
+        .action-button:hover { background: #f0f7ff; }
+        .action-button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-danger { color: var(--danger); }
+        .btn-danger:hover { background: #fff5f5; border-color: var(--danger); }
 
         #scrollContainer {
             height: 100vh; padding-top: var(--header-h);
@@ -71,6 +77,7 @@
             background: var(--primary); color: white; padding: 12px 20px;
             border-radius: 12px; font-size: 1.4em; font-weight: 900;
             position: sticky; top: 10px; z-index: 100; margin-bottom: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
 
         .series {
@@ -87,20 +94,24 @@
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
         .fav-star.active { color: var(--fav-color); }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 600px; text-align: center; position: relative; }
+        /* מודאל וידיאו */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 18px; width: 95%; max-width: 600px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; min-height: 60px; }
-        .nav-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.1em; }
-        .nav-btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.5; }
-        .reroll-btn { background: #ff9800; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; min-height: 65px; }
+        .modal-nav-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .modal-nav-btn:disabled { background: #e0e0e0; color: #999; cursor: not-allowed; box-shadow: none; }
+        
+        .reroll-btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 30px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 10px; margin: 0 auto; font-size: 1.1em; transition: transform 0.2s; }
+        .reroll-btn:active { transform: scale(0.95); }
 
-        .info-label { font-size: 0.8em; color: var(--secondary); font-weight: 700; margin-bottom: 2px; display: block; }
-        .video-counter { font-size: 0.8em; font-weight: 700; color: #666; background: #f0f4f8; padding: 2px 8px; border-radius: 10px; }
+        .info-label { font-size: 0.85em; color: var(--secondary); font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.8; }
+        .video-counter { font-size: 0.8em; font-weight: 700; color: #555; background: #edf2f7; padding: 3px 12px; border-radius: 20px; margin-top: 5px; display: inline-block; }
 
-        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 12px; overflow: hidden; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .close-x { position: absolute; top: -45px; left: 0; color: white; font-size: 30px; cursor: pointer; }
+        .close-x { position: absolute; top: -50px; left: 0; color: white; font-size: 35px; cursor: pointer; transition: color 0.2s; }
+        .close-x:hover { color: #ccc; }
 
         .hidden { display: none !important; }
     </style>
@@ -112,14 +123,14 @@
         <img src="Logo.png" alt="Logo" class="logo-img">
         <div class="title-area">
             <h1>סילבוס IJJA</h1>
-            <span class="version-text">גרסה 1.2.5</span>
+            <span class="version-text">גרסה 1.2.6</span>
         </div>
     </div>
     <div class="action-bar">
-        <button class="action-button" onclick="getRandomEx()" style="background:#ff9800; color:white;"><i class="fas fa-dice"></i></button>
-        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white;"><i class="fas fa-arrows-alt-v"></i></button>
-        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star" style="color:var(--fav-color)"></i></button>
-        <button class="action-button" onclick="clearAllFavs()" style="background:#f44336; color:white;"><i class="fas fa-trash"></i></button>
+        <button class="action-button btn-primary" onclick="getRandomEx()" title="אקראי"><i class="fas fa-dice"></i></button>
+        <button class="action-button active" id="toggleAllBtn" onclick="toggleAllAccordions()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
+        <button class="action-button btn-danger" onclick="clearAllFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
     </div>
 </header>
 
@@ -132,21 +143,21 @@
         <i class="fas fa-times close-x" onclick="closeModal()"></i>
         
         <div class="nav-header">
-            <button id="prevBtn" class="nav-btn nav-mode" onclick="navigateEx(-1)"><i class="fas fa-chevron-right"></i></button>
+            <button id="prevBtn" class="modal-nav-btn nav-mode" onclick="navigateEx(-1)"><i class="fas fa-chevron-right"></i></button>
             
             <div style="flex:1">
                 <span id="mInfo" class="info-label"></span>
-                <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.1em;"></h3>
+                <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.2em; font-weight: 900;"></h3>
                 <div id="mCounter" class="video-counter nav-mode"></div>
                 
                 <div id="rerollArea" class="hidden">
                     <button class="reroll-btn" onclick="getRandomEx()">
-                        <i class="fas fa-random"></i> הגרל שוב
+                        <i class="fas fa-random"></i> אקראי
                     </button>
                 </div>
             </div>
             
-            <button id="nextBtn" class="nav-btn nav-mode" onclick="navigateEx(1)"><i class="fas fa-chevron-left"></i></button>
+            <button id="nextBtn" class="modal-nav-btn nav-mode" onclick="navigateEx(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
         
         <div class="video-wrapper">
@@ -227,7 +238,6 @@
         document.getElementById('mTitle').innerText = ex.name;
         document.getElementById('videoFrame').src = getEmbedUrl(ex.link);
         
-        // ניהול מצבי תצוגה (אקראי מול ניווט)
         const navElements = document.querySelectorAll('.nav-mode');
         const rerollArea = document.getElementById('rerollArea');
         
@@ -292,7 +302,7 @@
     }
 
     function clearAllFavs() {
-        if(confirm("למחוק מועדפים?")) {
+        if(confirm("למחוק את כל המועדפים?")) {
             favorites = []; localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
         }
