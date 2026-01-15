@@ -5,7 +5,7 @@
     <meta name="theme-color" content="#007aff">
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Syllabus for black belts in ju-jitsu</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
@@ -21,7 +21,7 @@
             --card-bg: #ffffff;
             --border: #d2dce5;
             --header-height: 70px;
-            --filter-height: 60px;
+            --filter-area-height: 60px;
             --fav-color: #ffc107;
         }
 
@@ -48,6 +48,7 @@
 
         .layout { display: flex; max-width: 900px; margin: auto; padding: 20px; gap: 20px; align-items: flex-start; }
 
+        /* תפריט צד למחשב */
         .filter-sidebar {
             width: 230px; position: sticky; top: calc(var(--header-height) + 20px);
             max-height: calc(100vh - var(--header-height) - 40px); overflow-y: auto;
@@ -62,7 +63,7 @@
         .filter-button {
             width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
             background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: right; font-family: 'Heebo';
-            transition: 0.2s; white-space: nowrap;
+            transition: 0.2s; white-space: nowrap; font-size: 14px;
         }
 
         .filter-button.active { background: var(--primary); color: white; }
@@ -92,7 +93,7 @@
         .fav-star.active { color: var(--fav-color); }
 
         /* מודאלים */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1200; justify-content: center; align-items: center; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
         .modal-btns { display: flex; gap: 10px; flex-direction: column; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; text-decoration: none; }
@@ -100,32 +101,41 @@
 
         .hidden { display: none !important; }
 
+        /* התאמה למובייל - יצירת אחידות גלילה */
         @media (max-width: 900px) {
             header { height: 60px; }
-            /* גובה קבוע ל-Header + סרגל פילטרים למניעת קפיצות גלילה */
-            body { padding-top: 120px; } 
             
+            /* קיבוע הגובה הכולל של ה-Header והפילטרים למניעת קפיצות */
+            body { padding-top: 120px; } 
+
             .filter-sidebar {
                 width: 100%; position: fixed; top: 60px; left: 0; z-index: 1050;
-                height: var(--filter-height); background: white; border-bottom: 2px solid var(--primary);
+                height: var(--filter-area-height); background: white; border-bottom: 2px solid var(--primary);
+                display: block; overflow: hidden;
             }
 
             .filter-bar {
                 flex-direction: row; flex-wrap: nowrap; overflow-x: auto; 
-                padding: 10px; gap: 8px; border: none; border-radius: 0; height: 100%; box-sizing: border-box;
-                -webkit-overflow-scrolling: touch;
+                padding: 10px; gap: 8px; border: none; border-radius: 0; height: 100%; 
+                box-shadow: none; box-sizing: border-box;
+                -webkit-overflow-scrolling: touch; /* גלילה חלקה ב-iOS */
             }
-            .filter-bar::-webkit-scrollbar { display: none; }
-            .filter-button { width: auto; font-size: 0.85em; padding: 0 15px; height: 35px; display: flex; align-items: center; }
+            .filter-bar::-webkit-scrollbar { display: none; } /* הסתרת סרגל גלילה */
+            
+            .filter-button { 
+                width: auto; font-size: 13px; padding: 0 15px; height: 38px; 
+                display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            }
 
             .category { top: 120px; }
+            .layout { padding: 0; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.5</div>
+    <div class="version-tag">Version 1.1.6</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
@@ -133,16 +143,16 @@
     <aside class="filter-sidebar">
         <div class="filter-bar" id="filterContainer">
             <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
-                <i class="fas fa-random"></i> אקראי
+                <i class="fas fa-random" style="margin-left:5px;"></i> אקראי
             </button>
             <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none;">
-                <i class="fas fa-star"></i> מועדפים
+                <i class="fas fa-star" style="margin-left:5px;"></i> מועדפים
             </button>
             <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
-                <i class="fas fa-arrows-alt-v"></i> פתח הכל
+                <i class="fas fa-arrows-alt-v" style="margin-left:5px;"></i> פתח הכל
             </button>
             <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
-                <i class="fas fa-trash-alt"></i> נקה מועדפים
+                <i class="fas fa-trash-alt" style="margin-left:5px;"></i> נקה
             </button>
             <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
         </div>
@@ -153,9 +163,9 @@
 
 <div id="rndModal" class="modal-overlay" onclick="closeRndModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 id="rCat">קטגוריה</h2>
-        <h4 id="rSer">סדרה</h4>
-        <span style="font-size:1.4em; font-weight:900; margin-bottom:20px; display:block;" id="rName">שם התרגיל</span>
+        <h2 id="rCat" style="font-size:1.1em; color:var(--primary); margin:0;">קטגוריה</h2>
+        <h4 id="rSer" style="font-weight:400; color:#666; margin:5px 0 15px 0;">סדרה</h4>
+        <span style="font-size:1.5em; font-weight:900; margin-bottom:25px; display:block; line-height:1.2;" id="rName">שם התרגיל</span>
         <div class="modal-btns">
             <a id="rLink" class="btn-main" target="_blank">צפה בוידיאו <i class="fas fa-play"></i></a>
             <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר <i class="fas fa-redo"></i></button>
@@ -244,7 +254,7 @@
         allExpanded = !allExpanded;
         document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
         document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
+        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור' : '<i class="fas fa-arrows-alt-v"></i> פתח';
     }
 
     function applyFilter(val, btn) {
