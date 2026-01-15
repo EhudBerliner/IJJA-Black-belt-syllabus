@@ -62,13 +62,13 @@
 
         .filter-button {
             width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
-            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: center; font-family: 'Heebo';
-            transition: 0.2s;
+            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: right; font-family: 'Heebo';
+            transition: 0.2s; white-space: nowrap;
         }
 
         .filter-button.active { background: var(--primary); color: white; }
 
-        .container { flex: 1; padding-bottom: 50vh; }
+        .container { flex: 1; min-height: 100vh; padding-bottom: 50vh; }
 
         .category {
             margin-top: 0; background: var(--primary); color: white; padding: 15px 20px;
@@ -122,51 +122,52 @@
         .modal-content .ex-title { font-size: 1.4em; font-weight: 900; margin-bottom: 25px; display: block; }
 
         .modal-btns { display: flex; gap: 10px; flex-direction: column; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1em; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1em; text-decoration: none; display: inline-block; }
         .btn-sub { background: #f0f4f8; color: var(--text-dark); border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
         .btn-close { color: #888; background: none; border: none; margin-top: 10px; cursor: pointer; text-decoration: underline; }
-
-        /* שכבת הוידאו מעל הכל */
-        .video-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 1300; justify-content: center; align-items: center;
-        }
-        .video-container { width: 95%; max-width: 800px; position: relative; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; }
-        .video-container iframe { width: 100%; height: 100%; border: none; }
-        .close-video { position: absolute; top: 10px; left: 15px; color: white; font-size: 2.5rem; cursor: pointer; z-index: 10001; }
 
         .hidden { display: none !important; }
 
         @media (max-width: 900px) {
-            .layout { flex-direction: column; padding: 10px; }
-            .filter-sidebar { width: 100%; position: static; max-height: none; }
-            .filter-bar { flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 10px; }
-            .filter-button { width: auto; font-size: 0.85em; padding: 8px 12px; }
-            .category { margin-top: 20px; top: var(--header-height); }
+            header { height: 60px; }
+            body { padding-top: 120px; } /* מקום ל-Header ולפילטרים */
+            
+            .layout { flex-direction: column; padding: 0; gap: 0; }
+            
+            .filter-sidebar {
+                width: 100%; position: fixed; top: 60px; left: 0; z-index: 1050;
+                max-height: 60px; background: white; border-bottom: 1px solid var(--border);
+            }
+
+            .filter-bar {
+                flex-direction: row; flex-wrap: nowrap; overflow-x: auto; 
+                padding: 10px; gap: 10px; border: none; border-radius: 0;
+                -webkit-overflow-scrolling: touch; scrollbar-width: none;
+            }
+            .filter-bar::-webkit-scrollbar { display: none; }
+            
+            .filter-button { width: auto; font-size: 0.85em; padding: 6px 15px; text-align: center; }
+
+            .container { padding: 10px; }
+            .category { top: 120px; } /* צמוד מתחת לפילטרים */
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.2</div>
+    <div class="version-tag">Version 1.1.4</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
 <div class="layout">
     <aside class="filter-sidebar">
         <div class="filter-bar" id="filterContainer">
-            <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none; text-align:center;">
-                <i class="fas fa-random"></i> תרגיל אקראי
+            <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
+                <i class="fas fa-random"></i> אקראי
             </button>
-            <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none; text-align:center;">
+            <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none;">
                 <i class="fas fa-star"></i> מועדפים
-            </button>
-            <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none; text-align:center;">
-                <i class="fas fa-trash-alt"></i> בטל מועדפים
-            </button>
-            <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none; text-align:center;">
-                <i class="fas fa-arrows-alt-v"></i> פתח הכל
             </button>
             <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
         </div>
@@ -181,25 +182,16 @@
         <h4 id="rSer">סדרה</h4>
         <span class="ex-title" id="rName">שם התרגיל</span>
         <div class="modal-btns">
-            <button class="btn-main" onclick="playCurrentRnd()">צפה בוידיאו <i class="fas fa-play"></i></button>
+            <a id="rLink" class="btn-main" target="_blank">צפה בוידיאו <i class="fas fa-play"></i></a>
             <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר <i class="fas fa-redo"></i></button>
             <button class="btn-close" onclick="closeRndModal()">סגור</button>
         </div>
     </div>
 </div>
 
-<div id="videoModal" class="video-overlay" onclick="closeVideo()">
-    <div class="video-container" onclick="event.stopPropagation()">
-        <span class="close-video" onclick="closeVideo()">&times;</span>
-        <iframe id="mainPlayer" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-    </div>
-</div>
-
 <script>
     let rawData = [];
-    let currentRandomEx = null;
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let allExpanded = false;
 
     async function loadSyllabus() {
         try {
@@ -253,7 +245,7 @@
                     const li = document.createElement('li');
                     li.className = 'exercise';
                     li.innerHTML = `
-                        <span class="ex-name" onclick="openVideo('${ex.link}')">${ex.num}. ${ex.name}</span>
+                        <span class="ex-name" onclick="window.open('${ex.link}', '_blank')">${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
                     `;
                     list.appendChild(li);
@@ -265,57 +257,6 @@
         });
     }
 
-    // פונקציות תרגיל אקראי
-    function getRandomEx() {
-        if (rawData.length === 0) return;
-        currentRandomEx = rawData[Math.floor(Math.random() * rawData.length)];
-        
-        document.getElementById('rCat').innerText = currentRandomEx.cat;
-        document.getElementById('rSer').innerText = currentRandomEx.ser;
-        document.getElementById('rName').innerText = currentRandomEx.name;
-        
-        document.getElementById('rndModal').style.display = 'flex';
-        document.body.classList.add('modal-open');
-    }
-
-    function playCurrentRnd() {
-        if (currentRandomEx) openVideo(currentRandomEx.link);
-    }
-
-    function closeRndModal() {
-        document.getElementById('rndModal').style.display = 'none';
-        if (!document.getElementById('videoModal').style.display === 'flex') {
-            document.body.classList.remove('modal-open');
-        }
-    }
-
-    function openVideo(url) {
-        if (!url) return;
-        let videoId = "", start = 0;
-        try {
-            if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-            else if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-            if (url.includes("t=")) {
-                const tParam = url.split("t=")[1].split("&")[0];
-                start = parseInt(tParam.replace('s', '')) || 0;
-            }
-            if (videoId) {
-                document.getElementById('mainPlayer').src = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
-                document.getElementById('videoModal').style.display = 'flex';
-                document.body.classList.add('modal-open');
-            } else window.open(url, '_blank');
-        } catch (e) { window.open(url, '_blank'); }
-    }
-
-    function closeVideo() {
-        document.getElementById('mainPlayer').src = "";
-        document.getElementById('videoModal').style.display = 'none';
-        // אם מודאל האקראי לא פתוח, נחזיר את הגלילה
-        if (document.getElementById('rndModal').style.display !== 'flex') {
-            document.body.classList.remove('modal-open');
-        }
-    }
-
     function toggleFav(id, el) {
         if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
         else favorites.push(id);
@@ -323,31 +264,43 @@
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
     }
 
-    function toggleAllAccordions() {
-        allExpanded = !allExpanded;
-        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
-        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
-    }
-
     function applyFilter(val, btn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        
         document.querySelectorAll('.category').forEach(c => {
             if (val === 'favs') c.classList.add('hidden');
             else c.classList.toggle('hidden', val !== 'all' && c.dataset.cat !== val);
         });
+
         document.querySelectorAll('.series-wrapper').forEach(w => {
             if (val === 'favs') {
-                const hasFav = w.querySelector('.fav-star.active');
+                const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
                 w.classList.toggle('hidden', !hasFav);
-                w.querySelectorAll('.exercise').forEach(ex => ex.classList.toggle('hidden', !ex.querySelector('.fav-star.active')));
+                w.querySelectorAll('.exercise').forEach(ex => {
+                    ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
+                });
             } else {
                 w.classList.toggle('hidden', val !== 'all' && w.dataset.pcat !== val);
                 w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
             }
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function getRandomEx() {
+        const ex = rawData[Math.floor(Math.random() * rawData.length)];
+        document.getElementById('rCat').innerText = ex.cat;
+        document.getElementById('rSer').innerText = ex.ser;
+        document.getElementById('rName').innerText = ex.name;
+        document.getElementById('rLink').href = ex.link;
+        document.getElementById('rndModal').style.display = 'flex';
+        document.body.classList.add('modal-open');
+    }
+
+    function closeRndModal() {
+        document.getElementById('rndModal').style.display = 'none';
+        document.body.classList.remove('modal-open');
     }
 
     function genFilters(data) {
@@ -373,10 +326,9 @@
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW registered'));
+            navigator.serviceWorker.register('./sw.js');
         });
     }
 </script>
 </body>
 </html>
-
