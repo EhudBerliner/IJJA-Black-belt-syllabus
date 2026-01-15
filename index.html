@@ -44,125 +44,65 @@
             box-sizing: border-box;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 50px; width: auto; }
+        .title-area { display: flex; flex-direction: column; }
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.3em; line-height: 1.1; }
+        .version-text { font-size: 0.7em; color: #666; margin-top: 2px; }
 
-        .logo-img {
-            height: 50px;
-            width: auto;
-        }
-
-        .title-area {
-            display: flex;
-            flex-direction: column;
-        }
-
-        header h1 { 
-            margin: 0; 
-            font-weight: 800; 
-            color: var(--primary); 
-            font-size: 1.3em;
-            line-height: 1.1;
-        }
-
-        .version-text {
-            font-size: 0.7em;
-            color: #666;
-            margin-top: 2px;
-        }
-
-        .action-bar {
-            display: flex;
-            gap: 6px;
-        }
-
+        .action-bar { display: flex; gap: 6px; }
         .action-button {
-            width: 42px;
-            height: 42px;
-            border-radius: 6px; /* מרובע עם עיגול קל בפינות */
-            border: 1px solid var(--border);
-            background: #f0f4f8;
-            color: var(--primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            transition: all 0.2s;
+            width: 42px; height: 42px; border-radius: 6px;
+            border: 1px solid var(--border); background: #f0f4f8;
+            color: var(--primary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2em; transition: all 0.2s;
         }
-
         .action-button.active { background: var(--primary); color: white; }
 
         #scrollContainer {
-            height: 100vh;
-            padding-top: var(--header-h);
-            overflow-y: auto;
-            box-sizing: border-box;
-            scrollbar-gutter: stable;
+            height: 100vh; padding-top: var(--header-h);
+            overflow-y: auto; box-sizing: border-box; scrollbar-gutter: stable;
         }
 
         .main-content { max-width: 900px; margin: 0 auto; padding: 20px; }
-
         .category-wrap { margin-bottom: 25px; }
         .category-title {
-            background: var(--primary);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 1.4em;
-            font-weight: 900;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-            margin-bottom: 10px;
+            background: var(--primary); color: white; padding: 12px 20px;
+            border-radius: 12px; font-size: 1.4em; font-weight: 900;
+            position: sticky; top: 10px; z-index: 100; margin-bottom: 10px;
         }
 
-        .series-container { margin-bottom: 10px; }
         .series {
-            background: white;
-            padding: 15px;
-            font-weight: 700;
-            border-right: 4px solid var(--secondary);
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: white; padding: 15px; font-weight: 700;
+            border-right: 4px solid var(--secondary); border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 5px;
         }
 
         .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-        .exercise-list.expanded { max-height: 2000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; }
+        .exercise-list.expanded { max-height: 2000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; margin-bottom: 10px; }
         .exercise { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        
         .ex-name { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
         .fav-star.active { color: var(--fav-color); }
 
-        .hidden { display: none !important; }
-
-        /* מודאל וידיאו */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 600px; text-align: center; position: relative; }
         
-        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
-        .nav-btn { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; font-weight: 700; }
-        .nav-btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
-        
-        .video-counter { font-size: 0.85em; font-weight: 700; color: #666; background: #f0f4f8; padding: 3px 10px; border-radius: 10px; display: inline-block; margin-top: 4px; }
+        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; min-height: 60px; }
+        .nav-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1.1em; }
+        .nav-btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.5; }
+        .reroll-btn { background: #ff9800; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+
+        .info-label { font-size: 0.8em; color: var(--secondary); font-weight: 700; margin-bottom: 2px; display: block; }
+        .video-counter { font-size: 0.8em; font-weight: 700; color: #666; background: #f0f4f8; padding: 2px 8px; border-radius: 10px; }
+
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        
         .close-x { position: absolute; top: -45px; left: 0; color: white; font-size: 30px; cursor: pointer; }
 
-        @media (max-width: 600px) {
-            header { padding: 0 10px; }
-            header h1 { font-size: 1.1em; }
-            .action-button { width: 36px; height: 36px; font-size: 1em; }
-        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -172,23 +112,14 @@
         <img src="Logo.png" alt="Logo" class="logo-img">
         <div class="title-area">
             <h1>סילבוס IJJA</h1>
-            <span class="version-text">גרסה 1.2.4</span>
+            <span class="version-text">גרסה 1.2.5</span>
         </div>
     </div>
-    
     <div class="action-bar">
-        <button class="action-button" onclick="getRandomEx()" title="אקראי" style="background:#ff9800; color:white; border:none;">
-            <i class="fas fa-random"></i>
-        </button>
-        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" title="פתח/סגור הכל" style="background:#4caf50; color:white; border:none;">
-            <i class="fas fa-arrows-alt-v"></i>
-        </button>
-        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים">
-            <i class="fas fa-star" style="color:var(--fav-color)"></i>
-        </button>
-        <button class="action-button" onclick="clearAllFavs()" title="נקה מועדפים" style="background:#f44336; color:white; border:none;">
-            <i class="fas fa-trash"></i>
-        </button>
+        <button class="action-button" onclick="getRandomEx()" style="background:#ff9800; color:white;"><i class="fas fa-dice"></i></button>
+        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white;"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star" style="color:var(--fav-color)"></i></button>
+        <button class="action-button" onclick="clearAllFavs()" style="background:#f44336; color:white;"><i class="fas fa-trash"></i></button>
     </div>
 </header>
 
@@ -201,16 +132,21 @@
         <i class="fas fa-times close-x" onclick="closeModal()"></i>
         
         <div class="nav-header">
-            <button id="prevBtn" class="nav-btn" onclick="navigateEx(-1)">
-                <i class="fas fa-chevron-right"></i>
-            </button>
+            <button id="prevBtn" class="nav-btn nav-mode" onclick="navigateEx(-1)"><i class="fas fa-chevron-right"></i></button>
+            
             <div style="flex:1">
-                <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.1em; line-height:1.2;"></h3>
-                <div id="mCounter" class="video-counter"></div>
+                <span id="mInfo" class="info-label"></span>
+                <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.1em;"></h3>
+                <div id="mCounter" class="video-counter nav-mode"></div>
+                
+                <div id="rerollArea" class="hidden">
+                    <button class="reroll-btn" onclick="getRandomEx()">
+                        <i class="fas fa-random"></i> הגרל שוב
+                    </button>
+                </div>
             </div>
-            <button id="nextBtn" class="nav-btn" onclick="navigateEx(1)">
-                <i class="fas fa-chevron-left"></i>
-            </button>
+            
+            <button id="nextBtn" class="nav-btn nav-mode" onclick="navigateEx(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
         
         <div class="video-wrapper">
@@ -222,9 +158,8 @@
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let allExpanded = false;
-    let isFavFilterActive = false;
     let currentEx = null;
+    let isFavFilterActive = false;
 
     async function loadSyllabus() {
         try {
@@ -263,46 +198,51 @@
             const catWrap = document.createElement('div');
             catWrap.className = 'category-wrap';
             catWrap.innerHTML = `<div class="category-title">${cat}</div>`;
-            
             Object.keys(grouped[cat]).forEach(ser => {
-                const sContainer = document.createElement('div');
-                sContainer.className = 'series-container';
                 const sDiv = document.createElement('div');
                 sDiv.className = 'series';
                 sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
-                
                 const list = document.createElement('ul');
                 list.className = 'exercise-list';
-                
                 grouped[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
                     li.className = 'exercise';
-                    li.innerHTML = `
-                        <span class="ex-name" onclick='openVideo(${JSON.stringify(ex)})'>${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
-                    `;
+                    li.innerHTML = `<span class="ex-name" onclick='openVideo(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>
+                                    <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
-
                 sDiv.onclick = () => { sDiv.classList.toggle('active'); list.classList.toggle('expanded'); };
-                sContainer.appendChild(sDiv); sContainer.appendChild(list); catWrap.appendChild(sContainer);
+                catWrap.appendChild(sDiv); catWrap.appendChild(list);
             });
             container.appendChild(catWrap);
         });
     }
 
-    function openVideo(ex) {
+    function openVideo(ex, isRandom) {
         currentEx = ex;
         const seriesData = rawData.filter(i => i.cat === ex.cat && i.ser === ex.ser);
         const idx = seriesData.findIndex(i => i.id === ex.id);
 
+        document.getElementById('mInfo').innerText = `${ex.cat} » ${ex.ser}`;
         document.getElementById('mTitle').innerText = ex.name;
-        document.getElementById('mCounter').innerText = `תרגיל ${idx + 1} מתוך ${seriesData.length}`;
         document.getElementById('videoFrame').src = getEmbedUrl(ex.link);
-        document.getElementById('videoModal').style.display = 'flex';
         
-        document.getElementById('prevBtn').disabled = (idx === 0);
-        document.getElementById('nextBtn').disabled = (idx === seriesData.length - 1);
+        // ניהול מצבי תצוגה (אקראי מול ניווט)
+        const navElements = document.querySelectorAll('.nav-mode');
+        const rerollArea = document.getElementById('rerollArea');
+        
+        if (isRandom) {
+            navElements.forEach(el => el.classList.add('hidden'));
+            rerollArea.classList.remove('hidden');
+        } else {
+            navElements.forEach(el => el.classList.remove('hidden'));
+            rerollArea.classList.add('hidden');
+            document.getElementById('mCounter').innerText = `תרגיל ${idx + 1} מתוך ${seriesData.length}`;
+            document.getElementById('prevBtn').disabled = (idx === 0);
+            document.getElementById('nextBtn').disabled = (idx === seriesData.length - 1);
+        }
+
+        document.getElementById('videoModal').style.display = 'flex';
     }
 
     function getEmbedUrl(url) {
@@ -316,7 +256,12 @@
     function navigateEx(dir) {
         const seriesData = rawData.filter(i => i.cat === currentEx.cat && i.ser === currentEx.ser);
         const idx = seriesData.findIndex(i => i.id === currentEx.id);
-        if (seriesData[idx + dir]) openVideo(seriesData[idx + dir]);
+        if (seriesData[idx + dir]) openVideo(seriesData[idx + dir], false);
+    }
+
+    function getRandomEx() {
+        const ex = rawData[Math.floor(Math.random() * rawData.length)];
+        openVideo(ex, true);
     }
 
     function closeModal() {
@@ -329,46 +274,27 @@
         else favorites.push(id);
         el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
-        if(isFavFilterActive) applyFavFilter();
     }
 
     function toggleFavFilter() {
         isFavFilterActive = !isFavFilterActive;
         document.getElementById('favFilterBtn').classList.toggle('active', isFavFilterActive);
-        applyFavFilter();
-    }
-
-    function applyFavFilter() {
         document.querySelectorAll('.category-wrap').forEach(w => {
-            if (isFavFilterActive) {
-                const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
-                w.classList.toggle('hidden', !hasFav);
-                w.querySelectorAll('.exercise').forEach(ex => {
-                    ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
-                });
-            } else {
-                w.classList.remove('hidden');
-                w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
-            }
+            const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
+            w.classList.toggle('hidden', isFavFilterActive && !hasFav);
         });
     }
 
     function toggleAllAccordions() {
-        allExpanded = !allExpanded;
-        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
-        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-    }
-
-    function getRandomEx() {
-        const ex = rawData[Math.floor(Math.random() * rawData.length)];
-        openVideo(ex);
+        const anyExpanded = !!document.querySelector('.exercise-list.expanded');
+        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', !anyExpanded));
+        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', !anyExpanded));
     }
 
     function clearAllFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
+        if(confirm("למחוק מועדפים?")) {
             favorites = []; localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
-            if(isFavFilterActive) applyFavFilter();
         }
     }
 
