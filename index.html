@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.3.5</title>
+    <title>Syllabus IJJA - v1.3.6</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -93,11 +93,11 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס IJJA</h1>
-            <small style="color:#888">v1.3.5</small>
+            <small style="color:#888">v1.3.6</small>
         </div>
     </div>
     <div class="action-bar">
-        <button class="btn" onclick="playRandom(true)" title="אקראי"><i class="fas fa-random"></i></button>
+        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
         <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
         <button class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
         <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
@@ -146,7 +146,7 @@
                 else cur += char;
             }
             row.push(cur.trim());
-            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" });
+            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] ? row[4].trim() : "" });
         }
         return result;
     }
@@ -202,7 +202,7 @@
         }
     }
 
-    // פונקציית טעינת הוידאו מהגרסה הישנה והתקינה
+    // הפונקציה המקורית והתקינה מהגרסה ששלחת
     function loadVideo(url) {
         const frame = document.getElementById('vFrame');
         if (!url) { frame.src = ""; return; }
@@ -218,7 +218,7 @@
         const start = timeMatch ? timeMatch[1] : 0;
         
         if (videoId) {
-            frame.src = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
+            frame.src = `https://www.youtube.com/embed/${videoId.trim()}?start=${start}&autoplay=1&rel=0`;
         } else {
             frame.src = "";
         }
@@ -266,7 +266,7 @@
         if(target && target.link) openV(target, false);
     }
 
-    function playRandom() {
+    function playRandom(isFromModal = false) {
         const pool = db.filter(x => x.link && x.link.length > 5);
         if(pool.length > 0) {
             const r = pool[Math.floor(Math.random()*pool.length)];
