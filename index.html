@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.4.3</title>
+    <title>Syllabus IJJA - v1.4.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,7 +19,6 @@
             --border: #d2dce5;
             --header-h: 90px;
             --fav-color: #ffc107;
-            --danger: #d32f2f;
         }
 
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
@@ -65,13 +64,13 @@
         .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
         .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
         .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .ex-row.hidden { display: none; }
+        .ex-row.hidden { display: none !important; }
         
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
+        .ex-no-link { color: #888; flex: 1; cursor: default; }
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
-        /* Modal & Video Box */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; text-align: center; }
         
@@ -99,7 +98,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.3</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.4</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -119,8 +118,8 @@
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
-            <div style="flex: 1;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em;"></div>
+            <div style="flex: 1; overflow: hidden;">
+                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"></div>
                 <div id="vName" style="color:var(--primary); font-size:1.2em; font-weight: 800; margin-top:5px;"></div>
                 <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top: 4px;"></div>
             </div>
@@ -145,16 +144,16 @@
 
     function getEmbedUrl(url) {
         if (!url) return '';
-        let cleanUrl = url.trim();
-        if (cleanUrl.includes("/shorts/")) return cleanUrl.replace("/shorts/", "/embed/").split("?")[0];
-        let embedUrl = cleanUrl.replace("watch?v=", "embed/");
-        if (cleanUrl.includes("youtu.be/")) {
-            const videoId = cleanUrl.split("youtu.be/")[1].split("?")[0];
-            const timeParam = cleanUrl.split("?t=")[1] || cleanUrl.split("&t=")[1];
-            embedUrl = `https://www.youtube.com/embed/${videoId}`;
-            if (timeParam) embedUrl += `?start=${timeParam.replace(/[^0-9]/g, '')}`;
+        let clean = url.trim();
+        if (clean.includes("/shorts/")) return clean.replace("/shorts/", "/embed/").split("?")[0];
+        let embed = clean.replace("watch?v=", "embed/");
+        if (clean.includes("youtu.be/")) {
+            const id = clean.split("youtu.be/")[1].split("?")[0];
+            const t = clean.split("?t=")[1] || clean.split("&t=")[1];
+            embed = `https://www.youtube.com/embed/${id}`;
+            if (t) embed += `?start=${t.replace(/[^0-9]/g, '')}`;
         }
-        return embedUrl;
+        return embed;
     }
 
     async function init() {
@@ -163,23 +162,21 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("Data error"); }
+        } catch(e) { console.error("CSV error"); }
     }
 
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
-        const result = [];
-        for(let i=1; i<lines.length; i++) {
+        return lines.slice(1).map((line, i) => {
             let row = [], cur = '', inQ = false;
-            for(let char of lines[i]) {
+            for(let char of line) {
                 if(char === '"') inQ = !inQ;
                 else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
                 else cur += char;
             }
             row.push(cur.trim());
-            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" });
-        }
-        return result;
+            return { id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" };
+        });
     }
 
     function render() {
@@ -195,26 +192,32 @@
         for(let cat in groups) {
             const cDiv = document.createElement('div');
             cDiv.className = 'cat-group';
+            cDiv.dataset.cat = cat;
             cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
+            
             for(let ser in groups[cat]) {
                 const sBtn = document.createElement('div');
                 sBtn.className = 'ser-item';
                 sBtn.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+                
                 const list = document.createElement('ul');
                 list.className = 'ex-list';
+                
                 groups[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
                     li.className = 'ex-row';
-                    const isLink = ex.link && ex.link.length > 5;
+                    li.dataset.id = ex.id;
+                    const hasLink = ex.link && ex.link.length > 5;
                     li.innerHTML = `
-                        <span class="${isLink?'ex-link':'ex-no-link'}" onclick="${isLink?`openV(${JSON.stringify(ex)}, false)` : ''}">${ex.num}. ${ex.name}</span>
+                        <span class="${hasLink?'ex-link':'ex-no-link'}" onclick='${hasLink?`openV(${JSON.stringify(ex)}, false)` : ""}'>${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>
                     `;
                     list.appendChild(li);
                 });
+
                 sBtn.onclick = () => {
-                    const isOpen = list.classList.toggle('open');
-                    sBtn.querySelector('i').className = isOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                    const open = list.classList.toggle('open');
+                    sBtn.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
                 };
                 cDiv.appendChild(sBtn);
                 cDiv.appendChild(list);
@@ -225,7 +228,6 @@
 
     function openV(ex, isRandom) {
         currentEx = ex;
-        // איפוס תצוגה
         document.getElementById('videoContainer').style.display = 'none';
         document.getElementById('vFrame').src = "";
         document.getElementById('watchBtn').style.display = 'inline-flex';
@@ -233,9 +235,6 @@
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
 
-        const seriesItems = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
-        const currentIdx = seriesItems.findIndex(x => x.id === ex.id) + 1;
-        
         if(isRandom) {
             document.getElementById('prevBtn').classList.add('hidden');
             document.getElementById('nextBtn').classList.add('hidden');
@@ -245,28 +244,26 @@
             document.getElementById('prevBtn').classList.remove('hidden');
             document.getElementById('nextBtn').classList.remove('hidden');
             document.getElementById('randBtnModal').classList.add('hidden');
-            document.getElementById('vCounter').innerText = `תרגיל ${currentIdx} מתוך ${seriesItems.length}`;
-            document.getElementById('prevBtn').disabled = (currentIdx === 1);
-            document.getElementById('nextBtn').disabled = (currentIdx === seriesItems.length);
+            const series = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
+            const idx = series.findIndex(x => x.id === ex.id) + 1;
+            document.getElementById('vCounter').innerText = `תרגיל ${idx} מתוך ${series.length}`;
+            document.getElementById('prevBtn').disabled = (idx === 1);
+            document.getElementById('nextBtn').disabled = (idx === series.length);
         }
-
         document.getElementById('vModal').style.display = 'flex';
     }
 
     function startVideo() {
         if(!currentEx || !currentEx.link) return;
-        const embed = getEmbedUrl(currentEx.link);
-        document.getElementById('vFrame').src = embed + (embed.includes('?') ? '&' : '?') + "autoplay=1";
+        const url = getEmbedUrl(currentEx.link);
+        document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
         document.getElementById('watchBtn').style.display = 'none';
         document.getElementById('videoContainer').style.display = 'block';
     }
 
     function playRandom() {
         const pool = db.filter(x => x.link && x.link.length > 5);
-        if(pool.length > 0) {
-            const r = pool[Math.floor(Math.random()*pool.length)];
-            openV(r, true);
-        }
+        if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)], true);
     }
 
     function nav(dir) {
@@ -302,8 +299,7 @@
                 const list = s.nextElementSibling;
                 let serHas = false;
                 list.querySelectorAll('.ex-row').forEach(row => {
-                    const id = parseInt(row.querySelector('.star').getAttribute('onclick').match(/\d+/)[0]);
-                    const isF = favs.includes(id);
+                    const isF = favs.includes(parseInt(row.dataset.id));
                     const hide = isFavOnly && !isF;
                     row.classList.toggle('hidden', hide);
                     if(!hide) serHas = true;
@@ -318,8 +314,8 @@
 
     function toggleAll() {
         const lists = document.querySelectorAll('.ex-list');
-        const anyClosed = Array.from(lists).some(l => !l.classList.contains('open'));
-        lists.forEach(l => l.classList.toggle('open', anyClosed));
+        const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
+        lists.forEach(l => l.classList.toggle('open', someClosed));
     }
 
     window.onload = init;
