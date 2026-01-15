@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.3.3</title>
+    <title>Syllabus IJJA - v1.3.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -94,7 +94,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס IJJA</h1>
-            <small style="color:#888">v1.3.3</small>
+            <small style="color:#888">v1.3.4</small>
         </div>
     </div>
     <div class="action-bar">
@@ -114,11 +114,11 @@
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
         <i id="randBtnModal" class="fas fa-random rand-top-btn hidden" onclick="playRandom(true)"></i>
         
-        <div class="modal-nav" id="modalNav">
+        <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
             <div style="text-align: center; flex: 1; overflow: hidden;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em;"></div>
-                <div id="vName" style="color:var(--primary); font-size:1.05em; font-weight: 800;"></div>
+                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                <div id="vName" style="color:var(--primary); font-size:1.05em; font-weight: 800; line-height: 1.2;"></div>
                 <div id="vCounter"></div>
             </div>
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
@@ -136,7 +136,6 @@
     let isFavOnly = false;
     let currentEx = null;
 
-    // פארסר CSV פשוט ואמין
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
         const result = [];
@@ -148,14 +147,7 @@
                 else cur += char;
             }
             row.push(cur.trim());
-            if(row[0]) result.push({ 
-                id: i, 
-                cat: row[0], 
-                ser: row[1], 
-                num: row[2], 
-                name: row[3], 
-                link: row[4] ? row[4].trim() : "" 
-            });
+            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" });
         }
         return result;
     }
@@ -166,7 +158,7 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV Load Fail"); }
+        } catch(e) { console.error("Data error"); }
     }
 
     function render() {
@@ -196,13 +188,12 @@
                     const li = document.createElement('li');
                     li.className = 'ex-row';
                     li.dataset.id = ex.id;
-                    
                     const isLink = ex.link && ex.link.length > 5;
-                    const name = isLink 
+                    const nameHtml = isLink 
                         ? `<span class="ex-link" onclick='openV(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>`
                         : `<span class="ex-no-link">${ex.num}. ${ex.name}</span>`;
                     
-                    li.innerHTML = `${name} <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
+                    li.innerHTML = `${nameHtml} <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
 
@@ -219,19 +210,23 @@
 
     function openV(ex, isRandom) {
         currentEx = ex;
-        const navBar = document.getElementById('modalNav');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
         const randBtn = document.getElementById('randBtnModal');
         const counter = document.getElementById('vCounter');
         
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
 
+        // תמיד נציג את פרטי התרגיל, גם באקראי
         if (isRandom) {
-            navBar.classList.add('hidden');
+            prevBtn.classList.add('hidden');
+            nextBtn.classList.add('hidden');
             randBtn.classList.remove('hidden');
-            counter.innerText = "";
+            counter.innerText = "תרגיל אקראי";
         } else {
-            navBar.classList.remove('hidden');
+            prevBtn.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
             randBtn.classList.add('hidden');
             const seriesItems = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
             const currentIdx = seriesItems.findIndex(x => x.id === ex.id) + 1;
@@ -239,11 +234,11 @@
             updateNavButtons(seriesItems);
         }
         
-        loadYoutube(ex.link);
+        loadVideo(ex.link);
         document.getElementById('vModal').style.display = 'flex';
     }
 
-    function loadYoutube(url) {
+    function loadVideo(url) {
         const frame = document.getElementById('vFrame');
         if(!url) { frame.src = ""; return; }
         
@@ -274,7 +269,7 @@
         const series = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
         const idx = series.findIndex(x => x.id === currentEx.id);
         const target = series[idx + dir];
-        if(target) openV(target, false);
+        if(target && target.link) openV(target, false);
     }
 
     function playRandom() {
