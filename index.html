@@ -2,11 +2,11 @@
 <html lang="he" dir="rtl">
 <head>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0056a6">
+    <meta name="theme-color" content="#007aff">
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>סילבוס חגורות שחורות - IJJA</title>
+    <title>Syllabus for black belts - IJJA</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -17,7 +17,7 @@
             --primary: #0056a6;
             --secondary: #009be5;
             --border: #d2dce5;
-            --header-h: 170px; /* הותאם למיקום הכפתורים החדש */
+            --header-h: 110px;
             --fav-color: #ffc107;
         }
 
@@ -39,67 +39,60 @@
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            padding: 10px 15px;
+            padding: 8px 15px;
             box-sizing: border-box;
         }
 
         .header-content {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 15px;
-            width: 100%;
+            gap: 12px;
         }
 
         .logo {
-            height: 50px;
+            height: 45px;
             width: auto;
-            object-fit: contain;
         }
 
         .title-area h1 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--primary);
             font-weight: 900;
         }
 
         .title-area p {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #666;
         }
 
-        /* כפתורי שליטה מעל לקו */
+        /* השינוי כאן: הוספתי margin-bottom כדי להרחיק מהקו */
         .controls {
             display: flex;
-            gap: 8px;
-            width: 100%;
-            justify-content: center;
+            gap: 6px;
+            margin-bottom: 4px; 
         }
 
         .controls button {
-            flex: 1;
-            padding: 8px 5px;
+            padding: 6px 10px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 6px;
             background: white;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 5px;
-            max-width: 120px;
+            gap: 4px;
         }
 
         .controls button.active {
@@ -110,7 +103,6 @@
 
         .danger-btn { color: #dc3545; }
 
-        /* חיפוש */
         .search-container {
             position: relative;
             width: 100%;
@@ -126,21 +118,14 @@
 
         #searchInput {
             width: 100%;
-            padding: 10px 35px 10px 12px;
-            border: 2px solid #edf2f7;
-            border-radius: 12px;
+            padding: 8px 35px 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
             font-size: 1rem;
             box-sizing: border-box;
             background: #f8fafc;
         }
 
-        #searchInput:focus {
-            outline: none;
-            border-color: var(--secondary);
-            background: white;
-        }
-
-        /* רשימת תכנים */
         main {
             margin-top: var(--header-h);
             height: calc(100% - var(--header-h));
@@ -154,23 +139,22 @@
         .category-title {
             background: var(--primary);
             color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
             font-weight: bold;
             margin-bottom: 5px;
-            font-size: 1.1rem;
         }
 
         .series {
             background: white;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 5px;
+            border-radius: 6px;
+            margin-bottom: 4px;
             overflow: hidden;
         }
 
         .series-header {
-            padding: 12px 15px;
+            padding: 10px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -178,23 +162,13 @@
             font-weight: bold;
         }
 
-        .series-header i {
-            transition: transform 0.3s;
-            color: var(--secondary);
-        }
+        .series.active .series-header { background: #f0f7ff; }
 
-        .series.active .series-header i { transform: rotate(180deg); }
-
-        .exercise-list {
-            display: none;
-            border-top: 1px solid #eee;
-            background: #fafafa;
-        }
-
+        .exercise-list { display: none; border-top: 1px solid #eee; }
         .exercise-list.expanded { display: block; }
 
         .exercise {
-            padding: 12px 15px;
+            padding: 10px 12px;
             display: flex;
             align-items: center;
             border-bottom: 1px solid #eee;
@@ -202,33 +176,31 @@
         }
 
         .exercise:last-child { border-bottom: none; }
-
         .exercise-name { flex: 1; cursor: pointer; }
 
         .fav-star {
             color: #ccc;
             cursor: pointer;
-            font-size: 1.2rem;
-            padding: 5px;
+            font-size: 1.1rem;
         }
 
         .fav-star.active { color: var(--fav-color); }
 
         .hidden { display: none !important; }
 
-        /* Modal וידאו */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.8);
             z-index: 2000;
             justify-content: center;
             align-items: center;
         }
 
         .modal-content {
-            width: 95%;
+            width: 90%;
             max-width: 800px;
             position: relative;
         }
@@ -242,14 +214,13 @@
         .video-container iframe {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 8px;
         }
 
         .close-modal {
             position: absolute;
-            top: -40px; left: 0;
+            top: -30px; left: 0;
             color: white;
-            font-size: 2rem;
+            font-size: 1.5rem;
             cursor: pointer;
         }
     </style>
@@ -259,29 +230,27 @@
 <header>
     <div class="header-content">
         <div class="logo-area">
-            <img src="Logo.png" alt="IJJA Logo" class="logo">
+            <img src="Logo.png" alt="Logo" class="logo">
             <div class="title-area">
-                <h1>Syllabus - Black Belts</h1>
-                <p>איגוד הג'וג'יטסו בישראל</p>
+                <h1>Syllabus</h1>
+                <p>IJJA Black Belts</p>
             </div>
         </div>
-
         <div class="controls">
             <button id="toggleAllBtn" onclick="toggleAllAccordions()">
-                <i class="fas fa-arrows-alt-v"></i> פתח הכל
+                <i class="fas fa-arrows-alt-v"></i>
             </button>
             <button id="favFilterBtn" onclick="toggleFavFilter()">
-                <i class="fas fa-star"></i> מועדפים
+                <i class="fas fa-star"></i>
             </button>
             <button id="clearFavsBtn" onclick="clearAllFavs()" class="danger-btn">
-                <i class="fas fa-trash-alt"></i> נקה
+                <i class="fas fa-trash-alt"></i>
             </button>
         </div>
     </div>
-
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" placeholder="חפש תרגיל או סדרה..." oninput="handleSearch()">
+        <input type="text" id="searchInput" placeholder="חפש תרגיל..." oninput="handleSearch()">
     </div>
 </header>
 
@@ -302,79 +271,68 @@
     let isFavFilterActive = false;
     let allExpanded = false;
 
-    // טעינת נתונים
     async function loadData() {
         try {
             const response = await fetch('Black_belt_syllabus_IJJA.csv');
             const csvText = await response.text();
             parseCSV(csvText);
             renderSyllabus();
-        } catch (e) { console.error("Error loading CSV", e); }
+        } catch (e) { console.error(e); }
     }
 
     function parseCSV(text) {
-        const lines = text.split('\n').filter(line => line.trim() !== '');
-        const headers = lines[0].split(',');
+        const lines = text.split('\n').filter(l => l.trim());
         allData = lines.slice(1).map(line => {
-            const values = line.split(',');
-            return {
-                category: values[0]?.trim(),
-                series: values[1]?.trim(),
-                id: values[2]?.trim(),
-                name: values[3]?.trim(),
-                link: values[4]?.trim()
-            };
+            const v = line.split(',');
+            return { category: v[0], series: v[1], id: v[2], name: v[3], link: v[4] };
         });
     }
 
     function renderSyllabus() {
         const container = document.getElementById('content');
         container.innerHTML = '';
+        const cats = [...new Set(allData.map(d => d.category))];
 
-        const categories = [...new Set(allData.map(d => d.category))];
-
-        categories.forEach(cat => {
+        cats.forEach(cat => {
             const catDiv = document.createElement('div');
             catDiv.className = 'category-wrap';
             catDiv.innerHTML = `<div class="category-title">${cat}</div>`;
-
-            const seriesInCat = [...new Set(allData.filter(d => d.category === cat).map(d => d.series))];
-
-            seriesInCat.forEach(ser => {
+            
+            const series = [...new Set(allData.filter(d => d.category === cat).map(d => d.series))];
+            series.forEach(ser => {
                 const serDiv = document.createElement('div');
                 serDiv.className = 'series';
                 serDiv.innerHTML = `
-                    <div class="series-header" onclick="this.parentElement.classList.toggle('active'); this.nextElementSibling.classList.toggle('expanded')">
-                        <span>${ser}</span>
-                        <i class="fas fa-chevron-down"></i>
+                    <div class="series-header" onclick="toggleSeries(this)">
+                        <span>${ser}</span><i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="exercise-list"></div>
                 `;
-
                 const list = serDiv.querySelector('.exercise-list');
-                const exercises = allData.filter(d => d.category === cat && d.series === ser);
-
-                exercises.forEach(ex => {
-                    const isFav = favorites.includes(ex.link);
+                allData.filter(d => d.category === cat && d.series === ser).forEach(ex => {
                     const exDiv = document.createElement('div');
                     exDiv.className = 'exercise';
                     exDiv.innerHTML = `
-                        <i class="fas fa-star fav-star ${isFav ? 'active' : ''}" onclick="toggleFav('${ex.link}', this)"></i>
+                        <i class="fas fa-star fav-star ${favorites.includes(ex.link)?'active':''}" onclick="toggleFav('${ex.link}', this)"></i>
                         <div class="exercise-name" onclick="openVideo('${ex.link}')">${ex.name}</div>
-                        <i class="fab fa-youtube" style="color:#ff0000"></i>
                     `;
                     list.appendChild(exDiv);
                 });
-
                 catDiv.appendChild(serDiv);
             });
             container.appendChild(catDiv);
         });
     }
 
+    function toggleSeries(el) {
+        const s = el.parentElement;
+        s.classList.toggle('active');
+        s.querySelector('.exercise-list').classList.toggle('expanded');
+    }
+
     function openVideo(url) {
-        const embedUrl = url.replace("youtu.be/", "www.youtube.com/embed/").replace("watch?v=", "embed/");
-        document.getElementById('videoFrame').src = embedUrl;
+        const embed = url.replace("youtu.be/", "www.youtube.com/embed/").replace("watch?v=", "embed/");
+        document.getElementById('videoFrame').src = embed;
         document.getElementById('videoModal').style.display = 'flex';
     }
 
@@ -384,13 +342,9 @@
     }
 
     function toggleFav(link, el) {
-        if (favorites.includes(link)) {
-            favorites = favorites.filter(f => f !== link);
-            el.classList.remove('active');
-        } else {
-            favorites.push(link);
-            el.classList.add('active');
-        }
+        if (favorites.includes(link)) favorites = favorites.filter(f => f !== link);
+        else favorites.push(link);
+        el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
         if (isFavFilterActive) applyFavFilter();
     }
@@ -398,17 +352,11 @@
     function handleSearch() {
         const term = document.getElementById('searchInput').value.toLowerCase();
         document.querySelectorAll('.exercise').forEach(ex => {
-            const text = ex.innerText.toLowerCase();
-            ex.classList.toggle('hidden', !text.includes(term));
+            ex.classList.toggle('hidden', !ex.innerText.toLowerCase().includes(term));
         });
-
         document.querySelectorAll('.series').forEach(ser => {
-            const hasVisible = ser.querySelectorAll('.exercise:not(.hidden)').length > 0;
-            ser.classList.toggle('hidden', !hasVisible);
-            if (term.length > 0 && hasVisible) {
-                ser.classList.add('active');
-                ser.querySelector('.exercise-list').classList.add('expanded');
-            }
+            const has = ser.querySelectorAll('.exercise:not(.hidden)').length > 0;
+            ser.classList.toggle('hidden', !has);
         });
     }
 
@@ -420,25 +368,16 @@
 
     function applyFavFilter() {
         document.querySelectorAll('.category-wrap').forEach(w => {
-            const exercises = w.querySelectorAll('.exercise');
-            let hasFavInCategory = false;
-
-            exercises.forEach(ex => {
-                const isFav = ex.querySelector('.fav-star').classList.contains('active');
-                if (isFavFilterActive) {
-                    ex.classList.toggle('hidden', !isFav);
-                    if (isFav) hasFavInCategory = true;
-                } else {
-                    ex.classList.remove('hidden');
-                }
-            });
-
-            document.querySelectorAll('.series').forEach(ser => {
-                const hasVisible = ser.querySelectorAll('.exercise:not(.hidden)').length > 0;
-                ser.classList.toggle('hidden', isFavFilterActive && !hasVisible);
-            });
-
-            w.classList.toggle('hidden', isFavFilterActive && !hasFavInCategory);
+            if (isFavFilterActive) {
+                const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
+                w.classList.toggle('hidden', !hasFav);
+                w.querySelectorAll('.exercise').forEach(ex => {
+                    ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
+                });
+            } else {
+                w.classList.remove('hidden');
+                w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
+            }
         });
     }
 
@@ -446,27 +385,21 @@
         allExpanded = !allExpanded;
         document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
         document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
     }
 
     function clearAllFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
-            favorites = [];
-            localStorage.setItem('ijja_favs', "[]");
+        if(confirm("למחוק מועדפים?")) {
+            favorites = []; localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
             if(isFavFilterActive) applyFavFilter();
         }
     }
 
-    // רישום Service Worker
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
-        });
+        window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
     }
 
     loadData();
 </script>
-
 </body>
 </html>
