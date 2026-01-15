@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus for black belts in ju-jitsu</title>
+    <title>Syllabus for black belts - IJJA</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,51 +16,50 @@
         :root {
             --primary: #0056a6;
             --secondary: #009be5;
-            --text-dark: #233142;
             --border: #d2dce5;
-            --header-h: 60px;
-            --filter-h: 60px;
-            --total-sticky: 120px; /* זהו הגובה הקבוע שיבטיח אחידות */
+            --header-h: 65px;
+            --filter-h: 55px;
             --fav-color: #ffc107;
         }
 
-        body {
-            font-family: 'Heebo', sans-serif;
+        /* מניעת גלילה של כל ה-body כדי לשמור על יציבות */
+        html, body {
+            height: 100%;
             margin: 0;
+            overflow: hidden; 
+            font-family: 'Heebo', sans-serif;
             background: #f7f9fb;
-            color: var(--text-dark);
-            padding-top: var(--total-sticky); /* ריווח קבוע לכל הפילטרים */
         }
 
+        /* Header קבוע לחלוטין */
         header {
-            position: fixed;
-            top: 0; width: 100%; height: var(--header-h);
-            background: white; border-bottom: 2px solid var(--primary);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1200;
+            height: var(--header-h);
+            background: white;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
         }
 
-        .version-tag { font-size: 10px; color: #888; margin-bottom: -4px; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 24px; }
+        .version-tag { font-size: 10px; color: #888; }
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 22px; }
 
-        /* סרגל פילטרים קבוע במובייל ובמחשב */
-        .filter-sidebar {
-            position: fixed;
-            top: var(--header-h);
-            left: 0;
-            width: 100%;
+        /* סרגל פילטרים קבוע בגובהו */
+        .filter-area {
             height: var(--filter-h);
             background: white;
-            z-index: 1100;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
+            position: relative;
+            z-index: 9;
         }
 
         .filter-bar {
             display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
             overflow-x: auto;
             padding: 0 10px;
             gap: 8px;
@@ -70,101 +69,102 @@
         .filter-bar::-webkit-scrollbar { display: none; }
 
         .filter-button {
-            height: 36px;
-            padding: 0 15px;
-            border-radius: 18px;
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 17px;
             border: 1px solid var(--border);
             background: #f0f4f8;
             font-weight: 700;
-            font-family: 'Heebo';
             white-space: nowrap;
             flex-shrink: 0;
             cursor: pointer;
             font-size: 13px;
+            font-family: 'Heebo';
         }
 
         .filter-button.active { background: var(--primary); color: white; }
 
-        .container { max-width: 900px; margin: auto; padding: 15px; min-height: 100vh; }
-
-        .category {
-            background: var(--primary); color: white; padding: 15px 20px;
-            border-radius: 12px; font-size: 1.5em; font-weight: 900;
-            position: sticky;
-            top: var(--total-sticky); /* מיקום הצמדה אחיד לכולם */
-            z-index: 1000;
-            margin-bottom: 10px;
+        /* אזור התוכן הנגלל - כאן מתבצעת הגלילה האמיתית */
+        #scrollContainer {
+            height: calc(100vh - var(--header-h) - var(--filter-h));
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
-        .category:not(:first-child) { margin-top: 30px; }
+        .main-content { max-width: 800px; margin: auto; }
+
+        .category {
+            background: var(--primary);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 1.4em;
+            font-weight: 900;
+            margin: 20px 0 10px 0;
+            /* הפיכת הכותרת לסטטית בתוך אזור הגלילה לאחידות */
+        }
 
         .series {
-            background: white; padding: 15px 20px; font-weight: 700; margin-top: 10px;
-            border-right: 4px solid var(--secondary); cursor: pointer; border-radius: 8px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: white;
+            padding: 15px;
+            font-weight: 700;
+            margin-top: 8px;
+            border-right: 4px solid var(--secondary);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
         }
 
         .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-        .exercise-list.expanded { max-height: 3000px; border: 1px solid var(--border); border-top: none; background: white; }
-        .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .ex-name { color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: underline; }
+        .exercise-list.expanded { max-height: 2000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; }
+        .exercise { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .ex-name { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
         .fav-star.active { color: var(--fav-color); }
 
         .hidden { display: none !important; }
 
-        /* מודאל אקראי */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
+        /* מודאל */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
         .modal-btns { display: flex; gap: 10px; flex-direction: column; margin-top: 20px; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; text-decoration: none; display: block; }
-        .btn-sub { background: #f0f4f8; color: var(--text-dark); border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-
-        @media (min-width: 901px) {
-            /* התאמה למחשב כדי שישמור על מבנה סיידבר */
-            .filter-sidebar { width: 250px; position: sticky; top: 80px; height: auto; border: none; background: transparent; }
-            .filter-bar { flex-direction: column; overflow: visible; }
-            body { padding-top: 80px; }
-            .category { top: 80px; }
-        }
+        .btn-sub { background: #f0f4f8; color: #233142; border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.7</div>
+    <div class="version-tag">Version 1.1.8</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
-<div class="filter-sidebar">
+<div class="filter-area">
     <div class="filter-bar" id="filterContainer">
-        <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
-            <i class="fas fa-random"></i> אקראי
-        </button>
-        <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
-            <i class="fas fa-arrows-alt-v"></i> פתח הכל
-        </button>
-        <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); border:none;">
-            <i class="fas fa-star"></i> מועדפים
-        </button>
-        <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
-            <i class="fas fa-trash"></i> נקה
-        </button>
+        <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">אקראי</button>
+        <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">פתח הכל</button>
+        <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); border:none;">מועדפים</button>
+        <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">נקה</button>
         <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
     </div>
 </div>
 
-<main class="container" id="mainContainer"></main>
+<div id="scrollContainer">
+    <div class="main-content" id="mainContainer"></div>
+</div>
 
 <div id="rndModal" class="modal-overlay" onclick="closeRndModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 id="rCat" style="font-size:1em; color:var(--primary);">קטגוריה</h2>
-        <h4 id="rSer" style="font-weight:400; color:#666; margin:5px 0;">סדרה</h4>
-        <span id="rName" style="font-size:1.6em; font-weight:900; display:block; margin:15px 0;">שם התרגיל</span>
+        <h2 id="rCat" style="color:var(--primary); font-size:1em;"></h2>
+        <h4 id="rSer" style="font-weight:400; margin:5px 0;"></h4>
+        <span id="rName" style="font-size:1.5em; font-weight:900; display:block; margin:15px 0;"></span>
         <div class="modal-btns">
             <a id="rLink" class="btn-main" target="_blank">צפה בוידיאו <i class="fas fa-play"></i></a>
-            <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר <i class="fas fa-redo"></i></button>
+            <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר</button>
             <button class="btn-sub" onclick="closeRndModal()">סגור</button>
         </div>
     </div>
@@ -267,14 +267,15 @@
                 w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
             }
         });
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        // איפוס גלילה למכולה הפנימית בלבד לאחידות מקסימלית
+        document.getElementById('scrollContainer').scrollTop = 0;
     }
 
     function toggleAllAccordions() {
         allExpanded = !allExpanded;
         document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
         document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
+        document.getElementById('toggleAllBtn').innerText = allExpanded ? 'סגור הכל' : 'פתח הכל';
     }
 
     function getRandomEx() {
@@ -284,13 +285,9 @@
         document.getElementById('rName').innerText = ex.name;
         document.getElementById('rLink').href = ex.link;
         document.getElementById('rndModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
     }
 
-    function closeRndModal() {
-        document.getElementById('rndModal').style.display = 'none';
-        document.body.style.overflow = '';
-    }
+    function closeRndModal() { document.getElementById('rndModal').style.display = 'none'; }
 
     function genFilters(data) {
         const cats = [...new Set(data.map(i => i.cat))];
