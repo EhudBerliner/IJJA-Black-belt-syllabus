@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007aff">
+    <meta name="theme-color" content="#0056a6">
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -47,7 +47,7 @@
         }
         .action-button.active { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-primary { background: var(--primary); color: white; border: none; }
-        .btn-danger { color: var(--danger); border-color: rgba(211, 47, 47, 0.2); }
+        .btn-danger { color: var(--danger); border-color: rgba(211, 47, 47, 0.1); }
 
         #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; box-sizing: border-box; }
         .main-content { max-width: 900px; margin: 0 auto; padding: 20px; }
@@ -68,11 +68,11 @@
         .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
         .exercise-list.expanded { max-height: 2000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; margin-bottom: 10px; }
         .exercise { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .exercise.hidden { display: none; }
         .ex-name { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
         .fav-star.active { color: var(--fav-color); }
 
-        /* מודאל וידיאו */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 20px; border-radius: 18px; width: 95%; max-width: 600px; text-align: center; position: relative; }
         
@@ -80,8 +80,7 @@
         .modal-nav-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; }
         .modal-nav-btn:disabled { background: #e0e0e0; color: #999; cursor: not-allowed; }
         
-        /* כפתור אקראי בתוך המודאל (פינה ימנית עליונה) */
-        .modal-reroll-btn { position: absolute; top: -50px; right: 0; color: white; font-size: 28px; cursor: pointer; transition: transform 0.2s; }
+        .modal-reroll-btn { position: absolute; top: -50px; right: 0; color: white; font-size: 28px; cursor: pointer; }
         .close-x { position: absolute; top: -50px; left: 0; color: white; font-size: 35px; cursor: pointer; }
 
         .info-label { font-size: 0.85em; color: var(--secondary); font-weight: 700; margin-bottom: 4px; display: block; }
@@ -100,7 +99,7 @@
         <img src="Logo.png" alt="Logo" class="logo-img">
         <div class="title-area">
             <h1>סילבוס IJJA</h1>
-            <span class="version-text">גרסה 1.2.7</span>
+            <span class="version-text">גרסה 1.2.8</span>
         </div>
     </div>
     <div class="action-bar">
@@ -117,8 +116,8 @@
 
 <div id="videoModal" class="modal-overlay" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <i class="fas fa-times close-x" onclick="closeModal()" title="סגור"></i>
-        <i id="rerollIcon" class="fas fa-random modal-reroll-btn hidden" onclick="getRandomEx()" title="אקראי נוסף"></i>
+        <i class="fas fa-times close-x" onclick="closeModal()"></i>
+        <i id="rerollIcon" class="fas fa-random modal-reroll-btn hidden" onclick="getRandomEx()"></i>
         
         <div class="nav-header">
             <button id="prevBtn" class="modal-nav-btn nav-mode" onclick="navigateEx(-1)"><i class="fas fa-chevron-right"></i></button>
@@ -139,30 +138,49 @@
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let currentEx = null;
     let isFavFilterActive = false;
+    let currentEx = null;
 
     async function loadSyllabus() {
         try {
             const res = await fetch('Black_belt_syllabus_IJJA.csv');
             const text = await res.text();
-            const rows = text.split('\n').filter(r => r.trim() !== '');
+            const rows = text.split(/\r?\n/).filter(r => r.trim() !== '');
+            
+            // דילוג על השורה הראשונה (כותרות)
             rawData = rows.slice(1).map((row, idx) => {
                 const cols = parseCSV(row);
-                return { id: idx, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
-            }).filter(i => i.cat);
+                return { 
+                    id: idx, 
+                    cat: cols[0], 
+                    ser: cols[1], 
+                    num: cols[2], 
+                    name: cols[3], 
+                    link: cols[4] 
+                };
+            }).filter(i => i.cat && i.link);
+            
             render(rawData);
-        } catch (e) { console.error(e); }
+        } catch (e) { console.error("טעינת קובץ נכשלה", e); }
     }
 
+    // פונקציית CSV חכמה לטיפול בגרשיים ופסיקים
     function parseCSV(r) {
-        const res = []; let c = '', q = false;
-        for (let i=0; i<r.length; i++) {
-            if (r[i] === '"') q = !q;
-            else if (r[i] === ',' && !q) { res.push(c.trim()); c = ''; }
-            else c += r[i];
+        const result = [];
+        let cur = '';
+        let inQuote = false;
+        for (let i = 0; i < r.length; i++) {
+            let char = r[i];
+            if (char === '"') {
+                if (inQuote && r[i+1] === '"') { cur += '"'; i++; }
+                else { inQuote = !inQuote; }
+            } else if (char === ',' && !inQuote) {
+                result.push(cur.trim());
+                cur = '';
+            } else { cur += char; }
         }
-        res.push(c.trim()); return res;
+        result.push(cur.trim());
+        return result;
     }
 
     function render(data) {
@@ -179,21 +197,32 @@
             const catWrap = document.createElement('div');
             catWrap.className = 'category-wrap';
             catWrap.innerHTML = `<div class="category-title">${cat}</div>`;
+            
             Object.keys(grouped[cat]).forEach(ser => {
                 const sDiv = document.createElement('div');
                 sDiv.className = 'series';
                 sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+                
                 const list = document.createElement('ul');
                 list.className = 'exercise-list';
+                
                 grouped[cat][ser].forEach(ex => {
+                    const isFav = favorites.includes(ex.id);
                     const li = document.createElement('li');
-                    li.className = 'exercise';
-                    li.innerHTML = `<span class="ex-name" onclick='openVideo(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>
-                                    <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>`;
+                    li.className = `exercise ${isFavFilterActive && !isFav ? 'hidden' : ''}`;
+                    li.innerHTML = `
+                        <span class="ex-name" onclick='openVideo(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>
+                        <i class="fas fa-star fav-star ${isFav ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
+                    `;
                     list.appendChild(li);
                 });
-                sDiv.onclick = () => { sDiv.classList.toggle('active'); list.classList.toggle('expanded'); };
-                catWrap.appendChild(sDiv); catWrap.appendChild(list);
+
+                sDiv.onclick = () => {
+                    sDiv.classList.toggle('active');
+                    list.classList.toggle('expanded');
+                };
+                catWrap.appendChild(sDiv);
+                catWrap.appendChild(list);
             });
             container.appendChild(catWrap);
         });
@@ -226,9 +255,15 @@
     }
 
     function getEmbedUrl(url) {
+        if (!url) return "";
         try {
-            let vidId = url.includes("youtu.be/") ? url.split("youtu.be/")[1].split("?")[0] : new URL(url).searchParams.get("v");
-            let t = new URL(url).searchParams.get("t") || 0;
+            let vidId = "";
+            if (url.includes("youtu.be/")) {
+                vidId = url.split("youtu.be/")[1].split(/[?#]/)[0];
+            } else {
+                vidId = new URL(url).searchParams.get("v");
+            }
+            const t = new URL(url.replace('#', '?')).searchParams.get("t") || 0;
             return `https://www.youtube.com/embed/${vidId}?start=${parseInt(t)}&autoplay=1`;
         } catch(e) { return ""; }
     }
@@ -250,9 +285,13 @@
     }
 
     function toggleFav(id, el) {
-        if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
-        else favorites.push(id);
-        el.classList.toggle('active');
+        if (favorites.includes(id)) {
+            favorites = favorites.filter(f => f !== id);
+            el.classList.remove('active');
+        } else {
+            favorites.push(id);
+            el.classList.add('active');
+        }
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
         if (isFavFilterActive) applyFavFilter();
     }
@@ -265,35 +304,28 @@
 
     function applyFavFilter() {
         document.querySelectorAll('.category-wrap').forEach(w => {
-            const exercises = w.querySelectorAll('.exercise');
-            let hasVisibleEx = false;
-            
-            exercises.forEach(ex => {
-                const isFav = ex.querySelector('.fav-star').classList.contains('active');
-                if (isFavFilterActive) {
-                    ex.classList.toggle('hidden', !isFav);
-                    if (isFav) hasVisibleEx = true;
-                } else {
-                    ex.classList.remove('hidden');
-                    hasVisibleEx = true;
-                }
-            });
-
-            // הסתרת הקטגוריה אם אין בה תרגילים רלוונטיים
-            w.classList.toggle('hidden', !hasVisibleEx);
-            
-            // הסתרת סדרות ריקות בתוך הקטגוריה
+            let catHasFav = false;
             w.querySelectorAll('.series').forEach(s => {
                 const list = s.nextElementSibling;
-                const hasFavInSeries = Array.from(list.querySelectorAll('.fav-star')).some(st => st.classList.contains('active'));
-                if (isFavFilterActive) {
-                    s.classList.toggle('hidden', !hasFavInSeries);
-                    list.classList.toggle('hidden', !hasFavInSeries);
-                } else {
-                    s.classList.remove('hidden');
-                    list.classList.remove('hidden');
-                }
+                const exercises = list.querySelectorAll('.exercise');
+                let seriesHasFav = false;
+
+                exercises.forEach(ex => {
+                    const isFav = ex.querySelector('.fav-star').classList.contains('active');
+                    if (isFavFilterActive) {
+                        ex.classList.toggle('hidden', !isFav);
+                        if (isFav) seriesHasFav = true;
+                    } else {
+                        ex.classList.remove('hidden');
+                        seriesHasFav = true;
+                    }
+                });
+
+                s.classList.toggle('hidden', isFavFilterActive && !seriesHasFav);
+                list.classList.toggle('hidden', isFavFilterActive && !seriesHasFav);
+                if (seriesHasFav) catHasFav = true;
             });
+            w.classList.toggle('hidden', isFavFilterActive && !catHasFav);
         });
     }
 
@@ -305,7 +337,8 @@
 
     function clearAllFavs() {
         if(confirm("למחוק את כל המועדפים?")) {
-            favorites = []; localStorage.setItem('ijja_favs', "[]");
+            favorites = [];
+            localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
             if (isFavFilterActive) applyFavFilter();
         }
