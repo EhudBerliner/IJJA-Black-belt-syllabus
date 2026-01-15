@@ -16,12 +16,11 @@
         :root {
             --primary: #0056a6;
             --secondary: #009be5;
-            --accent: #e3f2fd;
             --text-dark: #233142;
-            --card-bg: #ffffff;
             --border: #d2dce5;
-            --header-height: 70px;
-            --filter-area-height: 60px;
+            --header-h: 60px;
+            --filter-h: 60px;
+            --total-sticky: 120px; /* זהו הגובה הקבוע שיבטיח אחידות */
             --fav-color: #ffc107;
         }
 
@@ -30,142 +29,139 @@
             margin: 0;
             background: #f7f9fb;
             color: var(--text-dark);
-            padding-top: var(--header-height);
+            padding-top: var(--total-sticky); /* ריווח קבוע לכל הפילטרים */
         }
-
-        body.modal-open { overflow: hidden; }
 
         header {
             position: fixed;
-            top: 0; width: 100%; height: var(--header-height);
-            background: white; border-bottom: 3px solid var(--primary);
+            top: 0; width: 100%; height: var(--header-h);
+            background: white; border-bottom: 2px solid var(--primary);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1100;
+            z-index: 1200;
         }
 
         .version-tag { font-size: 10px; color: #888; margin-bottom: -4px; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 26px; }
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 24px; }
 
-        .layout { display: flex; max-width: 900px; margin: auto; padding: 20px; gap: 20px; align-items: flex-start; }
-
-        /* תפריט צד למחשב */
+        /* סרגל פילטרים קבוע במובייל ובמחשב */
         .filter-sidebar {
-            width: 230px; position: sticky; top: calc(var(--header-height) + 20px);
-            max-height: calc(100vh - var(--header-height) - 40px); overflow-y: auto;
+            position: fixed;
+            top: var(--header-h);
+            left: 0;
+            width: 100%;
+            height: var(--filter-h);
+            background: white;
+            z-index: 1100;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
         }
 
         .filter-bar {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 14px; padding: 15px; display: flex; flex-direction: column; gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 0 10px;
+            gap: 8px;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
         }
+        .filter-bar::-webkit-scrollbar { display: none; }
 
         .filter-button {
-            width: 100%; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border);
-            background: #f0f4f8; font-weight: 700; cursor: pointer; text-align: right; font-family: 'Heebo';
-            transition: 0.2s; white-space: nowrap; font-size: 14px;
+            height: 36px;
+            padding: 0 15px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: #f0f4f8;
+            font-weight: 700;
+            font-family: 'Heebo';
+            white-space: nowrap;
+            flex-shrink: 0;
+            cursor: pointer;
+            font-size: 13px;
         }
 
         .filter-button.active { background: var(--primary); color: white; }
 
-        .container { flex: 1; min-height: 100vh; padding-bottom: 50vh; }
+        .container { max-width: 900px; margin: auto; padding: 15px; min-height: 100vh; }
 
         .category {
-            margin-top: 0; background: var(--primary); color: white; padding: 15px 20px;
-            border-radius: 12px; font-size: 1.6em; font-weight: 900; position: sticky;
-            top: var(--header-height); z-index: 1000;
+            background: var(--primary); color: white; padding: 15px 20px;
+            border-radius: 12px; font-size: 1.5em; font-weight: 900;
+            position: sticky;
+            top: var(--total-sticky); /* מיקום הצמדה אחיד לכולם */
+            z-index: 1000;
+            margin-bottom: 10px;
         }
 
-        .category:not(:first-child) { margin-top: 40px; }
+        .category:not(:first-child) { margin-top: 30px; }
 
         .series {
-            background: white; padding: 15px 20px; font-weight: 700; margin-top: 15px;
+            background: white; padding: 15px 20px; font-weight: 700; margin-top: 10px;
             border-right: 4px solid var(--secondary); cursor: pointer; border-radius: 8px;
             display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .series.active i { transform: rotate(180deg); }
-        .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: white; border-radius: 0 0 8px 8px; }
-        .exercise-list.expanded { max-height: 2500px; border: 1px solid var(--border); border-top: none; }
+        .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .exercise-list.expanded { max-height: 3000px; border: 1px solid var(--border); border-top: none; background: white; }
         .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .exercise .ex-name { color: var(--primary); font-weight: 600; cursor: pointer; flex-grow: 1; text-decoration: underline; }
-        .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 5px; }
+        .ex-name { color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: underline; }
+        .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
         .fav-star.active { color: var(--fav-color); }
-
-        /* מודאלים */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
-        .modal-btns { display: flex; gap: 10px; flex-direction: column; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; text-decoration: none; }
-        .btn-sub { background: #f0f4f8; color: var(--text-dark); border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
 
         .hidden { display: none !important; }
 
-        /* התאמה למובייל - יצירת אחידות גלילה */
-        @media (max-width: 900px) {
-            header { height: 60px; }
-            
-            /* קיבוע הגובה הכולל של ה-Header והפילטרים למניעת קפיצות */
-            body { padding-top: 120px; } 
+        /* מודאל אקראי */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
+        .modal-btns { display: flex; gap: 10px; flex-direction: column; margin-top: 20px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; text-decoration: none; display: block; }
+        .btn-sub { background: #f0f4f8; color: var(--text-dark); border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
 
-            .filter-sidebar {
-                width: 100%; position: fixed; top: 60px; left: 0; z-index: 1050;
-                height: var(--filter-area-height); background: white; border-bottom: 2px solid var(--primary);
-                display: block; overflow: hidden;
-            }
-
-            .filter-bar {
-                flex-direction: row; flex-wrap: nowrap; overflow-x: auto; 
-                padding: 10px; gap: 8px; border: none; border-radius: 0; height: 100%; 
-                box-shadow: none; box-sizing: border-box;
-                -webkit-overflow-scrolling: touch; /* גלילה חלקה ב-iOS */
-            }
-            .filter-bar::-webkit-scrollbar { display: none; } /* הסתרת סרגל גלילה */
-            
-            .filter-button { 
-                width: auto; font-size: 13px; padding: 0 15px; height: 38px; 
-                display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            }
-
-            .category { top: 120px; }
-            .layout { padding: 0; }
+        @media (min-width: 901px) {
+            /* התאמה למחשב כדי שישמור על מבנה סיידבר */
+            .filter-sidebar { width: 250px; position: sticky; top: 80px; height: auto; border: none; background: transparent; }
+            .filter-bar { flex-direction: column; overflow: visible; }
+            body { padding-top: 80px; }
+            .category { top: 80px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.6</div>
+    <div class="version-tag">Version 1.1.7</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
-<div class="layout">
-    <aside class="filter-sidebar">
-        <div class="filter-bar" id="filterContainer">
-            <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
-                <i class="fas fa-random" style="margin-left:5px;"></i> אקראי
-            </button>
-            <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none;">
-                <i class="fas fa-star" style="margin-left:5px;"></i> מועדפים
-            </button>
-            <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
-                <i class="fas fa-arrows-alt-v" style="margin-left:5px;"></i> פתח הכל
-            </button>
-            <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
-                <i class="fas fa-trash-alt" style="margin-left:5px;"></i> נקה
-            </button>
-            <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
-        </div>
-    </aside>
-
-    <main class="container" id="mainContainer"></main>
+<div class="filter-sidebar">
+    <div class="filter-bar" id="filterContainer">
+        <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
+            <i class="fas fa-random"></i> אקראי
+        </button>
+        <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
+            <i class="fas fa-arrows-alt-v"></i> פתח הכל
+        </button>
+        <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); border:none;">
+            <i class="fas fa-star"></i> מועדפים
+        </button>
+        <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
+            <i class="fas fa-trash"></i> נקה
+        </button>
+        <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
+    </div>
 </div>
+
+<main class="container" id="mainContainer"></main>
 
 <div id="rndModal" class="modal-overlay" onclick="closeRndModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 id="rCat" style="font-size:1.1em; color:var(--primary); margin:0;">קטגוריה</h2>
-        <h4 id="rSer" style="font-weight:400; color:#666; margin:5px 0 15px 0;">סדרה</h4>
-        <span style="font-size:1.5em; font-weight:900; margin-bottom:25px; display:block; line-height:1.2;" id="rName">שם התרגיל</span>
+        <h2 id="rCat" style="font-size:1em; color:var(--primary);">קטגוריה</h2>
+        <h4 id="rSer" style="font-weight:400; color:#666; margin:5px 0;">סדרה</h4>
+        <span id="rName" style="font-size:1.6em; font-weight:900; display:block; margin:15px 0;">שם התרגיל</span>
         <div class="modal-btns">
             <a id="rLink" class="btn-main" target="_blank">צפה בוידיאו <i class="fas fa-play"></i></a>
             <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר <i class="fas fa-redo"></i></button>
@@ -250,13 +246,6 @@
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
     }
 
-    function toggleAllAccordions() {
-        allExpanded = !allExpanded;
-        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
-        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
-        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור' : '<i class="fas fa-arrows-alt-v"></i> פתח';
-    }
-
     function applyFilter(val, btn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -278,7 +267,14 @@
                 w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
             }
         });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function toggleAllAccordions() {
+        allExpanded = !allExpanded;
+        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
+        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
+        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
     }
 
     function getRandomEx() {
@@ -288,12 +284,12 @@
         document.getElementById('rName').innerText = ex.name;
         document.getElementById('rLink').href = ex.link;
         document.getElementById('rndModal').style.display = 'flex';
-        document.body.classList.add('modal-open');
+        document.body.style.overflow = 'hidden';
     }
 
     function closeRndModal() {
         document.getElementById('rndModal').style.display = 'none';
-        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
     }
 
     function genFilters(data) {
@@ -316,9 +312,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadSyllabus);
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
-    }
 </script>
 </body>
 </html>
