@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.3.6</title>
+    <title>Syllabus IJJA - v1.3.7</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -93,7 +93,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס IJJA</h1>
-            <small style="color:#888">v1.3.6</small>
+            <small style="color:#888">v1.3.7</small>
         </div>
     </div>
     <div class="action-bar">
@@ -111,7 +111,7 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <i id="randBtnModal" class="fas fa-random rand-top-btn hidden" onclick="playRandom(true)"></i>
+        <i id="randBtnModal" class="fas fa-random rand-top-btn hidden" onclick="playRandom()"></i>
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
@@ -146,7 +146,14 @@
                 else cur += char;
             }
             row.push(cur.trim());
-            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] ? row[4].trim() : "" });
+            if(row[0]) result.push({ 
+                id: i, 
+                cat: row[0], 
+                ser: row[1], 
+                num: row[2], 
+                name: row[3], 
+                link: row[4] ? row[4].trim() : "" 
+            });
         }
         return result;
     }
@@ -157,7 +164,7 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("Error loading CSV"); }
+        } catch(e) { console.error("CSV Load Error"); }
     }
 
     function render() {
@@ -202,24 +209,30 @@
         }
     }
 
-    // הפונקציה המקורית והתקינה מהגרסה ששלחת
+    // פונקציית טעינה מתוקנת לחלוטין שתואמת ל-CSV ולגרסה הישנה
     function loadVideo(url) {
         const frame = document.getElementById('vFrame');
-        if (!url) { frame.src = ""; return; }
+        if (!url || url.length < 5) { frame.src = ""; return; }
         
         let videoId = '';
-        if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1].split('?')[0];
-        } else if (url.includes('v=')) {
-            videoId = url.split('v=')[1].split('&')[0];
+        // הסרת רווחים וניקוי הכתובת
+        const cleanUrl = url.trim();
+
+        if (cleanUrl.includes('youtu.be/')) {
+            // טיפול ב-youtu.be/ID?t=...
+            videoId = cleanUrl.split('youtu.be/')[1].split('?')[0];
+        } else if (cleanUrl.includes('v=')) {
+            // טיפול ב-youtube.com/watch?v=ID...
+            videoId = cleanUrl.split('v=')[1].split('&')[0];
         }
         
-        const timeMatch = url.match(/[?&]t=(\d+)/);
+        const timeMatch = cleanUrl.match(/[?&]t=(\d+)/);
         const start = timeMatch ? timeMatch[1] : 0;
         
         if (videoId) {
-            frame.src = `https://www.youtube.com/embed/${videoId.trim()}?start=${start}&autoplay=1&rel=0`;
+            frame.src = `https://www.youtube.com/embed/${videoId}?start=${start}&autoplay=1&rel=0`;
         } else {
+            // אם לא מצאנו ID בשיטות הרגילות, ננסה לבדוק אם כל הלינק הוא ה-ID (למקרה קיצון)
             frame.src = "";
         }
     }
@@ -266,7 +279,7 @@
         if(target && target.link) openV(target, false);
     }
 
-    function playRandom(isFromModal = false) {
+    function playRandom() {
         const pool = db.filter(x => x.link && x.link.length > 5);
         if(pool.length > 0) {
             const r = pool[Math.floor(Math.random()*pool.length)];
