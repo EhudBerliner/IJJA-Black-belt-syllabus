@@ -20,9 +20,9 @@
             --header-h: 65px;
             --filter-h: 55px;
             --fav-color: #ffc107;
+            --sidebar-width: 260px; /* רוחב קבוע למחשב */
         }
 
-        /* מניעת גלילה של כל ה-body כדי לשמור על יציבות */
         html, body {
             height: 100%;
             margin: 0;
@@ -31,7 +31,6 @@
             background: #f7f9fb;
         }
 
-        /* Header קבוע לחלוטין */
         header {
             height: var(--header-h);
             background: white;
@@ -41,75 +40,93 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            z-index: 10;
+            z-index: 1200;
         }
 
         .version-tag { font-size: 10px; color: #888; }
         header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 22px; }
 
-        /* סרגל פילטרים קבוע בגובהו */
-        .filter-area {
-            height: var(--filter-h);
-            background: white;
-            border-bottom: 1px solid var(--border);
+        /* מבנה ה-Layout הראשי */
+        .app-container {
             display: flex;
-            align-items: center;
-            position: relative;
-            z-index: 9;
+            height: calc(100vh - var(--header-h));
+            width: 100%;
         }
+
+        /* סיידבר למחשב */
+        .filter-sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 1100;
+            /* פתרון בעיית רוחב הגלילה במחשב */
+            scrollbar-gutter: stable; 
+            overflow-y: auto;
+        }
+
+        /* עיצוב פס גלילה מודרני למחשב */
+        .filter-sidebar::-webkit-scrollbar { width: 6px; }
+        .filter-sidebar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .filter-sidebar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        .filter-sidebar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         .filter-bar {
             display: flex;
-            overflow-x: auto;
-            padding: 0 10px;
-            gap: 8px;
-            width: 100%;
-            -webkit-overflow-scrolling: touch;
+            flex-direction: column;
+            padding: 15px;
+            gap: 10px;
         }
-        .filter-bar::-webkit-scrollbar { display: none; }
 
         .filter-button {
-            height: 34px;
-            padding: 0 12px;
-            border-radius: 17px;
+            width: 100%;
+            height: 40px;
+            padding: 0 15px;
+            border-radius: 20px;
             border: 1px solid var(--border);
             background: #f0f4f8;
             font-weight: 700;
             white-space: nowrap;
-            flex-shrink: 0;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             font-family: 'Heebo';
+            text-align: right;
+            transition: all 0.2s;
         }
 
-        .filter-button.active { background: var(--primary); color: white; }
+        .filter-button.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* אזור התוכן הנגלל - כאן מתבצעת הגלילה האמיתית */
+        /* אזור התוכן */
         #scrollContainer {
-            height: calc(100vh - var(--header-h) - var(--filter-h));
+            flex-grow: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 20px;
             box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .main-content { max-width: 800px; margin: auto; }
+        .main-content { max-width: 850px; margin: 0 auto; }
 
         .category {
             background: var(--primary);
             color: white;
-            padding: 12px 15px;
-            border-radius: 10px;
-            font-size: 1.4em;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.5em;
             font-weight: 900;
-            margin: 20px 0 10px 0;
-            /* הפיכת הכותרת לסטטית בתוך אזור הגלילה לאחידות */
+            margin: 10px 0 20px 0;
+            position: sticky;
+            top: -20px; /* הצמדה לראש המכולה הנגללת */
+            z-index: 100;
         }
 
         .series {
             background: white;
             padding: 15px;
             font-weight: 700;
-            margin-top: 8px;
+            margin-top: 10px;
             border-right: 4px solid var(--secondary);
             border-radius: 8px;
             display: flex;
@@ -120,7 +137,7 @@
         }
 
         .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-        .exercise-list.expanded { max-height: 2000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; }
+        .exercise-list.expanded { max-height: 3000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; }
         .exercise { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .ex-name { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
@@ -128,8 +145,44 @@
 
         .hidden { display: none !important; }
 
+        /* התאמה למובייל - חוזרים למבנה שפתר את הבעיה */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            
+            .filter-sidebar {
+                width: 100%;
+                height: var(--filter-h);
+                flex-direction: row;
+                border-left: none;
+                border-bottom: 1px solid var(--border);
+                scrollbar-gutter: auto;
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+
+            .filter-bar {
+                flex-direction: row;
+                padding: 10px;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .filter-button {
+                width: auto;
+                height: 34px;
+                padding: 0 15px;
+                font-size: 13px;
+            }
+
+            #scrollContainer {
+                height: calc(100vh - var(--header-h) - var(--filter-h));
+            }
+            
+            .category { top: -10px; }
+        }
+
         /* מודאל */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
         .modal-btns { display: flex; gap: 10px; flex-direction: column; margin-top: 20px; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; text-decoration: none; display: block; }
@@ -139,22 +192,24 @@
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.8</div>
+    <div class="version-tag">Version 1.1.9</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
-<div class="filter-area">
-    <div class="filter-bar" id="filterContainer">
-        <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">אקראי</button>
-        <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">פתח הכל</button>
-        <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); border:none;">מועדפים</button>
-        <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">נקה</button>
-        <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
-    </div>
-</div>
+<div class="app-container">
+    <aside class="filter-sidebar">
+        <div class="filter-bar" id="filterContainer">
+            <button class="filter-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">אקראי</button>
+            <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">פתח הכל</button>
+            <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); border:none;">מועדפים</button>
+            <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">נקה מועדפים</button>
+            <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
+        </div>
+    </aside>
 
-<div id="scrollContainer">
-    <div class="main-content" id="mainContainer"></div>
+    <div id="scrollContainer">
+        <main class="main-content" id="mainContainer"></main>
+    </div>
 </div>
 
 <div id="rndModal" class="modal-overlay" onclick="closeRndModal()">
@@ -267,7 +322,6 @@
                 w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
             }
         });
-        // איפוס גלילה למכולה הפנימית בלבד לאחידות מקסימלית
         document.getElementById('scrollContainer').scrollTop = 0;
     }
 
