@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.3.8</title>
+    <title>Syllabus IJJA - v1.3.9</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -70,7 +70,6 @@
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
-        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 550px; position: relative; }
         .video-box { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 8px; overflow: hidden; }
@@ -94,7 +93,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס IJJA</h1>
-            <small style="color:#888">v1.3.8</small>
+            <small style="color:#888">v1.3.9</small>
         </div>
     </div>
     <div class="action-bar">
@@ -136,34 +135,31 @@
     let isFavOnly = false;
     let currentEx = null;
 
-    // --- מנגנון ניגון וידאו "As Is" מהגרסה התקינה שצירפת ---
+    // פונקציית הניגון שנלקחה As Is מהגרסה שלך
     function getEmbedUrl(url) {
         if (!url) return '';
-        let embedUrl = url.replace("watch?v=", "embed/");
-        if (url.includes("youtu.be/")) {
-            const videoId = url.split("youtu.be/")[1].split("?")[0];
-            const timeParam = url.split("?t=")[1] || url.split("&t=")[1];
+        let embedUrl = url.replace(\"watch?v=\", \"embed/\");
+        if (url.includes(\"youtu.be/\")) {
+            const videoId = url.split(\"youtu.be/\")[1].split(\"?\")[0];
+            const timeParam = url.split(\"?t=\")[1] || url.split(\"&t=\")[1];
             embedUrl = `https://www.youtube.com/embed/${videoId}`;
             if (timeParam) embedUrl += `?start=${timeParam}`;
-        } else if (url.includes("embed/")) {
-            embedUrl = url;
         }
         return embedUrl;
     }
-    // ------------------------------------------------------
 
     function parseCSV(text) {
-        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
+        const lines = text.split(/\\r?\\n/).filter(l => l.trim().length > 5);
         const result = [];
         for(let i=1; i<lines.length; i++) {
             let row = [], cur = '', inQ = false;
             for(let char of lines[i]) {
-                if(char === '"') inQ = !inQ;
+                if(char === '\"') inQ = !inQ;
                 else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
                 else cur += char;
             }
             row.push(cur.trim());
-            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" });
+            if(row[0]) result.push({ id: i, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || \"\" });
         }
         return result;
     }
@@ -174,7 +170,7 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("Data error"); }
+        } catch(e) { console.error(\"CSV Error\"); }
     }
 
     function render() {
@@ -190,11 +186,11 @@
         for(let cat in groups) {
             const cDiv = document.createElement('div');
             cDiv.className = 'cat-group';
-            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
+            cDiv.innerHTML = `<div class=\"cat-header\">${cat}</div>`;
             for(let ser in groups[cat]) {
                 const sBtn = document.createElement('div');
                 sBtn.className = 'ser-item';
-                sBtn.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+                sBtn.innerHTML = `<span>${ser}</span><i class=\"fas fa-chevron-down\"></i>`;
                 const list = document.createElement('ul');
                 list.className = 'ex-list';
                 groups[cat][ser].forEach(ex => {
@@ -203,9 +199,9 @@
                     li.dataset.id = ex.id;
                     const isLink = ex.link && ex.link.length > 5;
                     const nameHtml = isLink 
-                        ? `<span class="ex-link" onclick='openV(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>`
-                        : `<span class="ex-no-link">${ex.num}. ${ex.name}</span>`;
-                    li.innerHTML = `${nameHtml} <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
+                        ? `<span class=\"ex-link\" onclick='openV(${JSON.stringify(ex)}, false)'>${ex.num}. ${ex.name}</span>`
+                        : `<span class=\"ex-no-link\">${ex.num}. ${ex.name}</span>`;
+                    li.innerHTML = `${nameHtml} <i class=\"fas fa-star star ${favs.includes(ex.id)?'active':''}\" onclick=\"toggleStar(${ex.id}, this)\"></i>`;
                     list.appendChild(li);
                 });
                 sBtn.onclick = () => {
@@ -233,7 +229,7 @@
             prevBtn.classList.add('hidden');
             nextBtn.classList.add('hidden');
             randBtn.classList.remove('hidden');
-            counter.innerText = "תרגיל אקראי";
+            counter.innerText = \"תרגיל אקראי\";
         } else {
             prevBtn.classList.remove('hidden');
             nextBtn.classList.remove('hidden');
@@ -245,7 +241,7 @@
         }
         
         const embed = getEmbedUrl(ex.link);
-        document.getElementById('vFrame').src = embed ? embed + (embed.includes('?') ? '&' : '?') + "autoplay=1" : "";
+        document.getElementById('vFrame').src = embed ? embed + (embed.includes('?') ? '&' : '?') + \"autoplay=1\" : \"\";
         document.getElementById('vModal').style.display = 'flex';
     }
 
@@ -272,7 +268,7 @@
 
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
-        document.getElementById('vFrame').src = "";
+        document.getElementById('vFrame').src = \"\";
     }
 
     function toggleStar(id, el) {
@@ -284,9 +280,9 @@
     }
 
     function clearFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
+        if(confirm(\"למחוק את כל המועדפים?\")) {
             favs = [];
-            localStorage.setItem('ijja_favs', "[]");
+            localStorage.setItem('ijja_favs', \"[]\");
             render();
         }
     }
