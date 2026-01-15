@@ -21,8 +21,8 @@
             --card-bg: #ffffff;
             --border: #d2dce5;
             --header-height: 70px;
+            --filter-height: 60px;
             --fav-color: #ffc107;
-            --sticky-offset: var(--header-height); 
         }
 
         body {
@@ -41,7 +41,6 @@
             background: white; border-bottom: 3px solid var(--primary);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 1100;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
         }
 
         .version-tag { font-size: 10px; color: #888; margin-bottom: -4px; }
@@ -50,8 +49,8 @@
         .layout { display: flex; max-width: 900px; margin: auto; padding: 20px; gap: 20px; align-items: flex-start; }
 
         .filter-sidebar {
-            width: 230px; position: sticky; top: calc(var(--sticky-offset) + 20px);
-            max-height: calc(100vh - var(--sticky-offset) - 40px); overflow-y: auto; scrollbar-width: none;
+            width: 230px; position: sticky; top: calc(var(--header-height) + 20px);
+            max-height: calc(100vh - var(--header-height) - 40px); overflow-y: auto;
         }
 
         .filter-bar {
@@ -73,13 +72,7 @@
         .category {
             margin-top: 0; background: var(--primary); color: white; padding: 15px 20px;
             border-radius: 12px; font-size: 1.6em; font-weight: 900; position: sticky;
-            top: var(--sticky-offset); z-index: 1000;
-            box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1);
-        }
-
-        .category::before {
-            content: ""; position: absolute; top: -20px; left: 0; width: 100%; height: 20px;
-            background: #f7f9fb;
+            top: var(--header-height); z-index: 1000;
         }
 
         .category:not(:first-child) { margin-top: 40px; }
@@ -88,75 +81,51 @@
             background: white; padding: 15px 20px; font-weight: 700; margin-top: 15px;
             border-right: 4px solid var(--secondary); cursor: pointer; border-radius: 8px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .series.active i { transform: rotate(180deg); }
-        .series i { transition: transform 0.3s; }
-
-        .exercise-list {
-            list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden;
-            transition: max-height 0.4s ease; background: white; border-radius: 0 0 8px 8px;
-        }
+        .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: white; border-radius: 0 0 8px 8px; }
         .exercise-list.expanded { max-height: 2500px; border: 1px solid var(--border); border-top: none; }
-
         .exercise { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .exercise .ex-name { color: var(--primary); font-weight: 600; cursor: pointer; flex-grow: 1; text-decoration: underline; }
-
         .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 5px; }
         .fav-star.active { color: var(--fav-color); }
 
         /* מודאלים */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 1200; justify-content: center; align-items: center;
-        }
-
-        .modal-content {
-            background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .modal-content h2 { color: var(--primary); margin-bottom: 5px; }
-        .modal-content h4 { color: #666; margin: 5px 0 20px 0; font-weight: 400; }
-        .modal-content .ex-title { font-size: 1.4em; font-weight: 900; margin-bottom: 25px; display: block; }
-
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1200; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
         .modal-btns { display: flex; gap: 10px; flex-direction: column; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1.1em; text-decoration: none; display: inline-block; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; text-decoration: none; }
         .btn-sub { background: #f0f4f8; color: var(--text-dark); border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-        .btn-close { color: #888; background: none; border: none; margin-top: 10px; cursor: pointer; text-decoration: underline; }
 
         .hidden { display: none !important; }
 
         @media (max-width: 900px) {
             header { height: 60px; }
-            body { padding-top: 120px; } /* מקום ל-Header ולפילטרים */
-            
-            .layout { flex-direction: column; padding: 0; gap: 0; }
+            /* גובה קבוע ל-Header + סרגל פילטרים למניעת קפיצות גלילה */
+            body { padding-top: 120px; } 
             
             .filter-sidebar {
                 width: 100%; position: fixed; top: 60px; left: 0; z-index: 1050;
-                max-height: 60px; background: white; border-bottom: 1px solid var(--border);
+                height: var(--filter-height); background: white; border-bottom: 2px solid var(--primary);
             }
 
             .filter-bar {
                 flex-direction: row; flex-wrap: nowrap; overflow-x: auto; 
-                padding: 10px; gap: 10px; border: none; border-radius: 0;
-                -webkit-overflow-scrolling: touch; scrollbar-width: none;
+                padding: 10px; gap: 8px; border: none; border-radius: 0; height: 100%; box-sizing: border-box;
+                -webkit-overflow-scrolling: touch;
             }
             .filter-bar::-webkit-scrollbar { display: none; }
-            
-            .filter-button { width: auto; font-size: 0.85em; padding: 6px 15px; text-align: center; }
+            .filter-button { width: auto; font-size: 0.85em; padding: 0 15px; height: 35px; display: flex; align-items: center; }
 
-            .container { padding: 10px; }
-            .category { top: 120px; } /* צמוד מתחת לפילטרים */
+            .category { top: 120px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="version-tag">Version 1.1.4</div>
+    <div class="version-tag">Version 1.1.5</div>
     <h1>סילבוס חגורה שחורה - IJJA</h1>
 </header>
 
@@ -169,6 +138,12 @@
             <button class="filter-button" onclick="applyFilter('favs', this)" style="background:var(--fav-color); color:var(--text-dark); border:none;">
                 <i class="fas fa-star"></i> מועדפים
             </button>
+            <button class="filter-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
+                <i class="fas fa-arrows-alt-v"></i> פתח הכל
+            </button>
+            <button class="filter-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
+                <i class="fas fa-trash-alt"></i> נקה מועדפים
+            </button>
             <button class="filter-button active" onclick="applyFilter('all', this)">הכל</button>
         </div>
     </aside>
@@ -180,11 +155,11 @@
     <div class="modal-content" onclick="event.stopPropagation()">
         <h2 id="rCat">קטגוריה</h2>
         <h4 id="rSer">סדרה</h4>
-        <span class="ex-title" id="rName">שם התרגיל</span>
+        <span style="font-size:1.4em; font-weight:900; margin-bottom:20px; display:block;" id="rName">שם התרגיל</span>
         <div class="modal-btns">
             <a id="rLink" class="btn-main" target="_blank">צפה בוידיאו <i class="fas fa-play"></i></a>
             <button class="btn-sub" onclick="getRandomEx()">תרגיל אחר <i class="fas fa-redo"></i></button>
-            <button class="btn-close" onclick="closeRndModal()">סגור</button>
+            <button class="btn-sub" onclick="closeRndModal()">סגור</button>
         </div>
     </div>
 </div>
@@ -192,6 +167,7 @@
 <script>
     let rawData = [];
     let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
+    let allExpanded = false;
 
     async function loadSyllabus() {
         try {
@@ -264,6 +240,13 @@
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
     }
 
+    function toggleAllAccordions() {
+        allExpanded = !allExpanded;
+        document.querySelectorAll('.series').forEach(s => s.classList.toggle('active', allExpanded));
+        document.querySelectorAll('.exercise-list').forEach(l => l.classList.toggle('expanded', allExpanded));
+        document.getElementById('toggleAllBtn').innerHTML = allExpanded ? '<i class="fas fa-arrows-alt-v"></i> סגור הכל' : '<i class="fas fa-arrows-alt-v"></i> פתח הכל';
+    }
+
     function applyFilter(val, btn) {
         document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -323,11 +306,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadSyllabus);
-
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js');
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
     }
 </script>
 </body>
