@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.4.5</title>
+    <title>Syllabus IJJA - v1.4.6</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -73,6 +73,7 @@
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; text-align: center; }
         
@@ -90,7 +91,7 @@
 
         .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
         .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .nav-btn:disabled { background: #eee !important; color: #bbb; }
+        .nav-btn:disabled { background: #eee !important; color: #bbb; cursor: not-allowed; }
 
         .hidden { display: none !important; }
     </style>
@@ -100,7 +101,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.5</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.6</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -117,15 +118,18 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
+        
         <i id="randBtnModal" class="fas fa-random rand-next-btn hidden" onclick="playRandom()"></i>
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
+            
             <div style="flex: 1; overflow: hidden;">
                 <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"></div>
                 <div id="vName" style="color:var(--primary); font-size:1.2em; font-weight: 800; margin-top:5px;"></div>
                 <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top: 4px;"></div>
             </div>
+
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
 
@@ -165,7 +169,7 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV Load Error"); }
+        } catch(e) { console.error("Load Error"); }
     }
 
     function parseCSV(text) {
@@ -224,31 +228,41 @@
         }
     }
 
+    // פונקציית פתיחת החלון עם הפרדה מוחלטת
     function openV(ex, isRandom) {
         currentEx = ex;
-        // איפוס חלונית
+        
+        // 1. איפוס תצוגה
         document.getElementById('videoContainer').style.display = 'none';
         document.getElementById('vFrame').src = "";
         document.getElementById('watchBtn').style.display = 'inline-flex';
         
+        // 2. כותרות
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
 
+        // 3. הפרדת פונקציונאליות
         if(isRandom) {
+            // מצב אקראי: אין חיצים, יש כפתור הגרלה מחדש
             document.getElementById('prevBtn').classList.add('hidden');
             document.getElementById('nextBtn').classList.add('hidden');
             document.getElementById('randBtnModal').classList.remove('hidden');
-            document.getElementById('vCounter').innerText = "";
+            document.getElementById('vCounter').innerText = "תרגיל אקראי";
         } else {
+            // מצב רשימה: יש חיצים, אין כפתור הגרלה מחדש
             document.getElementById('prevBtn').classList.remove('hidden');
             document.getElementById('nextBtn').classList.remove('hidden');
             document.getElementById('randBtnModal').classList.add('hidden');
+            
             const series = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
             const idx = series.findIndex(x => x.id === ex.id) + 1;
             document.getElementById('vCounter').innerText = `תרגיל ${idx} מתוך ${series.length}`;
+            
+            // עדכון מצב כפתורי הניווט
             document.getElementById('prevBtn').disabled = (idx === 1);
             document.getElementById('nextBtn').disabled = (idx === series.length);
         }
+
         document.getElementById('vModal').style.display = 'flex';
     }
 
@@ -262,7 +276,10 @@
 
     function playRandom() {
         const pool = db.filter(x => x.link && x.link.length > 5);
-        if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)], true);
+        if(pool.length) {
+            const r = pool[Math.floor(Math.random()*pool.length)];
+            openV(r, true);
+        }
     }
 
     function nav(dir) {
@@ -274,7 +291,7 @@
 
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
-        document.getElementById('vFrame').src = "";
+        document.getElementById('vFrame').src = ""; // עצירת הוידאו
     }
 
     function toggleStar(id, el) {
@@ -289,7 +306,8 @@
         if(confirm("למחוק את כל המועדפים?")) {
             favs = [];
             localStorage.setItem('ijja_favs', "[]");
-            render();
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+            if(isFavOnly) applyFilters();
         }
     }
 
