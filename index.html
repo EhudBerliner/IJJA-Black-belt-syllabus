@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.4.4</title>
+    <title>Syllabus IJJA - v1.4.5</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,6 +19,7 @@
             --border: #d2dce5;
             --header-h: 90px;
             --fav-color: #ffc107;
+            --danger: #d32f2f;
         }
 
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
@@ -40,6 +41,7 @@
             display: flex; align-items: center; justify-content: center; font-size: 1em;
         }
         .btn.active { background: var(--primary); color: white; }
+        .btn-danger { color: var(--danger); }
 
         #scrollContainer { 
             height: 100vh; padding-top: var(--header-h); 
@@ -98,12 +100,13 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.4</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.5</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
-        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
+        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
     </div>
 </header>
 
@@ -162,7 +165,7 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV error"); }
+        } catch(e) { console.error("CSV Load Error"); }
     }
 
     function parseCSV(text) {
@@ -192,29 +195,24 @@
         for(let cat in groups) {
             const cDiv = document.createElement('div');
             cDiv.className = 'cat-group';
-            cDiv.dataset.cat = cat;
             cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
-            
             for(let ser in groups[cat]) {
                 const sBtn = document.createElement('div');
                 sBtn.className = 'ser-item';
                 sBtn.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
-                
                 const list = document.createElement('ul');
                 list.className = 'ex-list';
-                
                 groups[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
                     li.className = 'ex-row';
                     li.dataset.id = ex.id;
                     const hasLink = ex.link && ex.link.length > 5;
                     li.innerHTML = `
-                        <span class="${hasLink?'ex-link':'ex-no-link'}" onclick='${hasLink?`openV(${JSON.stringify(ex)}, false)` : ""}'>${ex.num}. ${ex.name}</span>
+                        <span class="${hasLink?'ex-link':'ex-no-link'}" onclick='${hasLink ? `openV(${JSON.stringify(ex)}, false)` : ""}'>${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>
                     `;
                     list.appendChild(li);
                 });
-
                 sBtn.onclick = () => {
                     const open = list.classList.toggle('open');
                     sBtn.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
@@ -228,6 +226,7 @@
 
     function openV(ex, isRandom) {
         currentEx = ex;
+        // איפוס חלונית
         document.getElementById('videoContainer').style.display = 'none';
         document.getElementById('vFrame').src = "";
         document.getElementById('watchBtn').style.display = 'inline-flex';
@@ -286,6 +285,14 @@
         if(isFavOnly) applyFilters();
     }
 
+    function clearFavs() {
+        if(confirm("למחוק את כל המועדפים?")) {
+            favs = [];
+            localStorage.setItem('ijja_favs', "[]");
+            render();
+        }
+    }
+
     function toggleFavFilter() {
         isFavOnly = !isFavOnly;
         document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
@@ -299,7 +306,8 @@
                 const list = s.nextElementSibling;
                 let serHas = false;
                 list.querySelectorAll('.ex-row').forEach(row => {
-                    const isF = favs.includes(parseInt(row.dataset.id));
+                    const id = parseInt(row.dataset.id);
+                    const isF = favs.includes(id);
                     const hide = isFavOnly && !isF;
                     row.classList.toggle('hidden', hide);
                     if(!hide) serHas = true;
