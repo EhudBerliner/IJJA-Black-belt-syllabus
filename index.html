@@ -2,11 +2,11 @@
 <html lang="he" dir="rtl">
 <head>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007aff">
+    <meta name="theme-color" content="#0056a6">
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus for black belts - IJJA</title>
+    <title>סילבוס חגורות שחורות - IJJA</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -17,7 +17,7 @@
             --primary: #0056a6;
             --secondary: #009be5;
             --border: #d2dce5;
-            --header-h: 110px;
+            --header-h: 170px; /* הותאם למיקום הכפתורים החדש */
             --fav-color: #ffc107;
         }
 
@@ -26,323 +26,390 @@
             margin: 0;
             overflow: hidden; 
             font-family: 'Heebo', sans-serif;
-            background: #f7f9fb;
+            background-color: #f7f9fb;
+            color: #333;
         }
 
         header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
             height: var(--header-h);
             background: white;
-            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 15px;
+            box-sizing: border-box;
+        }
+
+        .header-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1200;
+            gap: 12px;
+            margin-bottom: 10px;
         }
 
-        .action-bar {
-            display: flex;
-            gap: 8px;
-            padding: 5px 10px 10px 10px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .action-button {
-            height: 32px;
-            padding: 0 12px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            background: #f0f4f8;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 13px;
+        .logo-area {
             display: flex;
             align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .title-area h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 900;
+        }
+
+        .title-area p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* כפתורי שליטה מעל לקו */
+        .controls {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .controls button {
+            flex: 1;
+            padding: 8px 5px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 5px;
+            max-width: 120px;
         }
 
-        .action-button.active { background: var(--primary); color: white; }
-
-        #scrollContainer {
-            height: 100vh;
-            padding-top: var(--header-h);
-            overflow-y: auto;
-            box-sizing: border-box;
-            scrollbar-gutter: stable;
-        }
-
-        .main-content { max-width: 900px; margin: 0 auto; padding: 20px; }
-
-        .category {
+        .controls button.active {
             background: var(--primary);
             color: white;
-            padding: 15px 20px;
+            border-color: var(--primary);
+        }
+
+        .danger-btn { color: #dc3545; }
+
+        /* חיפוש */
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px 35px 10px 12px;
+            border: 2px solid #edf2f7;
             border-radius: 12px;
-            font-size: 1.5em;
-            font-weight: 900;
-            margin: 20px 0 10px 0;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
+            font-size: 1rem;
+            box-sizing: border-box;
+            background: #f8fafc;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: white;
+        }
+
+        /* רשימת תכנים */
+        main {
+            margin-top: var(--header-h);
+            height: calc(100% - var(--header-h));
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .category-wrap { margin-bottom: 15px; }
+        .category-title {
+            background: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
         }
 
         .series {
             background: white;
-            padding: 15px;
-            font-weight: 700;
-            margin-top: 10px;
-            border-right: 4px solid var(--secondary);
+            border: 1px solid var(--border);
             border-radius: 8px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .series-header {
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             cursor: pointer;
+            font-weight: bold;
         }
 
-        .exercise-list { list-style: none; padding: 0; margin: 0; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-        .exercise-list.expanded { max-height: 3000px; border: 1px solid var(--border); border-top: none; background: white; border-radius: 0 0 8px 8px; }
-        .exercise { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        
-        .ex-name { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; }
-        .fav-star { cursor: pointer; color: #ccc; font-size: 1.2rem; }
+        .series-header i {
+            transition: transform 0.3s;
+            color: var(--secondary);
+        }
+
+        .series.active .series-header i { transform: rotate(180deg); }
+
+        .exercise-list {
+            display: none;
+            border-top: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .exercise-list.expanded { display: block; }
+
+        .exercise {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            gap: 10px;
+        }
+
+        .exercise:last-child { border-bottom: none; }
+
+        .exercise-name { flex: 1; cursor: pointer; }
+
+        .fav-star {
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
         .fav-star.active { color: var(--fav-color); }
 
         .hidden { display: none !important; }
 
-        /* מודאל וידיאו משופר עם ניווט */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 15px; border-radius: 15px; width: 95%; max-width: 600px; text-align: center; position: relative; }
-        
-        .video-wrapper { 
-            position: relative; 
-            padding-bottom: 56.25%; 
-            height: 0; 
-            overflow: hidden; 
-            margin: 15px 0;
-            background: #000;
+        /* Modal וידאו */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            width: 95%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 8px;
         }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        .nav-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            gap: 10px;
-        }
-
-        .nav-btn {
-            background: var(--primary);
+        .close-modal {
+            position: absolute;
+            top: -40px; left: 0;
             color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-weight: 700;
+            font-size: 2rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: opacity 0.2s;
-        }
-
-        .nav-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .modal-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-sub { flex: 1; background: #f0f4f8; color: #233142; border: none; padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-        .close-x { position: absolute; top: -40px; right: 0; color: white; font-size: 24px; cursor: pointer; }
-
-        @media (max-width: 600px) {
-            .nav-btn span { display: none; } /* במובייל נראה רק חצים */
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>סילבוס חגורה שחורה - IJJA</h1>
-    <div class="action-bar">
-        <button class="action-button" onclick="getRandomEx()" style="background:#ff9800; color:white; border:none;">
-            <i class="fas fa-random"></i> אקראי
-        </button>
-        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" style="background:#4caf50; color:white; border:none;">
-            <i class="fas fa-arrows-alt-v"></i> פתח הכל
-        </button>
-        <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()">
-            <i class="fas fa-star" style="color:var(--fav-color)"></i> מועדפים
-        </button>
-        <button class="action-button" onclick="clearAllFavs()" style="background:#f44336; color:white; border:none;">
-            <i class="fas fa-trash"></i> נקה
-        </button>
+    <div class="header-content">
+        <div class="logo-area">
+            <img src="Logo.png" alt="IJJA Logo" class="logo">
+            <div class="title-area">
+                <h1>Syllabus - Black Belts</h1>
+                <p>איגוד הג'וג'יטסו בישראל</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="toggleAllBtn" onclick="toggleAllAccordions()">
+                <i class="fas fa-arrows-alt-v"></i> פתח הכל
+            </button>
+            <button id="favFilterBtn" onclick="toggleFavFilter()">
+                <i class="fas fa-star"></i> מועדפים
+            </button>
+            <button id="clearFavsBtn" onclick="clearAllFavs()" class="danger-btn">
+                <i class="fas fa-trash-alt"></i> נקה
+            </button>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="חפש תרגיל או סדרה..." oninput="handleSearch()">
     </div>
 </header>
 
-<div id="scrollContainer">
-    <main class="main-content" id="mainContainer"></main>
-</div>
+<main id="content"></main>
 
-<div id="videoModal" class="modal-overlay" onclick="closeModal()">
+<div id="videoModal" class="modal" onclick="closeVideo()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <i class="fas fa-times close-x" onclick="closeModal()"></i>
-        
-        <div class="nav-controls">
-            <button id="prevBtn" class="nav-btn" onclick="navigateEx(-1)">
-                <i class="fas fa-chevron-right"></i> <span>הקודם</span>
-            </button>
-            <div style="flex:1">
-                <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.1em;"></h3>
-                <p id="mSub" style="margin: 0; font-size: 0.8em; color: #666;"></p>
-            </div>
-            <button id="nextBtn" class="nav-btn" onclick="navigateEx(1)">
-                <span>הבא</span> <i class="fas fa-chevron-left"></i>
-            </button>
-        </div>
-        
-        <div class="video-wrapper">
-            <iframe id="videoFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-
-        <div class="modal-btns">
-            <button class="btn-sub" onclick="getRandomEx()">תרגיל אקראי</button>
-            <button class="btn-sub" onclick="closeModal()">סגור</button>
+        <span class="close-modal" onclick="closeVideo()">&times;</span>
+        <div class="video-container">
+            <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
 </div>
 
 <script>
-    let rawData = [];
-    let favorites = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let allExpanded = false;
+    let allData = [];
+    let favorites = JSON.parse(localStorage.getItem('ijja_favs') || "[]");
     let isFavFilterActive = false;
-    let currentEx = null; // שמירת התרגיל הנוכחי שפתוח במודאל
+    let allExpanded = false;
 
-    async function loadSyllabus() {
+    // טעינת נתונים
+    async function loadData() {
         try {
-            const res = await fetch('Black_belt_syllabus_IJJA.csv');
-            const text = await res.text();
-            const rows = text.split('\n').filter(r => r.trim() !== '');
-            rawData = rows.slice(1).map((row, idx) => {
-                const cols = parseCSV(row);
-                return { id: idx, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4] };
-            }).filter(i => i.cat);
-            render(rawData);
-        } catch (e) { console.error(e); }
+            const response = await fetch('Black_belt_syllabus_IJJA.csv');
+            const csvText = await response.text();
+            parseCSV(csvText);
+            renderSyllabus();
+        } catch (e) { console.error("Error loading CSV", e); }
     }
 
-    function parseCSV(r) {
-        const res = []; let c = '', q = false;
-        for (let i=0; i<r.length; i++) {
-            if (r[i] === '"') q = !q;
-            else if (r[i] === ',' && !q) { res.push(c.trim()); c = ''; }
-            else c += r[i];
-        }
-        res.push(c.trim()); return res;
-    }
-
-    function render(data) {
-        const container = document.getElementById('mainContainer');
-        container.innerHTML = '';
-        const grouped = data.reduce((acc, i) => {
-            if (!acc[i.cat]) acc[i.cat] = {};
-            if (!acc[i.cat][i.ser]) acc[i.cat][i.ser] = [];
-            acc[i.cat][i.ser].push(i);
-            return acc;
-        }, {});
-
-        Object.keys(grouped).forEach(cat => {
-            const cDiv = document.createElement('div');
-            cDiv.className = 'category'; cDiv.innerText = cat;
-            container.appendChild(cDiv);
-
-            Object.keys(grouped[cat]).forEach(ser => {
-                const sWrap = document.createElement('div');
-                sWrap.className = 'series-wrapper';
-                const sDiv = document.createElement('div');
-                sDiv.className = 'series';
-                sDiv.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
-                const list = document.createElement('ul');
-                list.className = 'exercise-list';
-                
-                grouped[cat][ser].forEach(ex => {
-                    const li = document.createElement('li');
-                    li.className = 'exercise';
-                    li.innerHTML = `
-                        <span class="ex-name" onclick='openVideo(${JSON.stringify(ex)})'>${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star fav-star ${favorites.includes(ex.id) ? 'active' : ''}" onclick="toggleFav(${ex.id}, this)"></i>
-                    `;
-                    list.appendChild(li);
-                });
-
-                sDiv.onclick = () => { sDiv.classList.toggle('active'); list.classList.toggle('expanded'); };
-                sWrap.appendChild(sDiv); sWrap.appendChild(list); container.appendChild(sWrap);
-            });
+    function parseCSV(text) {
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        const headers = lines[0].split(',');
+        allData = lines.slice(1).map(line => {
+            const values = line.split(',');
+            return {
+                category: values[0]?.trim(),
+                series: values[1]?.trim(),
+                id: values[2]?.trim(),
+                name: values[3]?.trim(),
+                link: values[4]?.trim()
+            };
         });
     }
 
-    function getEmbedUrl(url) {
-        if (!url) return "";
-        let vidId = "";
-        try {
-            if (url.includes("youtu.be/")) {
-                vidId = url.split("youtu.be/")[1].split("?")[0];
-            } else {
-                vidId = new URL(url).searchParams.get("v");
-            }
-            const time = new URL(url).searchParams.get("t") || 0;
-            return `https://www.youtube.com/embed/${vidId}?start=${parseInt(time)}&autoplay=1`;
-        } catch(e) { return ""; }
+    function renderSyllabus() {
+        const container = document.getElementById('content');
+        container.innerHTML = '';
+
+        const categories = [...new Set(allData.map(d => d.category))];
+
+        categories.forEach(cat => {
+            const catDiv = document.createElement('div');
+            catDiv.className = 'category-wrap';
+            catDiv.innerHTML = `<div class="category-title">${cat}</div>`;
+
+            const seriesInCat = [...new Set(allData.filter(d => d.category === cat).map(d => d.series))];
+
+            seriesInCat.forEach(ser => {
+                const serDiv = document.createElement('div');
+                serDiv.className = 'series';
+                serDiv.innerHTML = `
+                    <div class="series-header" onclick="this.parentElement.classList.toggle('active'); this.nextElementSibling.classList.toggle('expanded')">
+                        <span>${ser}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="exercise-list"></div>
+                `;
+
+                const list = serDiv.querySelector('.exercise-list');
+                const exercises = allData.filter(d => d.category === cat && d.series === ser);
+
+                exercises.forEach(ex => {
+                    const isFav = favorites.includes(ex.link);
+                    const exDiv = document.createElement('div');
+                    exDiv.className = 'exercise';
+                    exDiv.innerHTML = `
+                        <i class="fas fa-star fav-star ${isFav ? 'active' : ''}" onclick="toggleFav('${ex.link}', this)"></i>
+                        <div class="exercise-name" onclick="openVideo('${ex.link}')">${ex.name}</div>
+                        <i class="fab fa-youtube" style="color:#ff0000"></i>
+                    `;
+                    list.appendChild(exDiv);
+                });
+
+                catDiv.appendChild(serDiv);
+            });
+            container.appendChild(catDiv);
+        });
     }
 
-    function openVideo(ex) {
-        currentEx = ex;
-        document.getElementById('mTitle').innerText = ex.name;
-        document.getElementById('mSub').innerText = `${ex.cat} > ${ex.ser}`;
-        document.getElementById('videoFrame').src = getEmbedUrl(ex.link);
+    function openVideo(url) {
+        const embedUrl = url.replace("youtu.be/", "www.youtube.com/embed/").replace("watch?v=", "embed/");
+        document.getElementById('videoFrame').src = embedUrl;
         document.getElementById('videoModal').style.display = 'flex';
-        updateNavButtons();
     }
 
-    // פונקציית ניווט בין תרגילים באותה סדרה
-    function navigateEx(direction) {
-        const seriesData = rawData.filter(i => i.cat === currentEx.cat && i.ser === currentEx.ser);
-        const currentIndex = seriesData.findIndex(i => i.id === currentEx.id);
-        const nextItem = seriesData[currentIndex + direction];
-        if (nextItem) openVideo(nextItem);
-    }
-
-    function updateNavButtons() {
-        const seriesData = rawData.filter(i => i.cat === currentEx.cat && i.ser === currentEx.ser);
-        const currentIndex = seriesData.findIndex(i => i.id === currentEx.id);
-        
-        document.getElementById('prevBtn').disabled = (currentIndex === 0);
-        document.getElementById('nextBtn').disabled = (currentIndex === seriesData.length - 1);
-    }
-
-    function getRandomEx() {
-        const ex = rawData[Math.floor(Math.random() * rawData.length)];
-        openVideo(ex);
-    }
-
-    function closeModal() {
+    function closeVideo() {
         document.getElementById('videoModal').style.display = 'none';
-        document.getElementById('videoFrame').src = "";
+        document.getElementById('videoFrame').src = '';
     }
 
-    function toggleFav(id, el) {
-        if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
-        else favorites.push(id);
-        el.classList.toggle('active');
+    function toggleFav(link, el) {
+        if (favorites.includes(link)) {
+            favorites = favorites.filter(f => f !== link);
+            el.classList.remove('active');
+        } else {
+            favorites.push(link);
+            el.classList.add('active');
+        }
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
-        if(isFavFilterActive) applyFavFilter();
+        if (isFavFilterActive) applyFavFilter();
+    }
+
+    function handleSearch() {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('.exercise').forEach(ex => {
+            const text = ex.innerText.toLowerCase();
+            ex.classList.toggle('hidden', !text.includes(term));
+        });
+
+        document.querySelectorAll('.series').forEach(ser => {
+            const hasVisible = ser.querySelectorAll('.exercise:not(.hidden)').length > 0;
+            ser.classList.toggle('hidden', !hasVisible);
+            if (term.length > 0 && hasVisible) {
+                ser.classList.add('active');
+                ser.querySelector('.exercise-list').classList.add('expanded');
+            }
+        });
     }
 
     function toggleFavFilter() {
@@ -352,18 +419,26 @@
     }
 
     function applyFavFilter() {
-        document.querySelectorAll('.category').forEach(c => c.classList.toggle('hidden', isFavFilterActive));
-        document.querySelectorAll('.series-wrapper').forEach(w => {
-            if (isFavFilterActive) {
-                const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
-                w.classList.toggle('hidden', !hasFav);
-                w.querySelectorAll('.exercise').forEach(ex => {
-                    ex.classList.toggle('hidden', !ex.querySelector('.fav-star').classList.contains('active'));
-                });
-            } else {
-                w.classList.remove('hidden');
-                w.querySelectorAll('.exercise').forEach(ex => ex.classList.remove('hidden'));
-            }
+        document.querySelectorAll('.category-wrap').forEach(w => {
+            const exercises = w.querySelectorAll('.exercise');
+            let hasFavInCategory = false;
+
+            exercises.forEach(ex => {
+                const isFav = ex.querySelector('.fav-star').classList.contains('active');
+                if (isFavFilterActive) {
+                    ex.classList.toggle('hidden', !isFav);
+                    if (isFav) hasFavInCategory = true;
+                } else {
+                    ex.classList.remove('hidden');
+                }
+            });
+
+            document.querySelectorAll('.series').forEach(ser => {
+                const hasVisible = ser.querySelectorAll('.exercise:not(.hidden)').length > 0;
+                ser.classList.toggle('hidden', isFavFilterActive && !hasVisible);
+            });
+
+            w.classList.toggle('hidden', isFavFilterActive && !hasFavInCategory);
         });
     }
 
@@ -376,13 +451,22 @@
 
     function clearAllFavs() {
         if(confirm("למחוק את כל המועדפים?")) {
-            favorites = []; localStorage.setItem('ijja_favs', "[]");
+            favorites = [];
+            localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
             if(isFavFilterActive) applyFavFilter();
         }
     }
 
-    document.addEventListener('DOMContentLoaded', loadSyllabus);
+    // רישום Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js');
+        });
+    }
+
+    loadData();
 </script>
+
 </body>
 </html>
