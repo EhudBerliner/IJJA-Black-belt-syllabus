@@ -22,34 +22,19 @@
             --danger: #d32f2f;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            overflow: hidden; 
-            font-family: 'Heebo', sans-serif;
-            background: #f7f9fb;
-        }
+        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
 
         header {
-            height: var(--header-h);
-            background: white;
-            border-bottom: 3px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1200;
-            box-sizing: border-box;
+            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 50px; width: auto; }
         .title-area { display: flex; flex-direction: column; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.3em; line-height: 1.1; }
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.2em; line-height: 1.1; }
         .version-text { font-size: 0.7em; color: #666; margin-top: 2px; }
 
         .action-bar { display: flex; gap: 8px; }
@@ -58,26 +43,19 @@
             border: 1px solid var(--border); background: white;
             color: var(--primary); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2em; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1em; transition: all 0.2s;
         }
-        .action-button:hover { background: #f0f7ff; }
         .action-button.active { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-primary { background: var(--primary); color: white; border: none; }
-        .btn-danger { color: var(--danger); }
-        .btn-danger:hover { background: #fff5f5; border-color: var(--danger); }
+        .btn-danger { color: var(--danger); border-color: rgba(211, 47, 47, 0.2); }
 
-        #scrollContainer {
-            height: 100vh; padding-top: var(--header-h);
-            overflow-y: auto; box-sizing: border-box; scrollbar-gutter: stable;
-        }
-
+        #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; box-sizing: border-box; }
         .main-content { max-width: 900px; margin: 0 auto; padding: 20px; }
         .category-wrap { margin-bottom: 25px; }
         .category-title {
             background: var(--primary); color: white; padding: 12px 20px;
             border-radius: 12px; font-size: 1.4em; font-weight: 900;
             position: sticky; top: 10px; z-index: 100; margin-bottom: 10px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
 
         .series {
@@ -96,22 +74,21 @@
 
         /* מודאל וידיאו */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 18px; width: 95%; max-width: 600px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-content { background: white; padding: 20px; border-radius: 18px; width: 95%; max-width: 600px; text-align: center; position: relative; }
         
-        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; min-height: 65px; }
-        .modal-nav-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .modal-nav-btn:disabled { background: #e0e0e0; color: #999; cursor: not-allowed; box-shadow: none; }
+        .nav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; min-height: 70px; }
+        .modal-nav-btn { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; }
+        .modal-nav-btn:disabled { background: #e0e0e0; color: #999; cursor: not-allowed; }
         
-        .reroll-btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 30px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 10px; margin: 0 auto; font-size: 1.1em; transition: transform 0.2s; }
-        .reroll-btn:active { transform: scale(0.95); }
+        /* כפתור אקראי בתוך המודאל (פינה ימנית עליונה) */
+        .modal-reroll-btn { position: absolute; top: -50px; right: 0; color: white; font-size: 28px; cursor: pointer; transition: transform 0.2s; }
+        .close-x { position: absolute; top: -50px; left: 0; color: white; font-size: 35px; cursor: pointer; }
 
-        .info-label { font-size: 0.85em; color: var(--secondary); font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.8; }
+        .info-label { font-size: 0.85em; color: var(--secondary); font-weight: 700; margin-bottom: 4px; display: block; }
         .video-counter { font-size: 0.8em; font-weight: 700; color: #555; background: #edf2f7; padding: 3px 12px; border-radius: 20px; margin-top: 5px; display: inline-block; }
 
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin: 15px 0; background: #000; border-radius: 12px; overflow: hidden; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .close-x { position: absolute; top: -50px; left: 0; color: white; font-size: 35px; cursor: pointer; transition: color 0.2s; }
-        .close-x:hover { color: #ccc; }
 
         .hidden { display: none !important; }
     </style>
@@ -123,12 +100,12 @@
         <img src="Logo.png" alt="Logo" class="logo-img">
         <div class="title-area">
             <h1>סילבוס IJJA</h1>
-            <span class="version-text">גרסה 1.2.6</span>
+            <span class="version-text">גרסה 1.2.7</span>
         </div>
     </div>
     <div class="action-bar">
-        <button class="action-button btn-primary" onclick="getRandomEx()" title="אקראי"><i class="fas fa-dice"></i></button>
-        <button class="action-button active" id="toggleAllBtn" onclick="toggleAllAccordions()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="action-button btn-primary" onclick="getRandomEx()" title="אקראי"><i class="fas fa-random"></i></button>
+        <button class="action-button" id="toggleAllBtn" onclick="toggleAllAccordions()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
         <button class="action-button" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
         <button class="action-button btn-danger" onclick="clearAllFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
     </div>
@@ -140,23 +117,16 @@
 
 <div id="videoModal" class="modal-overlay" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <i class="fas fa-times close-x" onclick="closeModal()"></i>
+        <i class="fas fa-times close-x" onclick="closeModal()" title="סגור"></i>
+        <i id="rerollIcon" class="fas fa-random modal-reroll-btn hidden" onclick="getRandomEx()" title="אקראי נוסף"></i>
         
         <div class="nav-header">
             <button id="prevBtn" class="modal-nav-btn nav-mode" onclick="navigateEx(-1)"><i class="fas fa-chevron-right"></i></button>
-            
             <div style="flex:1">
                 <span id="mInfo" class="info-label"></span>
                 <h3 id="mTitle" style="color:var(--primary); margin: 0; font-size: 1.2em; font-weight: 900;"></h3>
                 <div id="mCounter" class="video-counter nav-mode"></div>
-                
-                <div id="rerollArea" class="hidden">
-                    <button class="reroll-btn" onclick="getRandomEx()">
-                        <i class="fas fa-random"></i> אקראי
-                    </button>
-                </div>
             </div>
-            
             <button id="nextBtn" class="modal-nav-btn nav-mode" onclick="navigateEx(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
         
@@ -227,6 +197,7 @@
             });
             container.appendChild(catWrap);
         });
+        if(isFavFilterActive) applyFavFilter();
     }
 
     function openVideo(ex, isRandom) {
@@ -239,19 +210,18 @@
         document.getElementById('videoFrame').src = getEmbedUrl(ex.link);
         
         const navElements = document.querySelectorAll('.nav-mode');
-        const rerollArea = document.getElementById('rerollArea');
+        const rerollIcon = document.getElementById('rerollIcon');
         
         if (isRandom) {
             navElements.forEach(el => el.classList.add('hidden'));
-            rerollArea.classList.remove('hidden');
+            rerollIcon.classList.remove('hidden');
         } else {
             navElements.forEach(el => el.classList.remove('hidden'));
-            rerollArea.classList.add('hidden');
+            rerollIcon.classList.add('hidden');
             document.getElementById('mCounter').innerText = `תרגיל ${idx + 1} מתוך ${seriesData.length}`;
             document.getElementById('prevBtn').disabled = (idx === 0);
             document.getElementById('nextBtn').disabled = (idx === seriesData.length - 1);
         }
-
         document.getElementById('videoModal').style.display = 'flex';
     }
 
@@ -284,14 +254,46 @@
         else favorites.push(id);
         el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favorites));
+        if (isFavFilterActive) applyFavFilter();
     }
 
     function toggleFavFilter() {
         isFavFilterActive = !isFavFilterActive;
         document.getElementById('favFilterBtn').classList.toggle('active', isFavFilterActive);
+        applyFavFilter();
+    }
+
+    function applyFavFilter() {
         document.querySelectorAll('.category-wrap').forEach(w => {
-            const hasFav = Array.from(w.querySelectorAll('.fav-star')).some(s => s.classList.contains('active'));
-            w.classList.toggle('hidden', isFavFilterActive && !hasFav);
+            const exercises = w.querySelectorAll('.exercise');
+            let hasVisibleEx = false;
+            
+            exercises.forEach(ex => {
+                const isFav = ex.querySelector('.fav-star').classList.contains('active');
+                if (isFavFilterActive) {
+                    ex.classList.toggle('hidden', !isFav);
+                    if (isFav) hasVisibleEx = true;
+                } else {
+                    ex.classList.remove('hidden');
+                    hasVisibleEx = true;
+                }
+            });
+
+            // הסתרת הקטגוריה אם אין בה תרגילים רלוונטיים
+            w.classList.toggle('hidden', !hasVisibleEx);
+            
+            // הסתרת סדרות ריקות בתוך הקטגוריה
+            w.querySelectorAll('.series').forEach(s => {
+                const list = s.nextElementSibling;
+                const hasFavInSeries = Array.from(list.querySelectorAll('.fav-star')).some(st => st.classList.contains('active'));
+                if (isFavFilterActive) {
+                    s.classList.toggle('hidden', !hasFavInSeries);
+                    list.classList.toggle('hidden', !hasFavInSeries);
+                } else {
+                    s.classList.remove('hidden');
+                    list.classList.remove('hidden');
+                }
+            });
         });
     }
 
@@ -305,6 +307,7 @@
         if(confirm("למחוק את כל המועדפים?")) {
             favorites = []; localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.fav-star').forEach(s => s.classList.remove('active'));
+            if (isFavFilterActive) applyFavFilter();
         }
     }
 
