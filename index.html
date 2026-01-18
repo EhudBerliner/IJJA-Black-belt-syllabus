@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.8.2</title>
+    <title>Syllabus IJJA - v1.8.3 Fixed Links</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -49,14 +49,6 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn.active { background: var(--primary-grad); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(0, 86, 166, 0.3); }
-        .btn-danger { color: var(--danger); }
-
-        #ptr {
-            position: absolute; top: var(--header-h); left: 0; width: 100%;
-            height: 0; overflow: hidden; display: flex; align-items: center;
-            justify-content: center; background: #e2e8f0; transition: height 0.2s;
-            z-index: 1100; color: var(--primary); font-weight: bold;
-        }
 
         #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; }
         .main-content { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 100px; }
@@ -66,7 +58,6 @@
             background: var(--primary-grad); color: white; padding: 12px 18px;
             border-radius: 14px; font-size: 1.2em; font-weight: 900;
             position: sticky; top: 10px; z-index: 100; margin-bottom: 12px;
-            box-shadow: 0 4px 15px rgba(0, 86, 166, 0.2);
         }
 
         .ser-item {
@@ -76,62 +67,43 @@
             cursor: pointer; margin-bottom: 8px; box-shadow: var(--card-shadow);
         }
 
-        .ser-fav-btn { color: #cbd5e1; padding: 8px; font-size: 1.1em; transition: color 0.2s; }
-        .ser-fav-btn.active { color: var(--fav-color); }
-
-        .ex-list { list-style: none; padding: 0; margin: -4px 4px 12px 4px; display: none; background: white; border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; }
+        .ex-list { list-style: none; padding: 0; margin: -4px 4px 12px 4px; display: none; background: white; border: 1px solid var(--border); border-radius: 0 0 12px 12px; }
         .ex-list.open { display: block; }
         .ex-row { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-        .ex-row.hidden { display: none !important; }
         
         .ex-link { color: #334155; font-weight: 600; text-decoration: none; cursor: pointer; flex: 1; }
-        .ex-no-link { color: #94a3b8; flex: 1; cursor: default; }
-        .star { cursor: pointer; color: #cbd5e1; font-size: 1.3rem; padding: 0 8px; }
-        .star.active { color: var(--fav-color); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 24px; border-radius: 24px; width: 92%; max-width: 550px; position: relative; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .modal-box { background: white; padding: 24px; border-radius: 24px; width: 92%; max-width: 550px; position: relative; text-align: center; }
         
         .video-container { display: none; position: relative; padding-bottom: 56.25%; height: 0; margin-top: 20px; background: #000; border-radius: 16px; overflow: hidden; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
-        /* Updated Watch Button: Round & Icon Only */
         .watch-btn { 
             background: var(--primary-grad); color: white; border: none; 
             width: 70px; height: 70px; border-radius: 50%;
             font-size: 1.8em; cursor: pointer; 
-            margin: 30px auto 10px auto; 
-            display: none; align-items: center; justify-content: center;
+            margin: 30px auto 10px auto; display: none; align-items: center; justify-content: center;
             box-shadow: 0 10px 20px rgba(0, 86, 166, 0.3); 
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .watch-btn:active { transform: scale(0.9); }
-        .watch-btn i { margin-right: -4px; /* Centering the play triangle perfectly */ }
-        
+
         .close-btn { position: absolute; top: -50px; left: 10px; color: white; font-size: 32px; cursor: pointer; }
         .rand-next-btn { position: absolute; top: -50px; right: 10px; color: white; font-size: 28px; cursor: pointer; }
 
         .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 15px; }
         .nav-btn { background: #f1f5f9; color: var(--primary); border: none; width: 42px; height: 42px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="ptr"><i class="fas fa-circle-notch fa-spin"></i>&nbsp; מעדכן נתונים...</div>
-
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#64748b; font-weight:bold;">v1.8.2</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#64748b; font-weight:bold;">v1.8.3</small></div>
     </div>
     <div class="action-bar">
-        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
-        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-layer-group"></i></button>
-        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash-alt"></i></button>
+        <button class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
     </div>
 </header>
 
@@ -145,10 +117,8 @@
         <i id="randBtnModal" class="fas fa-random rand-next-btn hidden" onclick="playRandom()"></i>
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-arrow-right"></i></button>
-            <div style="flex: 1; overflow: hidden;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em; text-transform: uppercase;"></div>
-                <div id="vName" style="color:#0f172a; font-size:1.3em; font-weight: 900; margin-top:4px;"></div>
-                <div id="vCounter" style="font-size: 0.8em; color: #64748b; margin-top: 6px; font-weight: bold;"></div>
+            <div style="flex: 1;">
+                <div id="vName" style="color:#0f172a; font-size:1.1em; font-weight: 900;"></div>
             </div>
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-arrow-left"></i></button>
         </div>
@@ -158,70 +128,28 @@
 </div>
 
 <script>
-    // Logic remains identical to v1.8.1 to ensure no regressions
     let db = [];
-    let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let isFavOnly = false;
     let currentEx = null;
 
-    let startY = 0;
-    const scrollContainer = document.getElementById('scrollContainer');
-    const ptr = document.getElementById('ptr');
-    scrollContainer.addEventListener('touchstart', e => { startY = e.touches[0].pageY; }, {passive: true});
-    scrollContainer.addEventListener('touchmove', e => {
-        const diff = e.touches[0].pageY - startY;
-        if (scrollContainer.scrollTop === 0 && diff > 0) ptr.style.height = Math.min(diff, 60) + 'px';
-    }, {passive: true});
-    scrollContainer.addEventListener('touchend', () => {
-        if (ptr.offsetHeight > 50) location.reload(true);
-        ptr.style.height = '0px';
-    });
-
-    async function checkForUpdates() {
-        try {
-            const r = await fetch('Black_belt_syllabus_IJJA.csv', { method: 'HEAD', cache: 'no-cache' });
-            const serverETag = r.headers.get('ETag') || r.headers.get('Last-Modified');
-            const localETag = localStorage.getItem('ijja_csv_tag');
-            if (localETag && serverETag && localETag !== serverETag) {
-                if (confirm("נמצא עדכון לסילבוס. האם לעדכן כעת?")) {
-                    localStorage.setItem('ijja_csv_tag', serverETag);
-                    location.reload(true);
-                }
-            } else if (serverETag) {
-                localStorage.setItem('ijja_csv_tag', serverETag);
-            }
-        } catch(e) {}
-    }
-
-    document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'visible') checkForUpdates(); });
-
     async function init() {
-        checkForUpdates();
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV Error"); }
+        } catch(e) { console.error("CSV Load Error"); }
     }
 
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
         return lines.slice(1).map((line, i) => {
-            let row = [], cur = '', inQ = false;
-            for(let char of line) {
-                if(char === '"') inQ = !inQ;
-                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
-                else cur += char;
-            }
-            row.push(cur.trim());
-            return { id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" };
+            let row = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            return { id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4].replace(/"/g, "") || "" };
         });
     }
 
     function render() {
         const app = document.getElementById('app');
-        app.innerHTML = '';
         const groups = db.reduce((acc, x) => {
             if(!acc[x.cat]) acc[x.cat] = {};
             if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
@@ -234,27 +162,19 @@
             cDiv.className = 'cat-group';
             cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
             for(let ser in groups[cat]) {
-                const exercises = groups[cat][ser];
-                const allInFav = exercises.every(ex => favs.includes(ex.id));
                 const sBtn = document.createElement('div');
                 sBtn.className = 'ser-item';
-                sBtn.innerHTML = `
-                    <div style="flex:1" onclick="toggleSerList(this)">
-                        <i class="fas fa-chevron-down" style="margin-left:8px; color:#94a3b8"></i>
-                        <span>${ser}</span>
-                    </div>
-                    <i class="fas fa-star ser-fav-btn ${allInFav?'active':''}" 
-                       onclick="toggleSeriesFav('${cat}', '${ser}', this)"></i>`;
-
+                sBtn.innerHTML = `<span>${ser}</span><i class="fas fa-chevron-down"></i>`;
+                sBtn.onclick = () => {
+                    const list = sBtn.nextElementSibling;
+                    list.classList.toggle('open');
+                };
                 const list = document.createElement('ul');
                 list.className = 'ex-list';
-                exercises.forEach(ex => {
+                groups[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
-                    li.className = 'ex-row'; li.dataset.id = ex.id;
-                    const hasL = ex.link && ex.link.length > 5;
-                    li.innerHTML = `
-                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick='${hasL?`openV(${JSON.stringify(ex)},false)` : ""}'>${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
+                    li.className = 'ex-row';
+                    li.innerHTML = `<span class="ex-link" onclick="openV(${JSON.stringify(ex).replace(/"/g, '&quot;')}, false)">${ex.num}. ${ex.name}</span>`;
                     list.appendChild(li);
                 });
                 cDiv.appendChild(sBtn); cDiv.appendChild(list);
@@ -263,64 +183,35 @@
         }
     }
 
-    function toggleSerList(el) {
-        const sBtn = el.parentElement;
-        const list = sBtn.nextElementSibling;
-        const open = list.classList.toggle('open');
-        sBtn.querySelector('.fa-chevron-down, .fa-chevron-up').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-    }
-
-    function toggleSeriesFav(cat, ser, el) {
-        event.stopPropagation();
-        const exercises = db.filter(x => x.cat === cat && x.ser === ser);
-        const allInFav = exercises.every(ex => favs.includes(ex.id));
-        if (allInFav) {
-            const idsToRemove = exercises.map(x => x.id);
-            favs = favs.filter(id => !idsToRemove.includes(id));
-            el.classList.remove('active');
-        } else {
-            exercises.forEach(ex => { if (!favs.includes(ex.id)) favs.push(ex.id); });
-            el.classList.add('active');
-        }
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        const list = el.parentElement.nextElementSibling;
-        list.querySelectorAll('.star').forEach(s => {
-            const rowId = parseInt(s.closest('.ex-row').dataset.id);
-            s.classList.toggle('active', favs.includes(rowId));
-        });
-        if(isFavOnly) applyFilters();
-    }
-
-    function toggleStar(id, el) {
-        event.stopPropagation();
-        if(favs.includes(id)) favs = favs.filter(f => f !== id);
-        else favs.push(id);
-        el.classList.toggle('active');
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
+    function getEmbedUrl(url) {
+        if (!url) return '';
+        let clean = url.trim();
         
-        const list = el.closest('.ex-list');
-        const sBtn = list.previousElementSibling;
-        const serName = sBtn.querySelector('span').innerText;
-        const exercises = db.filter(x => x.ser === serName);
-        const allInFav = exercises.every(ex => favs.includes(ex.id));
-        sBtn.querySelector('.ser-fav-btn').classList.toggle('active', allInFav);
-
-        if(isFavOnly) applyFilters();
-        if(currentEx && currentEx.id === id) updateNavigationState(currentEx);
-    }
-
-    function toggleAll() {
-        const lists = document.querySelectorAll('.ex-list');
-        const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
-        lists.forEach(l => l.classList.toggle('open', someClosed));
-        document.querySelectorAll('.ser-item .fa-chevron-down, .ser-item .fa-chevron-up').forEach(a => {
-            a.className = someClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-        });
+        if (clean.includes("/shorts/")) {
+            return clean.replace("/shorts/", "/embed/").split("?")[0];
+        }
+        
+        if (clean.includes("watch?v=")) {
+            let videoId = clean.split("v=")[1].split("&")[0];
+            let embed = `https://www.youtube.com/embed/${videoId}`;
+            let timeMatch = clean.match(/[?&]t=(\d+)/);
+            if (timeMatch) embed += `?start=${timeMatch[1]}`;
+            return embed;
+        }
+        
+        if (clean.includes("youtu.be/")) {
+            let videoId = clean.split("youtu.be/")[1].split("?")[0];
+            let embed = `https://www.youtube.com/embed/${videoId}`;
+            let timeMatch = clean.match(/[?&]t=(\d+)/);
+            if (timeMatch) embed += `?start=${timeMatch[1]}`;
+            return embed;
+        }
+        
+        return clean;
     }
 
     function openV(ex, isRand) {
         currentEx = ex;
-        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
         if (isRand) {
             document.getElementById('videoContainer').style.display = 'none';
@@ -329,7 +220,6 @@
             document.getElementById('prevBtn').classList.add('hidden');
             document.getElementById('nextBtn').classList.add('hidden');
             document.getElementById('randBtnModal').classList.remove('hidden');
-            document.getElementById('vCounter').innerText = "תרגיל אקראי";
         } else {
             const url = getEmbedUrl(ex.link);
             document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
@@ -338,24 +228,8 @@
             document.getElementById('prevBtn').classList.remove('hidden');
             document.getElementById('nextBtn').classList.remove('hidden');
             document.getElementById('randBtnModal').classList.add('hidden');
-            updateNavigationState(ex);
         }
         document.getElementById('vModal').style.display = 'flex';
-    }
-
-    function updateNavigationState(ex) {
-        let currentList = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
-        let idx = currentList.findIndex(x => x.id === ex.id);
-        document.getElementById('vCounter').innerText = isFavOnly ? `מועדף ${idx + 1} מתוך ${currentList.length}` : `תרגיל ${idx + 1} מתוך ${currentList.length}`;
-        document.getElementById('prevBtn').disabled = (idx <= 0);
-        document.getElementById('nextBtn').disabled = (idx >= currentList.length - 1 || idx === -1);
-    }
-
-    function nav(dir) {
-        let currentList = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        const idx = currentList.findIndex(x => x.id === currentEx.id);
-        const target = currentList[idx + dir];
-        if(target && target.link) openV(target, false);
     }
 
     function startVideo() {
@@ -365,20 +239,6 @@
         document.getElementById('videoContainer').style.display = 'block';
     }
 
-    function getEmbedUrl(url) {
-        if (!url) return '';
-        let clean = url.trim();
-        if (clean.includes("/shorts/")) return clean.replace("/shorts/", "/embed/").split("?")[0];
-        let embed = clean.replace("watch?v=", "embed/");
-        if (clean.includes("youtu.be/")) {
-            const id = clean.split("youtu.be/")[1].split("?")[0];
-            const t = clean.split("?t=")[1] || clean.split("&t=")[1];
-            embed = `https://www.youtube.com/embed/${id}`;
-            if (t) embed += `?start=${t.replace(/[^0-9]/g, '')}`;
-        }
-        return embed;
-    }
-
     function playRandom() {
         const pool = db.filter(x => x.link && x.link.length > 5);
         if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)], true);
@@ -386,43 +246,7 @@
 
     function closeV() { document.getElementById('vModal').style.display = 'none'; document.getElementById('vFrame').src = ""; }
 
-    function clearFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
-            favs = []; localStorage.setItem('ijja_favs', "[]");
-            render();
-            if(isFavOnly) applyFilters();
-        }
-    }
-
-    function toggleFavFilter() {
-        isFavOnly = !isFavOnly;
-        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
-        applyFilters();
-    }
-
-    function applyFilters() {
-        document.querySelectorAll('.cat-group').forEach(c => {
-            let catHas = false;
-            c.querySelectorAll('.ser-item').forEach(s => {
-                const list = s.nextElementSibling;
-                let serHas = false;
-                list.querySelectorAll('.ex-row').forEach(row => {
-                    const hide = isFavOnly && !favs.includes(parseInt(row.dataset.id));
-                    row.classList.toggle('hidden', hide);
-                    if(!hide) serHas = true;
-                });
-                s.classList.toggle('hidden', isFavOnly && !serHas);
-                list.classList.toggle('hidden', isFavOnly && !serHas);
-                if(serHas) catHas = true;
-            });
-            c.classList.toggle('hidden', isFavOnly && !catHas);
-        });
-    }
-
     window.onload = init;
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
-    }
 </script>
 </body>
 </html>
