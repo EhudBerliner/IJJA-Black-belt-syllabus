@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.5.2</title>
+    <title>Syllabus IJJA - v1.6.0 (Offline Support)</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -109,7 +109,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.5.2</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.6.0</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -161,7 +161,7 @@
         ptr.style.height = '0px';
     });
 
-    // --- Automatic Updates Logic ---
+    // --- Automatic Updates Logic (v1.5.2) ---
     async function checkForUpdates() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv', { method: 'HEAD', cache: 'no-cache' });
@@ -185,7 +185,7 @@
 
     // --- Core Logic ---
     async function init() {
-        checkForUpdates(); // בדיקה שקטה בטעינה
+        checkForUpdates();
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
             const txt = await r.text();
@@ -259,7 +259,6 @@
         currentEx = ex;
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
-
         if (isRand) {
             document.getElementById('videoContainer').style.display = 'none';
             document.getElementById('vFrame').src = "";
@@ -276,7 +275,6 @@
             document.getElementById('prevBtn').classList.remove('hidden');
             document.getElementById('nextBtn').classList.remove('hidden');
             document.getElementById('randBtnModal').classList.add('hidden');
-
             updateNavigationState(ex);
         }
         document.getElementById('vModal').style.display = 'flex';
@@ -378,6 +376,17 @@
     }
 
     window.onload = init;
+
+    // --- Offline Service Worker Registration (Workbox Ready) ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                console.log('SW Registered', reg);
+            }).catch(err => {
+                console.log('SW Registration failed', err);
+            });
+        });
+    }
 </script>
 </body>
 </html>
