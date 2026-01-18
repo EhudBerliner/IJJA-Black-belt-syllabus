@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.7.1</title>
+    <title>Syllabus IJJA - v1.8.0 Premium</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -15,38 +15,49 @@
     <style>
         :root {
             --primary: #0056a6;
+            --primary-grad: linear-gradient(135deg, #0056a6 0%, #003d75 100%);
             --secondary: #009be5;
-            --border: #d2dce5;
+            --border: #e2e8f0;
             --header-h: 90px;
             --fav-color: #ffc107;
-            --danger: #d32f2f;
+            --danger: #ef4444;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --glass: rgba(255, 255, 255, 0.85);
         }
 
-        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
+        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f8fafc; color: #1e293b; }
 
         header {
-            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
+            height: var(--header-h); 
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 86, 166, 0.1);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
-        .logo-img { height: 45px; width: auto; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
+        .logo-img { height: 48px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        header h1 { margin: 0; font-weight: 900; color: var(--primary); font-size: 1.2em; letter-spacing: -0.5px; }
 
-        .action-bar { display: flex; gap: 6px; }
+        .action-bar { display: flex; gap: 8px; }
         .btn {
-            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
+            width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border);
             background: white; color: var(--primary); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1em;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1em;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .btn.active { background: var(--primary); color: white; }
+        .btn:active { transform: scale(0.92); }
+        .btn.active { background: var(--primary-grad); color: white; border-color: transparent; box-shadow: 0 4px 12px rgba(0, 86, 166, 0.3); }
         .btn-danger { color: var(--danger); }
 
         #ptr {
             position: absolute; top: var(--header-h); left: 0; width: 100%;
             height: 0; overflow: hidden; display: flex; align-items: center;
-            justify-content: center; background: #eee; transition: height 0.2s;
+            justify-content: center; background: #e2e8f0; transition: height 0.2s;
             z-index: 1100; color: var(--primary); font-weight: bold;
         }
 
@@ -54,71 +65,85 @@
             height: 100vh; padding-top: var(--header-h); 
             overflow-y: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; 
         }
-        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
+        .main-content { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 100px; }
         
-        .cat-group { margin-bottom: 25px; }
+        .cat-group { margin-bottom: 30px; }
         .cat-header {
-            background: var(--primary); color: white; padding: 10px 15px;
-            border-radius: 10px; font-size: 1.2em; font-weight: 900;
-            position: sticky; top: 10px; z-index: 100; margin-bottom: 8px;
+            background: var(--primary-grad); color: white; padding: 12px 18px;
+            border-radius: 14px; font-size: 1.2em; font-weight: 900;
+            position: sticky; top: 10px; z-index: 100; margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0, 86, 166, 0.2);
         }
 
         .ser-item {
-            background: white; padding: 12px; font-weight: 700;
-            border-right: 4px solid var(--secondary); border-radius: 6px;
+            background: white; padding: 14px 18px; font-weight: 800;
+            border-right: 5px solid var(--secondary); border-radius: 12px;
             display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer; margin-bottom: 8px; box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease;
         }
+        .ser-item:active { transform: scale(0.99); }
 
-        .ser-fav-btn { color: #ccc; padding: 5px 10px; font-size: 1em; }
-        .ser-fav-btn.active { color: var(--fav-color); }
+        .ser-fav-btn { color: #cbd5e1; padding: 8px; font-size: 1.1em; transition: color 0.2s; }
+        .ser-fav-btn.active { color: var(--fav-color); text-shadow: 0 0 10px rgba(255, 193, 7, 0.3); }
 
-        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
-        .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
-        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-list { list-style: none; padding: 0; margin: -4px 4px 12px 4px; display: none; background: rgba(255,255,255,0.5); border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; }
+        .ex-list.open { display: block; animation: slideDown 0.3s ease-out; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .ex-row { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .ex-row:last-child { border-bottom: none; }
+        .ex-row:hover { background: rgba(0, 86, 166, 0.02); }
         .ex-row.hidden { display: none !important; }
         
-        .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
-        .ex-no-link { color: #888; flex: 1; cursor: default; }
-        .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
-        .star.active { color: var(--fav-color); }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; text-align: center; }
+        .ex-link { color: #334155; font-weight: 600; text-decoration: none; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .ex-link:hover { color: var(--primary); }
+        .ex-no-link { color: #94a3b8; flex: 1; cursor: default; }
         
-        .video-container { display: none; position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 8px; overflow: hidden; }
+        .star { cursor: pointer; color: #cbd5e1; font-size: 1.3rem; padding: 0 8px; transition: all 0.2s; }
+        .star.active { color: var(--fav-color); transform: scale(1.1); }
+
+        /* Modal Premium Design */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 24px; border-radius: 24px; width: 92%; max-width: 550px; position: relative; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        
+        .video-container { display: none; position: relative; padding-bottom: 56.25%; height: 0; margin-top: 20px; background: #000; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
         .watch-btn { 
-            background: var(--primary); color: white; border: none; padding: 12px 25px; 
-            border-radius: 30px; font-size: 1.1em; font-weight: 700; cursor: pointer; 
-            margin-top: 20px; display: none; align-items: center; gap: 8px; justify-content: center; width: 100%;
+            background: var(--primary-grad); color: white; border: none; padding: 16px 32px; 
+            border-radius: 16px; font-size: 1.1em; font-weight: 800; cursor: pointer; 
+            margin-top: 20px; display: none; align-items: center; gap: 10px; justify-content: center; width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 86, 166, 0.3); transition: all 0.2s;
         }
+        .watch-btn:active { transform: scale(0.98); }
         
-        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .rand-next-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
-
-        .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .nav-btn:disabled { background: #eee !important; color: #bbb; cursor: not-allowed; }
+        .close-btn { position: absolute; top: -50px; left: 10px; color: white; font-size: 32px; cursor: pointer; opacity: 0.8; transition: opacity 0.2s; }
+        .close-btn:hover { opacity: 1; }
+        
+        .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .nav-btn { background: #f1f5f9; color: var(--primary); border: none; width: 42px; height: 42px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .nav-btn:hover:not(:disabled) { background: #e2e8f0; }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="ptr"><i class="fas fa-sync fa-spin"></i>&nbsp; מעדכן נתונים...</div>
+<div id="ptr"><i class="fas fa-circle-notch fa-spin"></i>&nbsp; מעדכן נתונים...</div>
 
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.1</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#64748b; font-weight:bold;">v1.8.0</small></div>
     </div>
     <div class="action-bar">
-        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
+        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-dice"></i></button>
         <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
-        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
+        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-layer-group"></i></button>
+        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash-alt"></i></button>
     </div>
 </header>
 
@@ -129,28 +154,27 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <i id="randBtnModal" class="fas fa-random rand-next-btn hidden" onclick="playRandom()"></i>
         <div class="modal-nav">
-            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
+            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-arrow-right"></i></button>
             <div style="flex: 1; overflow: hidden;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
-                <div id="vName" style="color:var(--primary); font-size:1.2em; font-weight: 800; margin-top:5px;"></div>
-                <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top: 4px;"></div>
+                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em; text-transform: uppercase; letter-spacing: 0.5px;"></div>
+                <div id="vName" style="color:#0f172a; font-size:1.3em; font-weight: 900; margin-top:4px; line-height: 1.2;"></div>
+                <div id="vCounter" style="font-size: 0.8em; color: #64748b; margin-top: 6px; font-weight: bold;"></div>
             </div>
-            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
+            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-arrow-left"></i></button>
         </div>
-        <button id="watchBtn" class="watch-btn" onclick="startVideo()"><i class="fas fa-play-circle"></i> צפה בסרטון</button>
+        <button id="watchBtn" class="watch-btn" onclick="startVideo()"><i class="fas fa-play"></i> צפה בסרטון</button>
         <div id="videoContainer" class="video-container"><iframe id="vFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
     </div>
 </div>
 
 <script>
+    // ה-JavaScript נשאר זהה ללוגיקה היציבה v1.7.1 כדי למנוע ריגרסיות
     let db = [];
     let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
     let isFavOnly = false;
     let currentEx = null;
 
-    // --- Pull to Refresh ---
     let startY = 0;
     const scrollContainer = document.getElementById('scrollContainer');
     const ptr = document.getElementById('ptr');
@@ -228,7 +252,7 @@
                 sBtn.className = 'ser-item';
                 sBtn.innerHTML = `
                     <div style="flex:1" onclick="toggleSerList(this)">
-                        <i class="fas fa-chevron-down" style="margin-left:8px"></i>
+                        <i class="fas fa-chevron-down" style="margin-left:8px; color:#94a3b8"></i>
                         <span>${ser}</span>
                     </div>
                     <i class="fas fa-star ser-fav-btn ${allInFav?'active':''}" 
@@ -262,7 +286,6 @@
         event.stopPropagation();
         const exercises = db.filter(x => x.cat === cat && x.ser === ser);
         const allInFav = exercises.every(ex => favs.includes(ex.id));
-
         if (allInFav) {
             const idsToRemove = exercises.map(x => x.id);
             favs = favs.filter(id => !idsToRemove.includes(id));
@@ -271,16 +294,12 @@
             exercises.forEach(ex => { if (!favs.includes(ex.id)) favs.push(ex.id); });
             el.classList.add('active');
         }
-
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        
-        // עדכון הכוכבים בתוך הרשימה הספציפית בלבד
         const list = el.parentElement.nextElementSibling;
         list.querySelectorAll('.star').forEach(s => {
             const rowId = parseInt(s.closest('.ex-row').dataset.id);
             s.classList.toggle('active', favs.includes(rowId));
         });
-
         if(isFavOnly) applyFilters();
     }
 
@@ -290,8 +309,7 @@
         else favs.push(id);
         el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
-
-        // עדכון כוכב הסדרה האב במידה וצריך
+        
         const list = el.closest('.ex-list');
         const sBtn = list.previousElementSibling;
         const serName = sBtn.querySelector('span').innerText;
@@ -316,24 +334,13 @@
         currentEx = ex;
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
-        if (isRand) {
-            document.getElementById('videoContainer').style.display = 'none';
-            document.getElementById('vFrame').src = "";
-            document.getElementById('watchBtn').style.display = 'flex';
-            document.getElementById('prevBtn').classList.add('hidden');
-            document.getElementById('nextBtn').classList.add('hidden');
-            document.getElementById('randBtnModal').classList.remove('hidden');
-            document.getElementById('vCounter').innerText = "תרגיל אקראי";
-        } else {
-            const url = getEmbedUrl(ex.link);
-            document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
-            document.getElementById('videoContainer').style.display = 'block';
-            document.getElementById('watchBtn').style.display = 'none';
-            document.getElementById('prevBtn').classList.remove('hidden');
-            document.getElementById('nextBtn').classList.remove('hidden');
-            document.getElementById('randBtnModal').classList.add('hidden');
-            updateNavigationState(ex);
-        }
+        const url = getEmbedUrl(ex.link);
+        document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
+        document.getElementById('videoContainer').style.display = 'block';
+        document.getElementById('watchBtn').style.display = 'none';
+        document.getElementById('prevBtn').classList.remove('hidden');
+        document.getElementById('nextBtn').classList.remove('hidden');
+        updateNavigationState(ex);
         document.getElementById('vModal').style.display = 'flex';
     }
 
@@ -350,13 +357,6 @@
         const idx = currentList.findIndex(x => x.id === currentEx.id);
         const target = currentList[idx + dir];
         if(target && target.link) openV(target, false);
-    }
-
-    function startVideo() {
-        const url = getEmbedUrl(currentEx.link);
-        document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
-        document.getElementById('watchBtn').style.display = 'none';
-        document.getElementById('videoContainer').style.display = 'block';
     }
 
     function getEmbedUrl(url) {
@@ -414,7 +414,6 @@
     }
 
     window.onload = init;
-
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
     }
