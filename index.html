@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.4.9</title>
+    <title>Syllabus IJJA - v1.5.1</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -109,7 +109,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.9</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.5.1</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -228,7 +228,6 @@
         const lists = document.querySelectorAll('.ex-list');
         const arrows = document.querySelectorAll('.ser-item i');
         const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
-        
         lists.forEach(l => l.classList.toggle('open', someClosed));
         arrows.forEach(a => a.className = someClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down');
     }
@@ -237,7 +236,9 @@
         currentEx = ex;
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
+
         if (isRand) {
+            // מצב אקראי: הסתרת וידאו, כפתור הגרלה מיוחד, ללא חיצי ניווט
             document.getElementById('videoContainer').style.display = 'none';
             document.getElementById('vFrame').src = "";
             document.getElementById('watchBtn').style.display = 'flex';
@@ -246,6 +247,7 @@
             document.getElementById('randBtnModal').classList.remove('hidden');
             document.getElementById('vCounter').innerText = "תרגיל אקראי";
         } else {
+            // מצב רשימה (רגילה או מועדפים): הצגת וידאו מיד
             const url = getEmbedUrl(ex.link);
             document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
             document.getElementById('videoContainer').style.display = 'block';
@@ -253,13 +255,45 @@
             document.getElementById('prevBtn').classList.remove('hidden');
             document.getElementById('nextBtn').classList.remove('hidden');
             document.getElementById('randBtnModal').classList.add('hidden');
-            const series = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
-            const idx = series.findIndex(x => x.id === ex.id) + 1;
-            document.getElementById('vCounter').innerText = `תרגיל ${idx} מתוך ${series.length}`;
-            document.getElementById('prevBtn').disabled = (idx === 1);
-            document.getElementById('nextBtn').disabled = (idx === series.length);
+
+            updateNavigationState(ex);
         }
         document.getElementById('vModal').style.display = 'flex';
+    }
+
+    function updateNavigationState(ex) {
+        let currentList = [];
+        let idx = -1;
+
+        if (isFavOnly) {
+            // לוגיקה למועדפים: רשימה גלובלית של מועדפים
+            currentList = db.filter(x => favs.includes(x.id));
+            idx = currentList.findIndex(x => x.id === ex.id);
+            document.getElementById('vCounter').innerText = `מועדף ${idx + 1} מתוך ${currentList.length}`;
+        } else {
+            // לוגיקה רגילה: רשימה בתוך הסדרה הנוכחית בלבד
+            currentList = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
+            idx = currentList.findIndex(x => x.id === ex.id);
+            document.getElementById('vCounter').innerText = `תרגיל ${idx + 1} מתוך ${currentList.length}`;
+        }
+
+        document.getElementById('prevBtn').disabled = (idx <= 0);
+        document.getElementById('nextBtn').disabled = (idx >= currentList.length - 1);
+    }
+
+    function nav(dir) {
+        let currentList = [];
+        if (isFavOnly) {
+            // ניווט רציף במועדפים
+            currentList = db.filter(x => favs.includes(x.id));
+        } else {
+            // ניווט מוגבל לסדרה במצב רגיל
+            currentList = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+        }
+
+        const idx = currentList.findIndex(x => x.id === currentEx.id);
+        const target = currentList[idx + dir];
+        if(target && target.link) openV(target, false);
     }
 
     function startVideo() {
@@ -288,13 +322,6 @@
         if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)], true);
     }
 
-    function nav(dir) {
-        const series = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        const idx = series.findIndex(x => x.id === currentEx.id);
-        const target = series[idx + dir];
-        if(target && target.link) openV(target, false);
-    }
-
     function closeV() { document.getElementById('vModal').style.display = 'none'; document.getElementById('vFrame').src = ""; }
 
     function toggleStar(id, el) {
@@ -302,7 +329,11 @@
         else favs.push(id);
         el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        if(isFavOnly) applyFilters();
+        if(isFavOnly) {
+            applyFilters();
+            // עדכון המצב בתוך החלונית אם היא פתוחה
+            if(document.getElementById('vModal').style.display === 'flex') updateNavigationState(currentEx);
+        }
     }
 
     function clearFavs() {
