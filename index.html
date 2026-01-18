@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.5.1</title>
+    <title>Syllabus IJJA - v1.5.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -109,7 +109,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.5.1</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.5.2</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -161,8 +161,31 @@
         ptr.style.height = '0px';
     });
 
+    // --- Automatic Updates Logic ---
+    async function checkForUpdates() {
+        try {
+            const r = await fetch('Black_belt_syllabus_IJJA.csv', { method: 'HEAD', cache: 'no-cache' });
+            const serverETag = r.headers.get('ETag') || r.headers.get('Last-Modified');
+            const localETag = localStorage.getItem('ijja_csv_tag');
+
+            if (localETag && serverETag && localETag !== serverETag) {
+                if (confirm("נמצא עדכון לסילבוס. האם לעדכן כעת?")) {
+                    localStorage.setItem('ijja_csv_tag', serverETag);
+                    location.reload(true);
+                }
+            } else if (serverETag) {
+                localStorage.setItem('ijja_csv_tag', serverETag);
+            }
+        } catch(e) { console.log("Update check skipped (offline or server error)"); }
+    }
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === 'visible') checkForUpdates();
+    });
+
     // --- Core Logic ---
     async function init() {
+        checkForUpdates(); // בדיקה שקטה בטעינה
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
             const txt = await r.text();
@@ -238,7 +261,6 @@
         document.getElementById('vName').innerText = ex.name;
 
         if (isRand) {
-            // מצב אקראי: הסתרת וידאו, כפתור הגרלה מיוחד, ללא חיצי ניווט
             document.getElementById('videoContainer').style.display = 'none';
             document.getElementById('vFrame').src = "";
             document.getElementById('watchBtn').style.display = 'flex';
@@ -247,7 +269,6 @@
             document.getElementById('randBtnModal').classList.remove('hidden');
             document.getElementById('vCounter').innerText = "תרגיל אקראי";
         } else {
-            // מצב רשימה (רגילה או מועדפים): הצגת וידאו מיד
             const url = getEmbedUrl(ex.link);
             document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
             document.getElementById('videoContainer').style.display = 'block';
@@ -264,33 +285,21 @@
     function updateNavigationState(ex) {
         let currentList = [];
         let idx = -1;
-
         if (isFavOnly) {
-            // לוגיקה למועדפים: רשימה גלובלית של מועדפים
             currentList = db.filter(x => favs.includes(x.id));
             idx = currentList.findIndex(x => x.id === ex.id);
             document.getElementById('vCounter').innerText = `מועדף ${idx + 1} מתוך ${currentList.length}`;
         } else {
-            // לוגיקה רגילה: רשימה בתוך הסדרה הנוכחית בלבד
             currentList = db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
             idx = currentList.findIndex(x => x.id === ex.id);
             document.getElementById('vCounter').innerText = `תרגיל ${idx + 1} מתוך ${currentList.length}`;
         }
-
         document.getElementById('prevBtn').disabled = (idx <= 0);
         document.getElementById('nextBtn').disabled = (idx >= currentList.length - 1);
     }
 
     function nav(dir) {
-        let currentList = [];
-        if (isFavOnly) {
-            // ניווט רציף במועדפים
-            currentList = db.filter(x => favs.includes(x.id));
-        } else {
-            // ניווט מוגבל לסדרה במצב רגיל
-            currentList = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        }
-
+        let currentList = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
         const idx = currentList.findIndex(x => x.id === currentEx.id);
         const target = currentList[idx + dir];
         if(target && target.link) openV(target, false);
@@ -331,7 +340,6 @@
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
         if(isFavOnly) {
             applyFilters();
-            // עדכון המצב בתוך החלונית אם היא פתוחה
             if(document.getElementById('vModal').style.display === 'flex') updateNavigationState(currentEx);
         }
     }
