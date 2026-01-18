@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.4.8</title>
+    <title>Syllabus IJJA - v1.4.9</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -43,7 +43,6 @@
         .btn.active { background: var(--primary); color: white; }
         .btn-danger { color: var(--danger); }
 
-        /* Pull to Refresh Indicator */
         #ptr {
             position: absolute; top: var(--header-h); left: 0; width: 100%;
             height: 0; overflow: hidden; display: flex; align-items: center;
@@ -77,6 +76,7 @@
         .ex-row.hidden { display: none !important; }
         
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
+        .ex-no-link { color: #888; flex: 1; cursor: default; }
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
@@ -109,7 +109,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.8</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.4.9</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -130,7 +130,7 @@
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
             <div style="flex: 1; overflow: hidden;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em;"></div>
+                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
                 <div id="vName" style="color:var(--primary); font-size:1.2em; font-weight: 800; margin-top:5px;"></div>
                 <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top: 4px;"></div>
             </div>
@@ -147,35 +147,28 @@
     let isFavOnly = false;
     let currentEx = null;
 
-    // --- Pull to Refresh Logic ---
+    // --- Pull to Refresh ---
     let startY = 0;
     const scrollContainer = document.getElementById('scrollContainer');
     const ptr = document.getElementById('ptr');
-
     scrollContainer.addEventListener('touchstart', e => { startY = e.touches[0].pageY; }, {passive: true});
     scrollContainer.addEventListener('touchmove', e => {
-        const y = e.touches[0].pageY;
-        const diff = y - startY;
-        if (scrollContainer.scrollTop === 0 && diff > 0) {
-            ptr.style.height = Math.min(diff, 60) + 'px';
-        }
+        const diff = e.touches[0].pageY - startY;
+        if (scrollContainer.scrollTop === 0 && diff > 0) ptr.style.height = Math.min(diff, 60) + 'px';
     }, {passive: true});
-
-    scrollContainer.addEventListener('touchend', e => {
-        if (ptr.offsetHeight > 50) {
-            location.reload(true); // עדכון גרסה ונתונים
-        }
+    scrollContainer.addEventListener('touchend', () => {
+        if (ptr.offsetHeight > 50) location.reload(true);
         ptr.style.height = '0px';
     });
 
-    // --- Core Functions ---
+    // --- Core Logic ---
     async function init() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV Load Error"); }
+        } catch(e) { console.error("CSV Error"); }
     }
 
     function parseCSV(text) {
@@ -214,32 +207,37 @@
                 list.className = 'ex-list';
                 groups[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
-                    li.className = 'ex-row';
-                    li.dataset.id = ex.id;
-                    const hasLink = ex.link && ex.link.length > 5;
+                    li.className = 'ex-row'; li.dataset.id = ex.id;
+                    const hasL = ex.link && ex.link.length > 5;
                     li.innerHTML = `
-                        <span class="${hasLink?'ex-link':'ex-no-link'}" onclick='${hasLink ? `openV(${JSON.stringify(ex)}, false)` : ""}'>${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>
-                    `;
+                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick='${hasL?`openV(${JSON.stringify(ex)},false)` : ""}'>${ex.num}. ${ex.name}</span>
+                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
                 sBtn.onclick = () => {
                     const open = list.classList.toggle('open');
                     sBtn.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
                 };
-                cDiv.appendChild(sBtn);
-                cDiv.appendChild(list);
+                cDiv.appendChild(sBtn); cDiv.appendChild(list);
             }
             app.appendChild(cDiv);
         }
     }
 
-    function openV(ex, isRandom) {
+    function toggleAll() {
+        const lists = document.querySelectorAll('.ex-list');
+        const arrows = document.querySelectorAll('.ser-item i');
+        const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
+        
+        lists.forEach(l => l.classList.toggle('open', someClosed));
+        arrows.forEach(a => a.className = someClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down');
+    }
+
+    function openV(ex, isRand) {
         currentEx = ex;
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
-
-        if (isRandom) {
+        if (isRand) {
             document.getElementById('videoContainer').style.display = 'none';
             document.getElementById('vFrame').src = "";
             document.getElementById('watchBtn').style.display = 'flex';
@@ -265,7 +263,6 @@
     }
 
     function startVideo() {
-        if(!currentEx || !currentEx.link) return;
         const url = getEmbedUrl(currentEx.link);
         document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
         document.getElementById('watchBtn').style.display = 'none';
@@ -298,10 +295,7 @@
         if(target && target.link) openV(target, false);
     }
 
-    function closeV() {
-        document.getElementById('vModal').style.display = 'none';
-        document.getElementById('vFrame').src = "";
-    }
+    function closeV() { document.getElementById('vModal').style.display = 'none'; document.getElementById('vFrame').src = ""; }
 
     function toggleStar(id, el) {
         if(favs.includes(id)) favs = favs.filter(f => f !== id);
@@ -313,8 +307,7 @@
 
     function clearFavs() {
         if(confirm("למחוק את כל המועדפים?")) {
-            favs = [];
-            localStorage.setItem('ijja_favs', "[]");
+            favs = []; localStorage.setItem('ijja_favs', "[]");
             document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
             if(isFavOnly) applyFilters();
         }
@@ -333,9 +326,7 @@
                 const list = s.nextElementSibling;
                 let serHas = false;
                 list.querySelectorAll('.ex-row').forEach(row => {
-                    const id = parseInt(row.dataset.id);
-                    const isF = favs.includes(id);
-                    const hide = isFavOnly && !isF;
+                    const hide = isFavOnly && !favs.includes(parseInt(row.dataset.id));
                     row.classList.toggle('hidden', hide);
                     if(!hide) serHas = true;
                 });
@@ -345,12 +336,6 @@
             });
             c.classList.toggle('hidden', isFavOnly && !catHas);
         });
-    }
-
-    function toggleAll() {
-        const lists = document.querySelectorAll('.ex-list');
-        const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
-        lists.forEach(l => l.classList.toggle('open', someClosed));
     }
 
     window.onload = init;
