@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.8.1 Premium Fixed</title>
+    <title>Syllabus IJJA - v1.8.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -89,18 +89,24 @@
         .star { cursor: pointer; color: #cbd5e1; font-size: 1.3rem; padding: 0 8px; }
         .star.active { color: var(--fav-color); }
 
-        /* Modal Premium Design */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 24px; border-radius: 24px; width: 92%; max-width: 550px; position: relative; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         
         .video-container { display: none; position: relative; padding-bottom: 56.25%; height: 0; margin-top: 20px; background: #000; border-radius: 16px; overflow: hidden; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
+        /* Updated Watch Button: Round & Icon Only */
         .watch-btn { 
-            background: var(--primary-grad); color: white; border: none; padding: 16px 32px; 
-            border-radius: 16px; font-size: 1.1em; font-weight: 800; cursor: pointer; 
-            margin-top: 20px; display: none; align-items: center; gap: 10px; justify-content: center; width: 100%;
+            background: var(--primary-grad); color: white; border: none; 
+            width: 70px; height: 70px; border-radius: 50%;
+            font-size: 1.8em; cursor: pointer; 
+            margin: 30px auto 10px auto; 
+            display: none; align-items: center; justify-content: center;
+            box-shadow: 0 10px 20px rgba(0, 86, 166, 0.3); 
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .watch-btn:active { transform: scale(0.9); }
+        .watch-btn i { margin-right: -4px; /* Centering the play triangle perfectly */ }
         
         .close-btn { position: absolute; top: -50px; left: 10px; color: white; font-size: 32px; cursor: pointer; }
         .rand-next-btn { position: absolute; top: -50px; right: 10px; color: white; font-size: 28px; cursor: pointer; }
@@ -119,7 +125,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#64748b; font-weight:bold;">v1.8.1</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#64748b; font-weight:bold;">v1.8.2</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -146,12 +152,13 @@
             </div>
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-arrow-left"></i></button>
         </div>
-        <button id="watchBtn" class="watch-btn" onclick="startVideo()"><i class="fas fa-play"></i> צפה בסרטון</button>
+        <button id="watchBtn" class="watch-btn" onclick="startVideo()"><i class="fas fa-play"></i></button>
         <div id="videoContainer" class="video-container"><iframe id="vFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
     </div>
 </div>
 
 <script>
+    // Logic remains identical to v1.8.1 to ensure no regressions
     let db = [];
     let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
     let isFavOnly = false;
