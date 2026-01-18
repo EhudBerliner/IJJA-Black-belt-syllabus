@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.7.0</title>
+    <title>Syllabus IJJA - v1.7.1</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -70,10 +70,8 @@
             cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* עיצוב כפתורי המועדפים בסדרה ובתרגיל */
-        .ser-fav-btn { color: #ccc; margin-left: 10px; font-size: 0.9em; transition: color 0.2s; }
+        .ser-fav-btn { color: #ccc; padding: 5px 10px; font-size: 1em; }
         .ser-fav-btn.active { color: var(--fav-color); }
-        .ser-fav-btn:hover { transform: scale(1.1); }
 
         .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
         .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
@@ -114,7 +112,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.0</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.1</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -166,7 +164,6 @@
         ptr.style.height = '0px';
     });
 
-    // --- Automatic Updates Logic ---
     async function checkForUpdates() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv', { method: 'HEAD', cache: 'no-cache' });
@@ -185,7 +182,6 @@
 
     document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'visible') checkForUpdates(); });
 
-    // --- Core Logic ---
     async function init() {
         checkForUpdates();
         try {
@@ -236,8 +232,7 @@
                         <span>${ser}</span>
                     </div>
                     <i class="fas fa-star ser-fav-btn ${allInFav?'active':''}" 
-                       onclick="toggleSeriesFav('${cat}', '${ser}', this)" 
-                       title="הוסף/הסר סדרה שלמה למועדפים"></i>`;
+                       onclick="toggleSeriesFav('${cat}', '${ser}', this)"></i>`;
 
                 const list = document.createElement('ul');
                 list.className = 'ex-list';
@@ -250,7 +245,6 @@
                         <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
-                
                 cDiv.appendChild(sBtn); cDiv.appendChild(list);
             }
             app.appendChild(cDiv);
@@ -264,28 +258,23 @@
         sBtn.querySelector('.fa-chevron-down, .fa-chevron-up').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
     }
 
-    // פונקציה חדשה: הוספת/הסרת סדרה שלמה
     function toggleSeriesFav(cat, ser, el) {
         event.stopPropagation();
         const exercises = db.filter(x => x.cat === cat && x.ser === ser);
         const allInFav = exercises.every(ex => favs.includes(ex.id));
 
         if (allInFav) {
-            // הסרה של כולם
             const idsToRemove = exercises.map(x => x.id);
             favs = favs.filter(id => !idsToRemove.includes(id));
             el.classList.remove('active');
         } else {
-            // הוספה של כולם (ללא כפילויות)
-            exercises.forEach(ex => {
-                if (!favs.includes(ex.id)) favs.push(ex.id);
-            });
+            exercises.forEach(ex => { if (!favs.includes(ex.id)) favs.push(ex.id); });
             el.classList.add('active');
         }
 
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
         
-        // עדכון ויזואלי מהיר של הכוכבים ברשימה למטה ללא רינדור מחדש של הכל
+        // עדכון הכוכבים בתוך הרשימה הספציפית בלבד
         const list = el.parentElement.nextElementSibling;
         list.querySelectorAll('.star').forEach(s => {
             const rowId = parseInt(s.closest('.ex-row').dataset.id);
@@ -293,6 +282,25 @@
         });
 
         if(isFavOnly) applyFilters();
+    }
+
+    function toggleStar(id, el) {
+        event.stopPropagation();
+        if(favs.includes(id)) favs = favs.filter(f => f !== id);
+        else favs.push(id);
+        el.classList.toggle('active');
+        localStorage.setItem('ijja_favs', JSON.stringify(favs));
+
+        // עדכון כוכב הסדרה האב במידה וצריך
+        const list = el.closest('.ex-list');
+        const sBtn = list.previousElementSibling;
+        const serName = sBtn.querySelector('span').innerText;
+        const exercises = db.filter(x => x.ser === serName);
+        const allInFav = exercises.every(ex => favs.includes(ex.id));
+        sBtn.querySelector('.ser-fav-btn').classList.toggle('active', allInFav);
+
+        if(isFavOnly) applyFilters();
+        if(currentEx && currentEx.id === id) updateNavigationState(currentEx);
     }
 
     function toggleAll() {
@@ -304,7 +312,6 @@
         });
     }
 
-    // --- לוגיקת וידאו (v1.5.2) ---
     function openV(ex, isRand) {
         currentEx = ex;
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
@@ -373,23 +380,6 @@
 
     function closeV() { document.getElementById('vModal').style.display = 'none'; document.getElementById('vFrame').src = ""; }
 
-    function toggleStar(id, el) {
-        if(favs.includes(id)) favs = favs.filter(f => f !== id);
-        else favs.push(id);
-        el.classList.toggle('active');
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-
-        // עדכון כוכב הסדרה (אם כל הסדרה מועדפת או לא)
-        const row = el.closest('.ex-row');
-        const list = row.parentElement;
-        const serItem = list.previousElementSibling;
-        const exercises = db.filter(x => x.cat === currentEx?.cat || true); // לוגיקה פשוטה לעדכון הכוכב למעלה
-        render(); // במידת הצורך ברינדור בודד, כאן עדיף render כדי לעדכן כוכבי סדרה במדויק
-        
-        if(isFavOnly) applyFilters();
-        if(document.getElementById('vModal').style.display === 'flex') updateNavigationState(currentEx);
-    }
-
     function clearFavs() {
         if(confirm("למחוק את כל המועדפים?")) {
             favs = []; localStorage.setItem('ijja_favs', "[]");
@@ -426,9 +416,7 @@
     window.onload = init;
 
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
     }
 </script>
 </body>
