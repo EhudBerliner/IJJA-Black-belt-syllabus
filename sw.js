@@ -1,5 +1,4 @@
-// עדכון גרסה ל-v6 כדי שהדפדפן ירענן את הנגן החדש והעיצוב אצל המשתמש
-const CACHE_NAME = 'ijja-syllabus-v7';
+8const CACHE_NAME = 'ijja-syllabus-v8';
 const ASSETS = [
   './',
   './index.html',
@@ -48,4 +47,5 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
 
