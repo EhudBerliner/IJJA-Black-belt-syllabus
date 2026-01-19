@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.9.3</title>
+    <title>Syllabus IJJA - Calibration Mode</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -41,7 +41,6 @@
             display: flex; align-items: center; justify-content: center; font-size: 1em;
         }
         .btn.active { background: var(--primary); color: white; }
-        .btn-danger { color: var(--danger); }
 
         #scrollContainer { 
             height: 100vh; padding-top: var(--header-h); 
@@ -63,31 +62,24 @@
             cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .ser-fav-btn { color: #ccc; padding: 5px 10px; font-size: 1em; }
-        .ser-fav-btn.active { color: var(--fav-color); }
-
         .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
         .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
         .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .ex-row.hidden { display: none !important; }
-        
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
-        .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
-        .star.active { color: var(--fav-color); }
+        .ex-no-link { color: #888; flex: 1; cursor: default; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 500px; position: relative; text-align: center; }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; }
         
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 8px; overflow: hidden; }
+        /* Calibration UI */
+        .cal-header { background: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+        .cal-time { font-size: 2em; font-weight: 900; color: #856404; display: block; }
+
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .rand-next-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
-
-        .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .nav-btn:disabled { background: #eee !important; color: #bbb; cursor: not-allowed; }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -96,34 +88,25 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.9.3</small></div>
-    </div>
-    <div class="action-bar">
-        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
-        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
-        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash-alt"></i></button>
+        <div><h1>מצב כיול זמנים</h1><small>v1.8.1</small></div>
     </div>
 </header>
 
 <div id="scrollContainer">
-    <main class="main-content" id="app"></main>
+    <main class="main-content" id="app">טוען נתונים...</main>
 </div>
 
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <i id="vRandBtn" class="fas fa-random rand-next-btn hidden" onclick="playRandom()" title="תרגיל אקראי הבא"></i>
         
-        <div class="modal-nav">
-            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
-            <div style="flex: 1; overflow: hidden;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
-                <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800; margin-top:3px;"></div>
-                <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top: 4px;"></div>
-            </div>
-            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
+        <div class="cal-header">
+            <span style="font-size: 0.9em;">משך זמן מההתחלה (בשניות):</span>
+            <span id="calDuration" class="cal-time">0</span>
+            <small style="color: #666;">עצור את הסרטון והעתק מספר זה לעמודה G</small>
         </div>
+
+        <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800; margin-bottom:10px; text-align: center;"></div>
         
         <div class="video-container">
             <div id="player"></div>
@@ -135,50 +118,48 @@
 
 <script>
     let db = [];
-    let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let isFavOnly = false;
-    let isRandomMode = false;
-    let currentEx = null;
     let ytPlayer = null;
-    let watchdogInterval = null;
-    let currentVideoStart = 0;
-    let currentVideoDuration = 0;
+    let timerInterval = null;
+    let currentStartTime = 0;
 
+    // 1. YouTube API Initialization
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
-            height: '100%', width: '100%',
+            height: '100%',
+            width: '100%',
             playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
             events: { 'onStateChange': onPlayerStateChange }
         });
     }
 
     function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING) startWatchdog();
-        else stopWatchdog();
-    }
-
-    function startWatchdog() {
-        stopWatchdog();
-        if (currentVideoDuration > 0) {
-            watchdogInterval = setInterval(() => {
-                const now = ytPlayer.getCurrentTime();
-                if ((now - currentVideoStart) >= currentVideoDuration) {
-                    ytPlayer.pauseVideo();
-                    ytPlayer.seekTo(currentVideoStart);
-                }
-            }, 300);
+        if (event.data == YT.PlayerState.PLAYING) {
+            startTimer();
+        } else {
+            stopTimer();
         }
     }
 
-    function stopWatchdog() { clearInterval(watchdogInterval); }
+    function startTimer() {
+        stopTimer();
+        timerInterval = setInterval(() => {
+            if (ytPlayer && ytPlayer.getCurrentTime) {
+                const elapsed = Math.max(0, Math.floor(ytPlayer.getCurrentTime() - currentStartTime));
+                document.getElementById('calDuration').innerText = elapsed;
+            }
+        }, 200);
+    }
 
+    function stopTimer() { clearInterval(timerInterval); }
+
+    // 2. Data Parsing
     async function init() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV Load Error"); }
+        } catch(e) { document.getElementById('app').innerText = "שגיאה בטעינת ה-CSV"; }
     }
 
     function parseCSV(text) {
@@ -191,16 +172,13 @@
                 else cur += char;
             }
             row.push(cur.trim());
-            return { 
-                id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], 
-                link: row[4] || "", embed: row[5] || "", 
-                duration: parseInt(row[6]) || 0 
-            };
+            return { id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "", embed: row[5] || "" };
         });
     }
 
     function render() {
-        const app = document.getElementById('app'); app.innerHTML = '';
+        const app = document.getElementById('app');
+        app.innerHTML = '';
         const groups = db.reduce((acc, x) => {
             if(!acc[x.cat]) acc[x.cat] = {};
             if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
@@ -213,26 +191,22 @@
             cDiv.className = 'cat-group';
             cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
             for(let ser in groups[cat]) {
-                const exercises = groups[cat][ser];
-                const allInFav = exercises.every(ex => favs.includes(ex.id));
                 const sBtn = document.createElement('div');
                 sBtn.className = 'ser-item';
-                sBtn.innerHTML = `
-                    <div style="flex:1" onclick="toggleSerList(this)">
-                        <i class="fas fa-chevron-down" style="margin-left:8px"></i>
-                        <span>${ser}</span>
-                    </div>
-                    <i class="fas fa-star ser-fav-btn ${allInFav?'active':''}" onclick="toggleSeriesFav(this, '${cat}', '${ser}')"></i>`;
+                sBtn.innerHTML = `<div><i class="fas fa-chevron-down" style="margin-left:8px"></i>${ser}</div>`;
+                sBtn.onclick = () => {
+                    const list = sBtn.nextElementSibling;
+                    const open = list.classList.toggle('open');
+                    sBtn.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                };
 
                 const list = document.createElement('ul');
                 list.className = 'ex-list';
-                exercises.forEach(ex => {
+                groups[cat][ser].forEach(ex => {
                     const li = document.createElement('li');
-                    li.className = 'ex-row'; li.dataset.id = ex.id;
+                    li.className = 'ex-row';
                     const hasL = ex.link.length > 5 || ex.embed.length > 5;
-                    li.innerHTML = `
-                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id}, false)` : ''}">${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
+                    li.innerHTML = `<span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id})` : ''}">${ex.num}. ${ex.name}</span>`;
                     list.appendChild(li);
                 });
                 cDiv.appendChild(sBtn); cDiv.appendChild(list);
@@ -241,150 +215,40 @@
         }
     }
 
-    function openVById(id, isRand = false) {
-        isRandomMode = isRand;
+    function openVById(id) {
         const ex = db.find(x => x.id === id);
-        if(ex) openV(ex);
-    }
+        if(!ex) return;
 
-    function openV(ex) {
-        currentEx = ex;
-        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
-        
+        document.getElementById('calDuration').innerText = "0";
+        document.getElementById('vModal').style.display = 'flex';
+
+        // Parse ID and Start Time
         const url = ex.embed || ex.link;
-        let videoId = '', start = 0;
+        let videoId = '';
+        let start = 0;
+
         if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
         else if (url.includes('embed/')) videoId = url.split('embed/')[1].split('?')[0];
         else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+        
         const tMatch = url.match(/[?&](t|start)=([0-9]+)/);
         if (tMatch) start = parseInt(tMatch[2]);
 
-        currentVideoStart = start;
-        currentVideoDuration = ex.duration;
-        document.getElementById('vModal').style.display = 'flex';
-        
-        updateModalLayout();
+        currentStartTime = start;
 
         if (ytPlayer && ytPlayer.loadVideoById) {
-            ytPlayer.loadVideoById({ videoId: videoId, startSeconds: start });
+            ytPlayer.loadVideoById({
+                videoId: videoId,
+                startSeconds: start
+            });
         }
-    }
-
-    function updateModalLayout() {
-        const randBtn = document.getElementById('vRandBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const counter = document.getElementById('vCounter');
-
-        if (isRandomMode) {
-            randBtn.classList.remove('hidden');
-            prevBtn.classList.add('hidden');
-            nextBtn.classList.add('hidden');
-            counter.innerText = "תרגיל אקראי";
-        } else {
-            randBtn.classList.add('hidden');
-            prevBtn.classList.remove('hidden');
-            nextBtn.classList.remove('hidden');
-            
-            let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-            let idx = list.findIndex(x => x.id === currentEx.id);
-            
-            counter.innerText = isFavOnly ? `מועדף ${idx + 1} מתוך ${list.length}` : `תרגיל ${idx + 1} מתוך ${list.length}`;
-            prevBtn.disabled = (idx <= 0);
-            nextBtn.disabled = (idx >= list.length - 1 || idx === -1);
-        }
-    }
-
-    function nav(dir) {
-        if (isRandomMode) return;
-        let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        const idx = list.findIndex(x => x.id === currentEx.id);
-        const target = list[idx + dir];
-        if(target) openV(target);
     }
 
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
         if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
-        stopWatchdog();
-        isRandomMode = false;
-    }
-
-    function toggleSerList(el) {
-        const list = el.parentElement.nextElementSibling;
-        const open = list.classList.toggle('open');
-        el.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-    }
-
-    function toggleStar(id, el) {
-        if(favs.includes(id)) favs = favs.filter(f => f !== id); else favs.push(id);
-        el.classList.toggle('active');
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        if(isFavOnly) applyFilters();
-    }
-
-    function toggleSeriesFav(el, cat, ser) {
-        const exercises = db.filter(x => x.cat === cat && x.ser === ser);
-        const allInFav = exercises.every(ex => favs.includes(ex.id));
-        if (allInFav) {
-            const ids = exercises.map(x => x.id);
-            favs = favs.filter(id => !ids.includes(id));
-        } else {
-            exercises.forEach(ex => { if (!favs.includes(ex.id)) favs.push(ex.id); });
-        }
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        render(); if(isFavOnly) applyFilters();
-    }
-
-    function clearFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
-            favs = []; 
-            localStorage.setItem('ijja_favs', "[]");
-            isFavOnly = false;
-            document.getElementById('favFilterBtn').classList.remove('active');
-            render();
-            applyFilters();
-        }
-    }
-
-    function toggleFavFilter() {
-        isFavOnly = !isFavOnly;
-        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
-        applyFilters();
-    }
-
-    function applyFilters() {
-        document.querySelectorAll('.cat-group').forEach(c => {
-            let catHas = false;
-            c.querySelectorAll('.ser-item').forEach(s => {
-                let serHas = false;
-                const list = s.nextElementSibling;
-                list.querySelectorAll('.ex-row').forEach(row => {
-                    const hide = isFavOnly && !favs.includes(parseInt(row.dataset.id));
-                    row.classList.toggle('hidden', hide);
-                    if(!hide) serHas = true;
-                });
-                s.classList.toggle('hidden', isFavOnly && !serHas);
-                list.classList.toggle('hidden', isFavOnly && !serHas);
-                if(serHas) catHas = true;
-            });
-            c.classList.toggle('hidden', isFavOnly && !catHas);
-        });
-    }
-
-    function toggleAll() {
-        const open = Array.from(document.querySelectorAll('.ex-list')).some(l => !l.classList.contains('open'));
-        document.querySelectorAll('.ex-list').forEach(l => l.classList.toggle('open', open));
-        document.querySelectorAll('.ser-item i.fas').forEach(i => i.className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down');
-    }
-
-    function playRandom() {
-        const pool = db.filter(x => x.link.length > 5 || x.embed.length > 5);
-        if(pool.length) {
-            const randomEx = pool[Math.floor(Math.random()*pool.length)];
-            openVById(randomEx.id, true);
-        }
+        stopTimer();
     }
 
     window.onload = init;
