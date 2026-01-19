@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.1.8</title>
+    <title>Syllabus IJJA - v2.1.9</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -89,14 +89,14 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.8</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.9</small></div>
     </div>
     <div class="action-bar">
-        <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
-        <button class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
-        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
-        <button class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
+        <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()" title="מנגנון עצירה"><i class="fas fa-history"></i></button>
+        <button class="btn" onclick="playRandom()" title="תרגיל אקראי"><i class="fas fa-random"></i></button>
+        <button id="favFilterBtn" class="btn" onclick="toggleFavFilter()" title="מועדפים בלבד"><i class="fas fa-star"></i></button>
+        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash-alt"></i></button>
     </div>
 </header>
 
@@ -110,10 +110,10 @@
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
-            <div style="flex: 1; overflow: hidden;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.8em; white-space:nowrap; overflow:hidden;"></div>
-                <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800;"></div>
-                <div id="vCounter" style="font-size: 0.8em; color: #888;"></div>
+            <div style="flex: 1; overflow: hidden; padding: 0 5px;">
+                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+                <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800; line-height:1.2;"></div>
+                <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top:2px;"></div>
             </div>
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
@@ -121,8 +121,8 @@
         <div class="video-container">
             <div id="player"></div>
             <div id="videoCover" class="hidden" onclick="revealVideo()">
-                <i class="fas fa-play-circle" style="font-size:3em; margin-bottom:10px; color:var(--secondary);"></i>
-                <div style="font-weight:bold">לחץ לצפייה בביצוע התרגיל</div>
+                <i class="fas fa-play-circle" style="font-size:4em; margin-bottom:12px; color:var(--secondary);"></i>
+                <div style="font-weight:900; font-size:1.2em;">לחץ לצפייה בביצוע התרגיל</div>
             </div>
         </div>
     </div>
@@ -134,6 +134,7 @@
     let db = [], favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
     let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
+    let pendingVideoId = '', pendingStart = 0;
 
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
@@ -169,7 +170,6 @@
     function toggleWatchdog() {
         watchdogEnabled = !watchdogEnabled;
         document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
-        if(!watchdogEnabled) stopWatchdog();
     }
 
     function toggleAutoplay() { 
@@ -224,7 +224,7 @@
                 list.className = 'ex-list';
                 exercises.forEach(ex => {
                     const li = document.createElement('li');
-                    li.className = 'ex-row';
+                    li.className = 'ex-row'; li.dataset.id = ex.id;
                     const hasL = (ex.link+ex.embed).length > 10;
                     li.innerHTML = `<span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL?`openVById(${ex.id},false)` : ''}">${ex.num}. ${ex.name}</span>
                                     <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id},this)"></i>`;
@@ -234,6 +234,7 @@
             }
             app.appendChild(cDiv);
         }
+        if(isFavOnly) applyFilters();
     }
 
     function openVById(id, isRand) {
@@ -256,15 +257,15 @@
         else if (url.includes('embed/')) vId = url.split('embed/')[1].split('?')[0];
         else if (url.includes('youtu.be/')) vId = url.split('youtu.be/')[1].split('?')[0];
 
-        const start = getStartTime(url);
+        pendingVideoId = vId;
+        pendingStart = getStartTime(url);
 
         if (isRandomMode) {
             document.getElementById('videoCover').classList.remove('hidden');
-            if(ytPlayer && playerReady) ytPlayer.loadVideoById({ videoId: vId, startSeconds: start });
-            // אנחנו משתמשים ב-loadVideo אך הכיסוי מסתיר אותו
+            if(ytPlayer) ytPlayer.stopVideo(); // מוודא ששום דבר לא רץ ברקע
         } else {
             document.getElementById('videoCover').classList.add('hidden');
-            if(ytPlayer && playerReady) ytPlayer.loadVideoById({ videoId: vId, startSeconds: start });
+            if(ytPlayer && playerReady) ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
         }
     }
 
@@ -275,7 +276,9 @@
 
     function revealVideo() {
         document.getElementById('videoCover').classList.add('hidden');
-        if(ytPlayer) ytPlayer.playVideo();
+        if(ytPlayer && playerReady) {
+            ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
+        }
     }
 
     function updateModalLayout() {
@@ -289,7 +292,7 @@
 
         if (isRandomMode) {
             nextRandBtn.classList.remove('hidden');
-            cnt.innerText = "מבחן עצמי (אקראי)";
+            cnt.innerText = "מצב מבחן עצמי";
         } else {
             let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
             let idx = list.findIndex(x => x.id === currentEx.id);
@@ -313,6 +316,7 @@
         document.getElementById('vModal').style.display = 'none';
         if(ytPlayer) ytPlayer.stopVideo();
         stopWatchdog();
+        isRandomMode = false;
     }
 
     function toggleSerList(el) {
@@ -334,7 +338,7 @@
         if (all) { const ids = exs.map(x=>x.id); favs = favs.filter(id => !ids.includes(id)); }
         else { exs.forEach(ex => { if(!favs.includes(ex.id)) favs.push(ex.id); }); }
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        render(); if(isFavOnly) applyFilters();
+        render(); 
     }
 
     function clearFavs() {
@@ -342,7 +346,7 @@
             favs = []; localStorage.setItem('ijja_favs', "[]");
             isFavOnly = false;
             document.getElementById('favFilterBtn').classList.remove('active');
-            render(); applyFilters();
+            render();
         }
     }
 
@@ -354,25 +358,33 @@
 
     function applyFilters() {
         document.querySelectorAll('.cat-group').forEach(c => {
-            let cHas = false;
+            let catHasVisible = false;
             c.querySelectorAll('.ser-item').forEach(s => {
-                let sHas = false;
-                s.nextElementSibling.querySelectorAll('.ex-row').forEach(r => {
-                    const h = isFavOnly && !favs.includes(parseInt(r.dataset.id));
-                    r.classList.toggle('hidden', h); if(!h) sHas = true;
+                let serHasVisible = false;
+                const list = s.nextElementSibling;
+                list.querySelectorAll('.ex-row').forEach(row => {
+                    const id = parseInt(row.dataset.id);
+                    const hide = isFavOnly && !favs.includes(id);
+                    row.classList.toggle('hidden', hide);
+                    if(!hide) serHasVisible = true;
                 });
-                s.classList.toggle('hidden', isFavOnly && !sHas);
-                s.nextElementSibling.classList.toggle('hidden', isFavOnly && !sHas);
-                if(sHas) cHas = true;
+                s.classList.toggle('hidden', isFavOnly && !serHasVisible);
+                list.classList.toggle('hidden', isFavOnly && !serHasVisible);
+                if(serHasVisible) catHasVisible = true;
             });
-            c.classList.toggle('hidden', isFavOnly && !cHas);
+            c.classList.toggle('hidden', isFavOnly && !catHasVisible);
         });
     }
 
     function toggleAll() {
-        const anyClosed = Array.from(document.querySelectorAll('.ex-list')).some(l => !l.classList.contains('open'));
-        document.querySelectorAll('.ex-list').forEach(l => l.classList.toggle('open', anyClosed));
-        document.querySelectorAll('.ser-item i.fas').forEach(i => i.className = anyClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down');
+        const anyClosed = Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l => !l.classList.contains('open'));
+        document.querySelectorAll('.ex-list').forEach(l => {
+            if(!l.classList.contains('hidden')) {
+                l.classList.toggle('open', anyClosed);
+                const icon = l.previousElementSibling.querySelector('i.fas');
+                if(icon) icon.className = anyClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+            }
+        });
     }
 
     function playRandom() {
