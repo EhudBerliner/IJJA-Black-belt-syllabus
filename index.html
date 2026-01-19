@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.7.3</title>
+    <title>Syllabus IJJA - v1.7.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -112,13 +112,13 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.3</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.4</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
         <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
         <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
-        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash"></i></button>
+        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash-alt"></i></button>
     </div>
 </header>
 
@@ -202,7 +202,6 @@
                 else cur += char;
             }
             row.push(cur.trim());
-            // מיפוי: 0=קטגוריה, 1=סדרה, 2=מספר, 3=שם, 4=לינק רגיל, 5=לינק Embed
             return { 
                 id: i + 1, 
                 cat: row[0], 
@@ -210,7 +209,7 @@
                 num: row[2], 
                 name: row[3], 
                 link: row[4] || "",
-                embed: row[5] || "" // עמודה חדשה
+                embed: row[5] || ""
             };
         });
     }
@@ -235,13 +234,16 @@
 
                 const sBtn = document.createElement('div');
                 sBtn.className = 'ser-item';
+                // שימוש ב-Data Attributes כדי למנוע בעיות תווים מיוחדים
+                sBtn.dataset.cat = cat;
+                sBtn.dataset.ser = ser;
                 sBtn.innerHTML = `
                     <div style="flex:1" onclick="toggleSerList(this)">
                         <i class="fas fa-chevron-down" style="margin-left:8px"></i>
                         <span>${ser}</span>
                     </div>
                     <i class="fas fa-star ser-fav-btn ${allInFav?'active':''}" 
-                       onclick="toggleSeriesFav('${cat}', '${ser}', this)"></i>`;
+                       onclick="toggleSeriesFav(this)"></i>`;
 
                 const list = document.createElement('ul');
                 list.className = 'ex-list';
@@ -250,7 +252,7 @@
                     li.className = 'ex-row'; li.dataset.id = ex.id;
                     const hasL = (ex.embed && ex.embed.length > 5) || (ex.link && ex.link.length > 5);
                     li.innerHTML = `
-                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick='${hasL?`openV(${JSON.stringify(ex)},false)` : ""}'>${ex.num}. ${ex.name}</span>
+                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id})` : ''}">${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
@@ -267,8 +269,12 @@
         sBtn.querySelector('.fa-chevron-down, .fa-chevron-up').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
     }
 
-    function toggleSeriesFav(cat, ser, el) {
+    function toggleSeriesFav(el) {
         event.stopPropagation();
+        const parent = el.parentElement;
+        const cat = parent.dataset.cat;
+        const ser = parent.dataset.ser;
+        
         const exercises = db.filter(x => x.cat === cat && x.ser === ser);
         const allInFav = exercises.every(ex => favs.includes(ex.id));
 
@@ -282,7 +288,7 @@
         }
 
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        const list = el.parentElement.nextElementSibling;
+        const list = parent.nextElementSibling;
         list.querySelectorAll('.star').forEach(s => {
             const rowId = parseInt(s.closest('.ex-row').dataset.id);
             s.classList.toggle('active', favs.includes(rowId));
@@ -298,10 +304,12 @@
         el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
 
+        // עדכון כוכב הסדרה (בדיקה לפי האלמנטים בדף)
         const list = el.closest('.ex-list');
         const sBtn = list.previousElementSibling;
-        const serName = sBtn.querySelector('span').innerText;
-        const exercises = db.filter(x => x.ser === serName);
+        const cat = sBtn.dataset.cat;
+        const ser = sBtn.dataset.ser;
+        const exercises = db.filter(x => x.cat === cat && x.ser === ser);
         const allInFav = exercises.every(ex => favs.includes(ex.id));
         sBtn.querySelector('.ser-fav-btn').classList.toggle('active', allInFav);
 
@@ -309,13 +317,9 @@
         if(currentEx && currentEx.id === id) updateNavigationState(currentEx);
     }
 
-    function toggleAll() {
-        const lists = document.querySelectorAll('.ex-list');
-        const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
-        lists.forEach(l => l.classList.toggle('open', someClosed));
-        document.querySelectorAll('.ser-item .fa-chevron-down, .ser-item .fa-chevron-up').forEach(a => {
-            a.className = someClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-        });
+    function openVById(id) {
+        const ex = db.find(x => x.id === id);
+        if(ex) openV(ex, false);
     }
 
     function openV(ex, isRand) {
@@ -366,12 +370,7 @@
     }
 
     function getEmbedUrl(ex) {
-        // עדיפות לקישור המובנה מה-CSV
-        if (ex.embed && ex.embed.trim().length > 5) {
-            return ex.embed.trim();
-        }
-        
-        // לוגיקת גיבוי למקרה שהעמודה ריקה
+        if (ex.embed && ex.embed.trim().length > 5) return ex.embed.trim();
         let url = ex.link || "";
         if (!url) return '';
         if (url.includes("/shorts/")) return url.replace("/shorts/", "/embed/").split("?")[0];
@@ -386,6 +385,15 @@
     function playRandom() {
         const pool = db.filter(x => (x.embed && x.embed.length > 5) || (x.link && x.link.length > 5));
         if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)], true);
+    }
+
+    function toggleAll() {
+        const lists = document.querySelectorAll('.ex-list');
+        const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
+        lists.forEach(l => l.classList.toggle('open', someClosed));
+        document.querySelectorAll('.ser-item .fa-chevron-down, .ser-item .fa-chevron-up').forEach(a => {
+            a.className = someClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        });
     }
 
     function closeV() { document.getElementById('vModal').style.display = 'none'; document.getElementById('vFrame').src = ""; }
