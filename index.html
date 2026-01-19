@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.1.2</title>
+    <title>Syllabus IJJA - v2.1.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -50,6 +50,7 @@
         .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
         .ex-list.open { display: block; border-radius: 0 0 6px 6px; }
         .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-row.hidden { display: none !important; }
         
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
@@ -63,7 +64,6 @@
         
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
         
-        /* כפתור Autoplay מעודכן - רק אייקון וריבוע */
         .modal-btn { 
             position: absolute; top: -45px; right: 0; 
             width: 38px; height: 38px; border-radius: 8px;
@@ -84,7 +84,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.2</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.3</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()" title="מנגנון עצירה">
@@ -104,7 +104,6 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        
         <button id="vAutoplayBtn" class="modal-btn hidden" onclick="toggleAutoplay()" title="ניגון רציף">
             <i class="fas fa-sync-alt"></i>
         </button>
@@ -137,7 +136,10 @@
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
             playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-            events: { 'onStateChange': onPlayerStateChange }
+            events: { 
+                'onReady': () => console.log("Player Ready"),
+                'onStateChange': onPlayerStateChange 
+            }
         });
     }
 
@@ -178,7 +180,6 @@
     function toggleAutoplay() { 
         isAutoplay = !isAutoplay; 
         if (isAutoplay) {
-            // כאשר ניגון רציף פועל - בטל את מנגנון העצירה
             watchdogEnabled = false;
             document.getElementById('watchdogToggle').classList.remove('active');
             stopWatchdog();
@@ -277,7 +278,6 @@
 
         if (ytPlayer && ytPlayer.loadVideoById) {
             ytPlayer.loadVideoById({ videoId: videoId, startSeconds: start });
-            ytPlayer.playVideo();
         }
     }
 
@@ -291,7 +291,7 @@
 
         if (isRandomMode) {
             autoBtn.classList.remove('hidden'); 
-            counter.innerText = "תרגיל אקראי";
+            counter.innerText = "אקראי";
         } else if (isFavOnly) {
             autoBtn.classList.remove('hidden');
             prevBtn.classList.remove('hidden');
@@ -324,7 +324,7 @@
 
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
-        if (ytPlayer) ytPlayer.stopVideo();
+        if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
         stopWatchdog();
         isRandomMode = false; isAutoplay = false;
     }
