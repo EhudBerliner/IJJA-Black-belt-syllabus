@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.1.0</title>
+    <title>Syllabus IJJA - v2.1.1</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -15,7 +15,7 @@
     <style>
         :root {
             --primary: #0056a6; --secondary: #009be5; --border: #d2dce5;
-            --header-h: 90px; --fav-color: #ffc107; --danger: #d32f2f;
+            --header-h: 90px; --fav-color: #ffc107; --danger: #d32f2f; --success: #2e7d32;
         }
 
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
@@ -50,7 +50,6 @@
         .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
         .ex-list.open { display: block; border-radius: 0 0 6px 6px; }
         .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .ex-row.hidden { display: none !important; }
         
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
@@ -63,7 +62,16 @@
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .top-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
+        
+        /* עיצוב כפתור Autoplay בחלון הוידיאו */
+        .modal-btn { 
+            position: absolute; top: -42px; right: 0; 
+            height: 34px; padding: 0 12px; border-radius: 6px;
+            border: 1px solid white; background: transparent; color: white;
+            font-family: 'Heebo'; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; font-size: 0.9em;
+        }
+        .modal-btn.active { background: var(--success); border-color: var(--success); }
 
         .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: center; }
         .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -77,7 +85,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.0</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.1</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()" title="מנגנון עצירה">
@@ -97,8 +105,10 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <i id="vRandBtn" class="fas fa-random top-btn hidden" onclick="playRandom()"></i>
-        <i id="vAutoplayBtn" class="fas fa-play-circle top-btn hidden" onclick="toggleAutoplay()" style="color:#4caf50"></i>
+        
+        <button id="vAutoplayBtn" class="modal-btn hidden" onclick="toggleAutoplay()">
+            <i class="fas fa-sync-alt"></i> <span>ניגון רציף</span>
+        </button>
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
@@ -127,7 +137,7 @@
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
-            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1, 'mute': 0 },
+            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
             events: { 'onStateChange': onPlayerStateChange }
         });
     }
@@ -136,7 +146,10 @@
         if (event.data == YT.PlayerState.PLAYING) {
             startWatchdog();
         } else if (event.data == YT.PlayerState.ENDED) {
-            if (isAutoplay && isFavOnly) nav(1);
+            if (isAutoplay) {
+                if (isRandomMode) playRandom(); // תיקון: אם באקראי וברצף, בחר עוד אחד
+                else if (isFavOnly) nav(1);     // אם במועדפים וברצף, עבור לבא
+            }
         } else {
             stopWatchdog();
         }
@@ -159,8 +172,7 @@
 
     function toggleWatchdog() {
         watchdogEnabled = !watchdogEnabled;
-        const btn = document.getElementById('watchdogToggle');
-        btn.classList.toggle('active', watchdogEnabled);
+        document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
         if (!watchdogEnabled) stopWatchdog();
     }
 
@@ -260,23 +272,20 @@
     }
 
     function updateModalLayout() {
-        const randBtn = document.getElementById('vRandBtn');
         const autoBtn = document.getElementById('vAutoplayBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const counter = document.getElementById('vCounter');
 
-        [randBtn, autoBtn, prevBtn, nextBtn].forEach(b => b.classList.add('hidden'));
+        [autoBtn, prevBtn, nextBtn].forEach(b => b.classList.add('hidden'));
 
         if (isRandomMode) {
-            randBtn.classList.remove('hidden');
+            autoBtn.classList.remove('hidden'); // אפשר ניגון רציף גם באקראי
             counter.innerText = "תרגיל אקראי";
         } else if (isFavOnly) {
             autoBtn.classList.remove('hidden');
             prevBtn.classList.remove('hidden');
             nextBtn.classList.remove('hidden');
-            autoBtn.className = isAutoplay ? "fas fa-pause-circle top-btn" : "fas fa-play-circle top-btn";
-            
             let list = db.filter(x => favs.includes(x.id));
             let idx = list.findIndex(x => x.id === currentEx.id);
             counter.innerText = `מועדף ${idx + 1} מתוך ${list.length}`;
@@ -291,11 +300,14 @@
             prevBtn.disabled = (idx <= 0);
             nextBtn.disabled = (idx >= list.length - 1);
         }
+        
+        autoBtn.classList.toggle('active', isAutoplay);
     }
 
     function toggleAutoplay() { isAutoplay = !isAutoplay; updateModalLayout(); }
 
     function nav(dir) {
+        if (isRandomMode) return;
         let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
         const idx = list.findIndex(x => x.id === currentEx.id);
         const target = list[idx + dir];
