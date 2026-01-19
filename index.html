@@ -1,93 +1,246 @@
-<style>
-    .calibration-box {
-        background: #fff3cd;
-        border: 2px dashed #ffeeba;
-        padding: 10px;
-        margin-top: 10px;
-        border-radius: 8px;
-        font-family: monospace;
-        font-weight: bold;
-        color: #856404;
-    }
-    #player { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
-</style>
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0056a6">
+    <link rel="apple-touch-icon" href="Logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Syllabus IJJA - Calibration Mode</title>
 
-<div class="calibration-box">
-    <div>זמן התחלה בקישור: <span id="cal-start">0</span> ש'</div>
-    <div style="font-size: 1.4em; margin: 5px 0;">משך זמן נוכחי: <span id="cal-duration">0</span> שניות</div>
-    <div style="font-size: 0.8em; color: #666;">(עצור את הוידיאו בנקודת הסיום והעתק את המספר לעמודה G)</div>
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0056a6;
+            --secondary: #009be5;
+            --border: #d2dce5;
+            --header-h: 90px;
+            --fav-color: #ffc107;
+            --danger: #d32f2f;
+        }
+
+        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
+
+        header {
+            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 45px; width: auto; }
+        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
+
+        .action-bar { display: flex; gap: 6px; }
+        .btn {
+            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
+            background: white; color: var(--primary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1em;
+        }
+        .btn.active { background: var(--primary); color: white; }
+
+        #scrollContainer { 
+            height: 100vh; padding-top: var(--header-h); 
+            overflow-y: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; 
+        }
+        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
+        
+        .cat-group { margin-bottom: 25px; }
+        .cat-header {
+            background: var(--primary); color: white; padding: 10px 15px;
+            border-radius: 10px; font-size: 1.2em; font-weight: 900;
+            position: sticky; top: 10px; z-index: 100; margin-bottom: 8px;
+        }
+
+        .ser-item {
+            background: white; padding: 12px; font-weight: 700;
+            border-right: 4px solid var(--secondary); border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
+        .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
+        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
+        .ex-no-link { color: #888; flex: 1; cursor: default; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; }
+        
+        /* Calibration UI */
+        .cal-header { background: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+        .cal-time { font-size: 2em; font-weight: 900; color: #856404; display: block; }
+
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
+        #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-right">
+        <img src="Logo.png" alt="IJJA" class="logo-img">
+        <div><h1>מצב כיול זמנים</h1><small>v1.8.1</small></div>
+    </div>
+</header>
+
+<div id="scrollContainer">
+    <main class="main-content" id="app">טוען נתונים...</main>
 </div>
 
-<div id="videoContainer" class="video-container">
-    <div id="player"></div>
+<div id="vModal" class="modal" onclick="closeV()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <i class="fas fa-times close-btn" onclick="closeV()"></i>
+        
+        <div class="cal-header">
+            <span style="font-size: 0.9em;">משך זמן מההתחלה (בשניות):</span>
+            <span id="calDuration" class="cal-time">0</span>
+            <small style="color: #666;">עצור את הסרטון והעתק מספר זה לעמודה G</small>
+        </div>
+
+        <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800; margin-bottom:10px; text-align: center;"></div>
+        
+        <div class="video-container">
+            <div id="player"></div>
+        </div>
+    </div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-    let ytPlayer;
-    let calibrationInterval;
-    let currentVideoStart = 0;
+    let db = [];
+    let ytPlayer = null;
+    let timerInterval = null;
+    let currentStartTime = 0;
 
-    // פונקציה חובה של יוטיוב שמתעוררת כשה-API מוכן
+    // 1. YouTube API Initialization
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
-            events: {
-                'onStateChange': onPlayerStateChange
-            }
+            height: '100%',
+            width: '100%',
+            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
+            events: { 'onStateChange': onPlayerStateChange }
         });
     }
 
     function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING) {
-            // התחלת עדכון הטיימר כשהוידיאו רץ
-            calibrationInterval = setInterval(updateCalibration, 100);
+            startTimer();
         } else {
-            // עצירת העדכון כשהוידיאו עוצר
-            clearInterval(calibrationInterval);
+            stopTimer();
         }
     }
 
-    function updateCalibration() {
-        if (ytPlayer && ytPlayer.getCurrentTime) {
-            const now = ytPlayer.getCurrentTime();
-            const diff = Math.max(0, Math.floor(now - currentVideoStart));
-            document.getElementById('cal-duration').innerText = diff;
+    function startTimer() {
+        stopTimer();
+        timerInterval = setInterval(() => {
+            if (ytPlayer && ytPlayer.getCurrentTime) {
+                const elapsed = Math.max(0, Math.floor(ytPlayer.getCurrentTime() - currentStartTime));
+                document.getElementById('calDuration').innerText = elapsed;
+            }
+        }, 200);
+    }
+
+    function stopTimer() { clearInterval(timerInterval); }
+
+    // 2. Data Parsing
+    async function init() {
+        try {
+            const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
+            const txt = await r.text();
+            db = parseCSV(txt);
+            render();
+        } catch(e) { document.getElementById('app').innerText = "שגיאה בטעינת ה-CSV"; }
+    }
+
+    function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
+        return lines.slice(1).map((line, i) => {
+            let row = [], cur = '', inQ = false;
+            for(let char of line) {
+                if(char === '"') inQ = !inQ;
+                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
+                else cur += char;
+            }
+            row.push(cur.trim());
+            return { id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "", embed: row[5] || "" };
+        });
+    }
+
+    function render() {
+        const app = document.getElementById('app');
+        app.innerHTML = '';
+        const groups = db.reduce((acc, x) => {
+            if(!acc[x.cat]) acc[x.cat] = {};
+            if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
+            acc[x.cat][x.ser].push(x);
+            return acc;
+        }, {});
+
+        for(let cat in groups) {
+            const cDiv = document.createElement('div');
+            cDiv.className = 'cat-group';
+            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
+            for(let ser in groups[cat]) {
+                const sBtn = document.createElement('div');
+                sBtn.className = 'ser-item';
+                sBtn.innerHTML = `<div><i class="fas fa-chevron-down" style="margin-left:8px"></i>${ser}</div>`;
+                sBtn.onclick = () => {
+                    const list = sBtn.nextElementSibling;
+                    const open = list.classList.toggle('open');
+                    sBtn.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                };
+
+                const list = document.createElement('ul');
+                list.className = 'ex-list';
+                groups[cat][ser].forEach(ex => {
+                    const li = document.createElement('li');
+                    li.className = 'ex-row';
+                    const hasL = ex.link.length > 5 || ex.embed.length > 5;
+                    li.innerHTML = `<span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id})` : ''}">${ex.num}. ${ex.name}</span>`;
+                    list.appendChild(li);
+                });
+                cDiv.appendChild(sBtn); cDiv.appendChild(list);
+            }
+            app.appendChild(cDiv);
         }
     }
 
-    // פונקציית עזר לחילוץ ה-ID וה-Start מהלינק
-    function getYoutubeData(url) {
-        let id = '', start = 0;
-        if (url.includes('v=')) id = url.split('v=')[1].split('&')[0];
-        else if (url.includes('embed/')) id = url.split('embed/')[1].split('?')[0];
-        else if (url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
+    function openVById(id) {
+        const ex = db.find(x => x.id === id);
+        if(!ex) return;
+
+        document.getElementById('vName').innerText = ex.name;
+        document.getElementById('calDuration').innerText = "0";
+        document.getElementById('vModal').style.display = 'flex';
+
+        // Parse ID and Start Time
+        const url = ex.embed || ex.link;
+        let videoId = '';
+        let start = 0;
+
+        if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
+        else if (url.includes('embed/')) videoId = url.split('embed/')[1].split('?')[0];
+        else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
         
         const tMatch = url.match(/[?&](t|start)=([0-9]+)/);
         if (tMatch) start = parseInt(tMatch[2]);
-        
-        return { id, start };
-    }
 
-    // עדכון פונקציית ה-OpenV הקיימת שלך
-    function openV(ex, isRand) {
-        currentEx = ex;
-        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
-        document.getElementById('vName').innerText = ex.name;
-        
-        const data = getYoutubeData(ex.embed || ex.link);
-        currentVideoStart = data.start;
-        document.getElementById('cal-start').innerText = data.start;
-        document.getElementById('cal-duration').innerText = "0";
+        currentStartTime = start;
 
-        document.getElementById('vModal').style.display = 'flex';
-        document.getElementById('videoContainer').style.display = 'block';
-
-        // טעינת הוידיאו לנגן
         if (ytPlayer && ytPlayer.loadVideoById) {
             ytPlayer.loadVideoById({
-                videoId: data.id,
-                startSeconds: data.start
+                videoId: videoId,
+                startSeconds: start
             });
         }
     }
@@ -95,6 +248,10 @@
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
         if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
-        clearInterval(calibrationInterval);
+        stopTimer();
     }
+
+    window.onload = init;
 </script>
+</body>
+</html>
