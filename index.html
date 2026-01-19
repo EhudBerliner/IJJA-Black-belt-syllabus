@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.7.2</title>
+    <title>Syllabus IJJA - v1.7.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -112,7 +112,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.2</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.3</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -202,7 +202,16 @@
                 else cur += char;
             }
             row.push(cur.trim());
-            return { id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "" };
+            // מיפוי: 0=קטגוריה, 1=סדרה, 2=מספר, 3=שם, 4=לינק רגיל, 5=לינק Embed
+            return { 
+                id: i + 1, 
+                cat: row[0], 
+                ser: row[1], 
+                num: row[2], 
+                name: row[3], 
+                link: row[4] || "",
+                embed: row[5] || "" // עמודה חדשה
+            };
         });
     }
 
@@ -239,7 +248,7 @@
                 exercises.forEach(ex => {
                     const li = document.createElement('li');
                     li.className = 'ex-row'; li.dataset.id = ex.id;
-                    const hasL = ex.link && ex.link.length > 5;
+                    const hasL = (ex.embed && ex.embed.length > 5) || (ex.link && ex.link.length > 5);
                     li.innerHTML = `
                         <span class="${hasL?'ex-link':'ex-no-link'}" onclick='${hasL?`openV(${JSON.stringify(ex)},false)` : ""}'>${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
@@ -273,8 +282,6 @@
         }
 
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        
-        // עדכון הכוכבים בתוך הרשימה הספציפית בלבד
         const list = el.parentElement.nextElementSibling;
         list.querySelectorAll('.star').forEach(s => {
             const rowId = parseInt(s.closest('.ex-row').dataset.id);
@@ -291,7 +298,6 @@
         el.classList.toggle('active');
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
 
-        // עדכון כוכב הסדרה האב במידה וצריך
         const list = el.closest('.ex-list');
         const sBtn = list.previousElementSibling;
         const serName = sBtn.querySelector('span').innerText;
@@ -325,7 +331,7 @@
             document.getElementById('randBtnModal').classList.remove('hidden');
             document.getElementById('vCounter').innerText = "תרגיל אקראי";
         } else {
-            const url = getEmbedUrl(ex.link);
+            const url = getEmbedUrl(ex);
             document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
             document.getElementById('videoContainer').style.display = 'block';
             document.getElementById('watchBtn').style.display = 'none';
@@ -349,44 +355,36 @@
         let currentList = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
         const idx = currentList.findIndex(x => x.id === currentEx.id);
         const target = currentList[idx + dir];
-        if(target && target.link) openV(target, false);
+        if(target && (target.embed || target.link)) openV(target, false);
     }
 
     function startVideo() {
-        const url = getEmbedUrl(currentEx.link);
+        const url = getEmbedUrl(currentEx);
         document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
         document.getElementById('watchBtn').style.display = 'none';
         document.getElementById('videoContainer').style.display = 'block';
     }
 
-    function getEmbedUrl(url) {
-        if (!url) return '';
-        let clean = url.trim();
-        
-        // Handling Youtube Shorts
-        if (clean.includes("/shorts/")) return clean.replace("/shorts/", "/embed/").split("?")[0];
-        
-        // Handling standard watch?v= format
-        let embed = clean.replace("watch?v=", "embed/");
-        
-        // Handling youtu.be format (including timestamps)
-        if (clean.includes("youtu.be/")) {
-            const parts = clean.split("youtu.be/")[1].split("?");
-            const id = parts[0];
-            const queryParams = parts[1] || "";
-            
-            // Extract timestamp if it exists (handles ?t= or &t=)
-            const tMatch = queryParams.match(/[?&]t=([0-9]+)/) || clean.match(/[?&]t=([0-9]+)/);
-            const t = tMatch ? tMatch[1] : null;
-            
-            embed = `https://www.youtube.com/embed/${id}`;
-            if (t) embed += `?start=${t}`;
+    function getEmbedUrl(ex) {
+        // עדיפות לקישור המובנה מה-CSV
+        if (ex.embed && ex.embed.trim().length > 5) {
+            return ex.embed.trim();
         }
-        return embed;
+        
+        // לוגיקת גיבוי למקרה שהעמודה ריקה
+        let url = ex.link || "";
+        if (!url) return '';
+        if (url.includes("/shorts/")) return url.replace("/shorts/", "/embed/").split("?")[0];
+        if (url.includes("youtu.be/")) {
+            const id = url.split("youtu.be/")[1].split("?")[0];
+            const tMatch = url.match(/[?&]t=([0-9]+)/);
+            return `https://www.youtube.com/embed/${id}${tMatch ? '?start='+tMatch[1] : ''}`;
+        }
+        return url.replace("watch?v=", "embed/");
     }
 
     function playRandom() {
-        const pool = db.filter(x => x.link && x.link.length > 5);
+        const pool = db.filter(x => (x.embed && x.embed.length > 5) || (x.link && x.link.length > 5));
         if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)], true);
     }
 
