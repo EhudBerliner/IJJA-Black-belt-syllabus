@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.0.0</title>
+    <title>Syllabus IJJA - v2.1.0</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -15,7 +15,7 @@
     <style>
         :root {
             --primary: #0056a6; --secondary: #009be5; --border: #d2dce5;
-            --header-h: 90px; --fav-color: #ffc107; --danger: #d32f2f; --success: #2e7d32;
+            --header-h: 90px; --fav-color: #ffc107; --danger: #d32f2f;
         }
 
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
@@ -36,8 +36,7 @@
             background: white; color: var(--primary); cursor: pointer;
             display: flex; align-items: center; justify-content: center; font-size: 1em;
         }
-        .btn.active { background: var(--primary); color: white; }
-        .btn-toggle.off { color: var(--danger); border-color: var(--danger); }
+        .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-danger { color: var(--danger); }
 
         #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; box-sizing: border-box; }
@@ -65,7 +64,6 @@
         
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
         .top-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
-        .autoplay-btn { color: #4caf50; } /* ירוק לציון נגינה אוטומטית */
 
         .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: center; }
         .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -79,15 +77,15 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.0.0</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.0</small></div>
     </div>
     <div class="action-bar">
-        <button id="watchdogToggle" class="btn btn-toggle" onclick="toggleWatchdog()" title="מנגנון עצירה אוטומטי">
+        <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()" title="מנגנון עצירה">
             <i class="fas fa-history"></i>
         </button>
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
         <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
+        <button class="btn" onclick="toggleAll()" title="פתח/סגור"><i class="fas fa-arrows-alt-v"></i></button>
         <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash-alt"></i></button>
     </div>
 </header>
@@ -100,7 +98,7 @@
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
         <i id="vRandBtn" class="fas fa-random top-btn hidden" onclick="playRandom()"></i>
-        <i id="vAutoplayBtn" class="fas fa-play-circle top-btn autoplay-btn hidden" onclick="toggleAutoplay()" title="נגן מועדפים ברצף"></i>
+        <i id="vAutoplayBtn" class="fas fa-play-circle top-btn hidden" onclick="toggleAutoplay()" style="color:#4caf50"></i>
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
@@ -122,15 +120,14 @@
 
 <script>
     let db = [], favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let isFavOnly = false, isRandomMode = false, isAutoplay = false;
-    let watchdogEnabled = true;
+    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
     let currentEx = null, ytPlayer = null, watchdogInterval = null;
     let currentVideoStart = 0, currentVideoDuration = 0;
 
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
-            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
+            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1, 'mute': 0 },
             events: { 'onStateChange': onPlayerStateChange }
         });
     }
@@ -139,7 +136,7 @@
         if (event.data == YT.PlayerState.PLAYING) {
             startWatchdog();
         } else if (event.data == YT.PlayerState.ENDED) {
-            if (isAutoplay && isFavOnly) nav(1); // מעבר אוטומטי במועדפים
+            if (isAutoplay && isFavOnly) nav(1);
         } else {
             stopWatchdog();
         }
@@ -163,8 +160,7 @@
     function toggleWatchdog() {
         watchdogEnabled = !watchdogEnabled;
         const btn = document.getElementById('watchdogToggle');
-        btn.classList.toggle('off', !watchdogEnabled);
-        btn.innerHTML = watchdogEnabled ? '<i class="fas fa-history"></i>' : '<i class="fas fa-history-slash"></i>';
+        btn.classList.toggle('active', watchdogEnabled);
         if (!watchdogEnabled) stopWatchdog();
     }
 
@@ -174,18 +170,23 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { console.error("CSV Error"); }
+        } catch(e) { console.error("CSV Load Fail"); }
     }
 
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
         return lines.slice(1).map((line, i) => {
-            const row = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-            const clean = row.map(v => v.replace(/^"|"$/g, '').trim());
+            let row = [], cur = '', inQ = false;
+            for(let char of line) {
+                if(char === '"') inQ = !inQ;
+                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
+                else cur += char;
+            }
+            row.push(cur.trim());
             return { 
-                id: i + 1, cat: clean[0], ser: clean[1], num: clean[2], name: clean[3], 
-                link: clean[4] || "", embed: clean[5] || "", 
-                duration: parseInt(clean[6]) || 0 
+                id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], 
+                link: row[4] || "", embed: row[5] || "", 
+                duration: parseInt(row[6]) || 0 
             };
         });
     }
@@ -208,10 +209,7 @@
                 const allInFav = exercises.every(ex => favs.includes(ex.id));
                 const sBtn = document.createElement('div');
                 sBtn.className = 'ser-item';
-                sBtn.innerHTML = `
-                    <div style="flex:1" onclick="toggleSerList(this)">
-                        <i class="fas fa-chevron-down" style="margin-left:8px"></i><span>${ser}</span>
-                    </div>
+                sBtn.innerHTML = `<div style="flex:1" onclick="toggleSerList(this)"><i class="fas fa-chevron-down" style="margin-left:8px"></i><span>${ser}</span></div>
                     <i class="fas fa-star star ${allInFav?'active':''}" style="font-size:1em" onclick="toggleSeriesFav(this, '${cat}', '${ser}')"></i>`;
 
                 const list = document.createElement('ul');
@@ -220,8 +218,7 @@
                     const li = document.createElement('li');
                     li.className = 'ex-row'; li.dataset.id = ex.id;
                     const hasL = ex.link.length > 5 || ex.embed.length > 5;
-                    li.innerHTML = `
-                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id}, false)` : ''}">${ex.num}. ${ex.name}</span>
+                    li.innerHTML = `<span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id}, false)` : ''}">${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
@@ -258,6 +255,7 @@
 
         if (ytPlayer && ytPlayer.loadVideoById) {
             ytPlayer.loadVideoById({ videoId: videoId, startSeconds: start });
+            ytPlayer.playVideo();
         }
     }
 
@@ -268,7 +266,6 @@
         const nextBtn = document.getElementById('nextBtn');
         const counter = document.getElementById('vCounter');
 
-        // איפוס נראות
         [randBtn, autoBtn, prevBtn, nextBtn].forEach(b => b.classList.add('hidden'));
 
         if (isRandomMode) {
@@ -278,7 +275,7 @@
             autoBtn.classList.remove('hidden');
             prevBtn.classList.remove('hidden');
             nextBtn.classList.remove('hidden');
-            autoBtn.className = isAutoplay ? "fas fa-pause-circle top-btn autoplay-btn" : "fas fa-play-circle top-btn autoplay-btn";
+            autoBtn.className = isAutoplay ? "fas fa-pause-circle top-btn" : "fas fa-play-circle top-btn";
             
             let list = db.filter(x => favs.includes(x.id));
             let idx = list.findIndex(x => x.id === currentEx.id);
@@ -296,17 +293,14 @@
         }
     }
 
-    function toggleAutoplay() {
-        isAutoplay = !isAutoplay;
-        updateModalLayout();
-    }
+    function toggleAutoplay() { isAutoplay = !isAutoplay; updateModalLayout(); }
 
     function nav(dir) {
         let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
         const idx = list.findIndex(x => x.id === currentEx.id);
         const target = list[idx + dir];
         if(target) openV(target);
-        else if (isAutoplay) closeV(); // סיום רצף
+        else if (isAutoplay) closeV();
     }
 
     function closeV() {
