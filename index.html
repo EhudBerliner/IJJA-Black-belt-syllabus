@@ -1,441 +1,100 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0056a6">
-    <link rel="apple-touch-icon" href="Logo.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.7.4</title>
+<style>
+    .calibration-box {
+        background: #fff3cd;
+        border: 2px dashed #ffeeba;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-weight: bold;
+        color: #856404;
+    }
+    #player { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+</style>
 
-    <link rel="icon" type="image/png" href="Logo.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary: #0056a6;
-            --secondary: #009be5;
-            --border: #d2dce5;
-            --header-h: 90px;
-            --fav-color: #ffc107;
-            --danger: #d32f2f;
-        }
-
-        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
-
-        header {
-            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
-        }
-
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .logo-img { height: 45px; width: auto; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
-
-        .action-bar { display: flex; gap: 6px; }
-        .btn {
-            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
-            background: white; color: var(--primary); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1em;
-        }
-        .btn.active { background: var(--primary); color: white; }
-        .btn-danger { color: var(--danger); }
-
-        #ptr {
-            position: absolute; top: var(--header-h); left: 0; width: 100%;
-            height: 0; overflow: hidden; display: flex; align-items: center;
-            justify-content: center; background: #eee; transition: height 0.2s;
-            z-index: 1100; color: var(--primary); font-weight: bold;
-        }
-
-        #scrollContainer { 
-            height: 100vh; padding-top: var(--header-h); 
-            overflow-y: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; 
-        }
-        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
-        
-        .cat-group { margin-bottom: 25px; }
-        .cat-header {
-            background: var(--primary); color: white; padding: 10px 15px;
-            border-radius: 10px; font-size: 1.2em; font-weight: 900;
-            position: sticky; top: 10px; z-index: 100; margin-bottom: 8px;
-        }
-
-        .ser-item {
-            background: white; padding: 12px; font-weight: 700;
-            border-right: 4px solid var(--secondary); border-radius: 6px;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .ser-fav-btn { color: #ccc; padding: 5px 10px; font-size: 1em; }
-        .ser-fav-btn.active { color: var(--fav-color); }
-
-        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
-        .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
-        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .ex-row.hidden { display: none !important; }
-        
-        .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
-        .ex-no-link { color: #888; flex: 1; cursor: default; }
-        .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
-        .star.active { color: var(--fav-color); }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; text-align: center; }
-        
-        .video-container { display: none; position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 8px; overflow: hidden; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        
-        .watch-btn { 
-            background: var(--primary); color: white; border: none; padding: 12px 25px; 
-            border-radius: 30px; font-size: 1.1em; font-weight: 700; cursor: pointer; 
-            margin-top: 20px; display: none; align-items: center; gap: 8px; justify-content: center; width: 100%;
-        }
-        
-        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .rand-next-btn { position: absolute; top: -45px; right: 0; color: white; font-size: 28px; cursor: pointer; }
-
-        .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .nav-btn:disabled { background: #eee !important; color: #bbb; cursor: not-allowed; }
-
-        .hidden { display: none !important; }
-    </style>
-</head>
-<body>
-
-<div id="ptr"><i class="fas fa-sync fa-spin"></i>&nbsp; מעדכן נתונים...</div>
-
-<header>
-    <div class="header-right">
-        <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.7.4</small></div>
-    </div>
-    <div class="action-bar">
-        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
-        <button class="btn" id="favFilterBtn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
-        <button class="btn" onclick="toggleAll()" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
-        <button class="btn btn-danger" onclick="clearFavs()" title="נקה מועדפים"><i class="fas fa-trash-alt"></i></button>
-    </div>
-</header>
-
-<div id="scrollContainer">
-    <main class="main-content" id="app"></main>
+<div class="calibration-box">
+    <div>זמן התחלה בקישור: <span id="cal-start">0</span> ש'</div>
+    <div style="font-size: 1.4em; margin: 5px 0;">משך זמן נוכחי: <span id="cal-duration">0</span> שניות</div>
+    <div style="font-size: 0.8em; color: #666;">(עצור את הוידיאו בנקודת הסיום והעתק את המספר לעמודה G)</div>
 </div>
 
-<div id="vModal" class="modal" onclick="closeV()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <i id="randBtnModal" class="fas fa-random rand-next-btn hidden" onclick="playRandom()"></i>
-        <div class="modal-nav">
-            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
-            <div style="flex: 1; overflow: hidden;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
-                <div id="vName" style="color:var(--primary); font-size:1.2em; font-weight: 800; margin-top:5px;"></div>
-                <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top: 4px;"></div>
-            </div>
-            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
-        </div>
-        <button id="watchBtn" class="watch-btn" onclick="startVideo()"><i class="fas fa-play-circle"></i> צפה בסרטון</button>
-        <div id="videoContainer" class="video-container"><iframe id="vFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
-    </div>
+<div id="videoContainer" class="video-container">
+    <div id="player"></div>
 </div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-    let db = [];
-    let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let isFavOnly = false;
-    let currentEx = null;
+    let ytPlayer;
+    let calibrationInterval;
+    let currentVideoStart = 0;
 
-    // --- Pull to Refresh ---
-    let startY = 0;
-    const scrollContainer = document.getElementById('scrollContainer');
-    const ptr = document.getElementById('ptr');
-    scrollContainer.addEventListener('touchstart', e => { startY = e.touches[0].pageY; }, {passive: true});
-    scrollContainer.addEventListener('touchmove', e => {
-        const diff = e.touches[0].pageY - startY;
-        if (scrollContainer.scrollTop === 0 && diff > 0) ptr.style.height = Math.min(diff, 60) + 'px';
-    }, {passive: true});
-    scrollContainer.addEventListener('touchend', () => {
-        if (ptr.offsetHeight > 50) location.reload(true);
-        ptr.style.height = '0px';
-    });
-
-    async function checkForUpdates() {
-        try {
-            const r = await fetch('Black_belt_syllabus_IJJA.csv', { method: 'HEAD', cache: 'no-cache' });
-            const serverETag = r.headers.get('ETag') || r.headers.get('Last-Modified');
-            const localETag = localStorage.getItem('ijja_csv_tag');
-            if (localETag && serverETag && localETag !== serverETag) {
-                if (confirm("נמצא עדכון לסילבוס. האם לעדכן כעת?")) {
-                    localStorage.setItem('ijja_csv_tag', serverETag);
-                    location.reload(true);
-                }
-            } else if (serverETag) {
-                localStorage.setItem('ijja_csv_tag', serverETag);
+    // פונקציה חובה של יוטיוב שמתעוררת כשה-API מוכן
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('player', {
+            events: {
+                'onStateChange': onPlayerStateChange
             }
-        } catch(e) {}
-    }
-
-    document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'visible') checkForUpdates(); });
-
-    async function init() {
-        checkForUpdates();
-        try {
-            const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
-            const txt = await r.text();
-            db = parseCSV(txt);
-            render();
-        } catch(e) { console.error("CSV Error"); }
-    }
-
-    function parseCSV(text) {
-        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
-        return lines.slice(1).map((line, i) => {
-            let row = [], cur = '', inQ = false;
-            for(let char of line) {
-                if(char === '"') inQ = !inQ;
-                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
-                else cur += char;
-            }
-            row.push(cur.trim());
-            return { 
-                id: i + 1, 
-                cat: row[0], 
-                ser: row[1], 
-                num: row[2], 
-                name: row[3], 
-                link: row[4] || "",
-                embed: row[5] || ""
-            };
         });
     }
 
-    function render() {
-        const app = document.getElementById('app');
-        app.innerHTML = '';
-        const groups = db.reduce((acc, x) => {
-            if(!acc[x.cat]) acc[x.cat] = {};
-            if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
-            acc[x.cat][x.ser].push(x);
-            return acc;
-        }, {});
-
-        for(let cat in groups) {
-            const cDiv = document.createElement('div');
-            cDiv.className = 'cat-group';
-            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
-            for(let ser in groups[cat]) {
-                const exercises = groups[cat][ser];
-                const allInFav = exercises.every(ex => favs.includes(ex.id));
-
-                const sBtn = document.createElement('div');
-                sBtn.className = 'ser-item';
-                // שימוש ב-Data Attributes כדי למנוע בעיות תווים מיוחדים
-                sBtn.dataset.cat = cat;
-                sBtn.dataset.ser = ser;
-                sBtn.innerHTML = `
-                    <div style="flex:1" onclick="toggleSerList(this)">
-                        <i class="fas fa-chevron-down" style="margin-left:8px"></i>
-                        <span>${ser}</span>
-                    </div>
-                    <i class="fas fa-star ser-fav-btn ${allInFav?'active':''}" 
-                       onclick="toggleSeriesFav(this)"></i>`;
-
-                const list = document.createElement('ul');
-                list.className = 'ex-list';
-                exercises.forEach(ex => {
-                    const li = document.createElement('li');
-                    li.className = 'ex-row'; li.dataset.id = ex.id;
-                    const hasL = (ex.embed && ex.embed.length > 5) || (ex.link && ex.link.length > 5);
-                    li.innerHTML = `
-                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id})` : ''}">${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
-                    list.appendChild(li);
-                });
-                cDiv.appendChild(sBtn); cDiv.appendChild(list);
-            }
-            app.appendChild(cDiv);
-        }
-    }
-
-    function toggleSerList(el) {
-        const sBtn = el.parentElement;
-        const list = sBtn.nextElementSibling;
-        const open = list.classList.toggle('open');
-        sBtn.querySelector('.fa-chevron-down, .fa-chevron-up').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-    }
-
-    function toggleSeriesFav(el) {
-        event.stopPropagation();
-        const parent = el.parentElement;
-        const cat = parent.dataset.cat;
-        const ser = parent.dataset.ser;
-        
-        const exercises = db.filter(x => x.cat === cat && x.ser === ser);
-        const allInFav = exercises.every(ex => favs.includes(ex.id));
-
-        if (allInFav) {
-            const idsToRemove = exercises.map(x => x.id);
-            favs = favs.filter(id => !idsToRemove.includes(id));
-            el.classList.remove('active');
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            // התחלת עדכון הטיימר כשהוידיאו רץ
+            calibrationInterval = setInterval(updateCalibration, 100);
         } else {
-            exercises.forEach(ex => { if (!favs.includes(ex.id)) favs.push(ex.id); });
-            el.classList.add('active');
+            // עצירת העדכון כשהוידיאו עוצר
+            clearInterval(calibrationInterval);
         }
-
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        const list = parent.nextElementSibling;
-        list.querySelectorAll('.star').forEach(s => {
-            const rowId = parseInt(s.closest('.ex-row').dataset.id);
-            s.classList.toggle('active', favs.includes(rowId));
-        });
-
-        if(isFavOnly) applyFilters();
     }
 
-    function toggleStar(id, el) {
-        event.stopPropagation();
-        if(favs.includes(id)) favs = favs.filter(f => f !== id);
-        else favs.push(id);
-        el.classList.toggle('active');
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-
-        // עדכון כוכב הסדרה (בדיקה לפי האלמנטים בדף)
-        const list = el.closest('.ex-list');
-        const sBtn = list.previousElementSibling;
-        const cat = sBtn.dataset.cat;
-        const ser = sBtn.dataset.ser;
-        const exercises = db.filter(x => x.cat === cat && x.ser === ser);
-        const allInFav = exercises.every(ex => favs.includes(ex.id));
-        sBtn.querySelector('.ser-fav-btn').classList.toggle('active', allInFav);
-
-        if(isFavOnly) applyFilters();
-        if(currentEx && currentEx.id === id) updateNavigationState(currentEx);
+    function updateCalibration() {
+        if (ytPlayer && ytPlayer.getCurrentTime) {
+            const now = ytPlayer.getCurrentTime();
+            const diff = Math.max(0, Math.floor(now - currentVideoStart));
+            document.getElementById('cal-duration').innerText = diff;
+        }
     }
 
-    function openVById(id) {
-        const ex = db.find(x => x.id === id);
-        if(ex) openV(ex, false);
+    // פונקציית עזר לחילוץ ה-ID וה-Start מהלינק
+    function getYoutubeData(url) {
+        let id = '', start = 0;
+        if (url.includes('v=')) id = url.split('v=')[1].split('&')[0];
+        else if (url.includes('embed/')) id = url.split('embed/')[1].split('?')[0];
+        else if (url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
+        
+        const tMatch = url.match(/[?&](t|start)=([0-9]+)/);
+        if (tMatch) start = parseInt(tMatch[2]);
+        
+        return { id, start };
     }
 
+    // עדכון פונקציית ה-OpenV הקיימת שלך
     function openV(ex, isRand) {
         currentEx = ex;
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
-        if (isRand) {
-            document.getElementById('videoContainer').style.display = 'none';
-            document.getElementById('vFrame').src = "";
-            document.getElementById('watchBtn').style.display = 'flex';
-            document.getElementById('prevBtn').classList.add('hidden');
-            document.getElementById('nextBtn').classList.add('hidden');
-            document.getElementById('randBtnModal').classList.remove('hidden');
-            document.getElementById('vCounter').innerText = "תרגיל אקראי";
-        } else {
-            const url = getEmbedUrl(ex);
-            document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
-            document.getElementById('videoContainer').style.display = 'block';
-            document.getElementById('watchBtn').style.display = 'none';
-            document.getElementById('prevBtn').classList.remove('hidden');
-            document.getElementById('nextBtn').classList.remove('hidden');
-            document.getElementById('randBtnModal').classList.add('hidden');
-            updateNavigationState(ex);
-        }
+        
+        const data = getYoutubeData(ex.embed || ex.link);
+        currentVideoStart = data.start;
+        document.getElementById('cal-start').innerText = data.start;
+        document.getElementById('cal-duration').innerText = "0";
+
         document.getElementById('vModal').style.display = 'flex';
-    }
-
-    function updateNavigationState(ex) {
-        let currentList = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
-        let idx = currentList.findIndex(x => x.id === ex.id);
-        document.getElementById('vCounter').innerText = isFavOnly ? `מועדף ${idx + 1} מתוך ${currentList.length}` : `תרגיל ${idx + 1} מתוך ${currentList.length}`;
-        document.getElementById('prevBtn').disabled = (idx <= 0);
-        document.getElementById('nextBtn').disabled = (idx >= currentList.length - 1 || idx === -1);
-    }
-
-    function nav(dir) {
-        let currentList = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        const idx = currentList.findIndex(x => x.id === currentEx.id);
-        const target = currentList[idx + dir];
-        if(target && (target.embed || target.link)) openV(target, false);
-    }
-
-    function startVideo() {
-        const url = getEmbedUrl(currentEx);
-        document.getElementById('vFrame').src = url + (url.includes('?') ? '&' : '?') + "autoplay=1";
-        document.getElementById('watchBtn').style.display = 'none';
         document.getElementById('videoContainer').style.display = 'block';
-    }
 
-    function getEmbedUrl(ex) {
-        if (ex.embed && ex.embed.trim().length > 5) return ex.embed.trim();
-        let url = ex.link || "";
-        if (!url) return '';
-        if (url.includes("/shorts/")) return url.replace("/shorts/", "/embed/").split("?")[0];
-        if (url.includes("youtu.be/")) {
-            const id = url.split("youtu.be/")[1].split("?")[0];
-            const tMatch = url.match(/[?&]t=([0-9]+)/);
-            return `https://www.youtube.com/embed/${id}${tMatch ? '?start='+tMatch[1] : ''}`;
-        }
-        return url.replace("watch?v=", "embed/");
-    }
-
-    function playRandom() {
-        const pool = db.filter(x => (x.embed && x.embed.length > 5) || (x.link && x.link.length > 5));
-        if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)], true);
-    }
-
-    function toggleAll() {
-        const lists = document.querySelectorAll('.ex-list');
-        const someClosed = Array.from(lists).some(l => !l.classList.contains('open'));
-        lists.forEach(l => l.classList.toggle('open', someClosed));
-        document.querySelectorAll('.ser-item .fa-chevron-down, .ser-item .fa-chevron-up').forEach(a => {
-            a.className = someClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-        });
-    }
-
-    function closeV() { document.getElementById('vModal').style.display = 'none'; document.getElementById('vFrame').src = ""; }
-
-    function clearFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
-            favs = []; localStorage.setItem('ijja_favs', "[]");
-            render();
-            if(isFavOnly) applyFilters();
-        }
-    }
-
-    function toggleFavFilter() {
-        isFavOnly = !isFavOnly;
-        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
-        applyFilters();
-    }
-
-    function applyFilters() {
-        document.querySelectorAll('.cat-group').forEach(c => {
-            let catHas = false;
-            c.querySelectorAll('.ser-item').forEach(s => {
-                const list = s.nextElementSibling;
-                let serHas = false;
-                list.querySelectorAll('.ex-row').forEach(row => {
-                    const hide = isFavOnly && !favs.includes(parseInt(row.dataset.id));
-                    row.classList.toggle('hidden', hide);
-                    if(!hide) serHas = true;
-                });
-                s.classList.toggle('hidden', isFavOnly && !serHas);
-                list.classList.toggle('hidden', isFavOnly && !serHas);
-                if(serHas) catHas = true;
+        // טעינת הוידיאו לנגן
+        if (ytPlayer && ytPlayer.loadVideoById) {
+            ytPlayer.loadVideoById({
+                videoId: data.id,
+                startSeconds: data.start
             });
-            c.classList.toggle('hidden', isFavOnly && !catHas);
-        });
+        }
     }
 
-    window.onload = init;
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+    function closeV() {
+        document.getElementById('vModal').style.display = 'none';
+        if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+        clearInterval(calibrationInterval);
     }
 </script>
-</body>
-</html>
