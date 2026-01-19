@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v1.9.1</title>
+    <title>Syllabus IJJA - v1.9.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -96,7 +96,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.9.1</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v1.9.2</small></div>
     </div>
     <div class="action-bar">
         <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
@@ -113,7 +113,7 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <i class="fas fa-random rand-next-btn" onclick="playRandom()" title="תרגיל אקראי הבא"></i>
+        <i id="vRandBtn" class="fas fa-random rand-next-btn hidden" onclick="playRandom()" title="תרגיל אקראי הבא"></i>
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
@@ -137,6 +137,7 @@
     let db = [];
     let favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
     let isFavOnly = false;
+    let isRandomMode = false;
     let currentEx = null;
     let ytPlayer = null;
     let watchdogInterval = null;
@@ -230,7 +231,7 @@
                     li.className = 'ex-row'; li.dataset.id = ex.id;
                     const hasL = ex.link.length > 5 || ex.embed.length > 5;
                     li.innerHTML = `
-                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id})` : ''}">${ex.num}. ${ex.name}</span>
+                        <span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id}, false)` : ''}">${ex.num}. ${ex.name}</span>
                         <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
@@ -240,121 +241,8 @@
         }
     }
 
-    function openVById(id) { const ex = db.find(x => x.id === id); if(ex) openV(ex); }
-
-    function openV(ex) {
-        currentEx = ex;
-        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
-        document.getElementById('vName').innerText = ex.name;
-        
-        const url = ex.embed || ex.link;
-        let videoId = '', start = 0;
-        if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
-        else if (url.includes('embed/')) videoId = url.split('embed/')[1].split('?')[0];
-        else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
-        const tMatch = url.match(/[?&](t|start)=([0-9]+)/);
-        if (tMatch) start = parseInt(tMatch[2]);
-
-        currentVideoStart = start;
-        currentVideoDuration = ex.duration;
-        document.getElementById('vModal').style.display = 'flex';
-        updateNavigationState(ex);
-
-        if (ytPlayer && ytPlayer.loadVideoById) {
-            ytPlayer.loadVideoById({ videoId: videoId, startSeconds: start });
-        }
+    function openVById(id, isRandom = false) { 
+        isRandomMode = isRandom;
+        const ex = db.find(x => x.id === id); 
+        if(ex) openV(ex); 
     }
-
-    function updateNavigationState(ex) {
-        let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === ex.cat && x.ser === ex.ser);
-        let idx = list.findIndex(x => x.id === ex.id);
-        document.getElementById('vCounter').innerText = isFavOnly ? `מועדף ${idx + 1} מתוך ${list.length}` : `תרגיל ${idx + 1} מתוך ${list.length}`;
-        document.getElementById('prevBtn').disabled = (idx <= 0);
-        document.getElementById('nextBtn').disabled = (idx >= list.length - 1 || idx === -1);
-    }
-
-    function nav(dir) {
-        let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        const idx = list.findIndex(x => x.id === currentEx.id);
-        const target = list[idx + dir];
-        if(target) openV(target);
-    }
-
-    function closeV() {
-        document.getElementById('vModal').style.display = 'none';
-        if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
-        stopWatchdog();
-    }
-
-    function toggleSerList(el) {
-        const list = el.parentElement.nextElementSibling;
-        const open = list.classList.toggle('open');
-        el.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-    }
-
-    function toggleStar(id, el) {
-        if(favs.includes(id)) favs = favs.filter(f => f !== id); else favs.push(id);
-        el.classList.toggle('active');
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        if(isFavOnly) applyFilters();
-    }
-
-    function toggleSeriesFav(el, cat, ser) {
-        const exercises = db.filter(x => x.cat === cat && x.ser === ser);
-        const allInFav = exercises.every(ex => favs.includes(ex.id));
-        if (allInFav) {
-            const ids = exercises.map(x => x.id);
-            favs = favs.filter(id => !ids.includes(id));
-        } else {
-            exercises.forEach(ex => { if (!favs.includes(ex.id)) favs.push(ex.id); });
-        }
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        render(); if(isFavOnly) applyFilters();
-    }
-
-    function clearFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
-            favs = []; localStorage.setItem('ijja_favs', "[]");
-            render(); if(isFavOnly) applyFilters();
-        }
-    }
-
-    function toggleFavFilter() {
-        isFavOnly = !isFavOnly;
-        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
-        applyFilters();
-    }
-
-    function applyFilters() {
-        document.querySelectorAll('.cat-group').forEach(c => {
-            let catHas = false;
-            c.querySelectorAll('.ser-item').forEach(s => {
-                let serHas = false;
-                s.nextElementSibling.querySelectorAll('.ex-row').forEach(row => {
-                    const hide = isFavOnly && !favs.includes(parseInt(row.dataset.id));
-                    row.classList.toggle('hidden', hide);
-                    if(!hide) serHas = true;
-                });
-                s.classList.toggle('hidden', isFavOnly && !serHas);
-                s.nextElementSibling.classList.toggle('hidden', isFavOnly && !serHas);
-                if(serHas) catHas = true;
-            });
-            c.classList.toggle('hidden', isFavOnly && !catHas);
-        });
-    }
-
-    function toggleAll() {
-        const open = Array.from(document.querySelectorAll('.ex-list')).some(l => !l.classList.contains('open'));
-        document.querySelectorAll('.ex-list').forEach(l => l.classList.toggle('open', open));
-        document.querySelectorAll('.ser-item i.fas').forEach(i => i.className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down');
-    }
-
-    function playRandom() {
-        const pool = db.filter(x => x.link.length > 5 || x.embed.length > 5);
-        if(pool.length) openV(pool[Math.floor(Math.random()*pool.length)]);
-    }
-
-    window.onload = init;
-</script>
-</body>
-</html>
