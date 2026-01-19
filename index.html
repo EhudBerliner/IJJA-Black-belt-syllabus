@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.1.1</title>
+    <title>Syllabus IJJA - v2.1.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -63,13 +63,12 @@
         
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
         
-        /* עיצוב כפתור Autoplay בחלון הוידיאו */
+        /* כפתור Autoplay מעודכן - רק אייקון וריבוע */
         .modal-btn { 
-            position: absolute; top: -42px; right: 0; 
-            height: 34px; padding: 0 12px; border-radius: 6px;
+            position: absolute; top: -45px; right: 0; 
+            width: 38px; height: 38px; border-radius: 8px;
             border: 1px solid white; background: transparent; color: white;
-            font-family: 'Heebo'; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; gap: 6px; font-size: 0.9em;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em;
         }
         .modal-btn.active { background: var(--success); border-color: var(--success); }
 
@@ -85,7 +84,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.1</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.2</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()" title="מנגנון עצירה">
@@ -106,8 +105,8 @@
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
         
-        <button id="vAutoplayBtn" class="modal-btn hidden" onclick="toggleAutoplay()">
-            <i class="fas fa-sync-alt"></i> <span>ניגון רציף</span>
+        <button id="vAutoplayBtn" class="modal-btn hidden" onclick="toggleAutoplay()" title="ניגון רציף">
+            <i class="fas fa-sync-alt"></i>
         </button>
         
         <div class="modal-nav">
@@ -147,8 +146,8 @@
             startWatchdog();
         } else if (event.data == YT.PlayerState.ENDED) {
             if (isAutoplay) {
-                if (isRandomMode) playRandom(); // תיקון: אם באקראי וברצף, בחר עוד אחד
-                else if (isFavOnly) nav(1);     // אם במועדפים וברצף, עבור לבא
+                if (isRandomMode) playRandom(); 
+                else if (isFavOnly) nav(1);     
             }
         } else {
             stopWatchdog();
@@ -174,6 +173,17 @@
         watchdogEnabled = !watchdogEnabled;
         document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
         if (!watchdogEnabled) stopWatchdog();
+    }
+
+    function toggleAutoplay() { 
+        isAutoplay = !isAutoplay; 
+        if (isAutoplay) {
+            // כאשר ניגון רציף פועל - בטל את מנגנון העצירה
+            watchdogEnabled = false;
+            document.getElementById('watchdogToggle').classList.remove('active');
+            stopWatchdog();
+        }
+        updateModalLayout(); 
     }
 
     async function init() {
@@ -280,7 +290,7 @@
         [autoBtn, prevBtn, nextBtn].forEach(b => b.classList.add('hidden'));
 
         if (isRandomMode) {
-            autoBtn.classList.remove('hidden'); // אפשר ניגון רציף גם באקראי
+            autoBtn.classList.remove('hidden'); 
             counter.innerText = "תרגיל אקראי";
         } else if (isFavOnly) {
             autoBtn.classList.remove('hidden');
@@ -300,11 +310,8 @@
             prevBtn.disabled = (idx <= 0);
             nextBtn.disabled = (idx >= list.length - 1);
         }
-        
         autoBtn.classList.toggle('active', isAutoplay);
     }
-
-    function toggleAutoplay() { isAutoplay = !isAutoplay; updateModalLayout(); }
 
     function nav(dir) {
         if (isRandomMode) return;
