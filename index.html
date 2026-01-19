@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.1.4</title>
+    <title>Syllabus IJJA - v2.1.5</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -63,6 +63,7 @@
         
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
         
+        /* עיצוב אחיד לכפתורים בחלק העליון של המודאל */
         .modal-btn { 
             position: absolute; top: -45px; right: 0; 
             width: 38px; height: 38px; border-radius: 8px;
@@ -83,7 +84,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.4</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.1.5</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()" title="מנגנון עצירה">
@@ -103,6 +104,11 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
+        
+        <button id="vNextRandomBtn" class="modal-btn hidden" onclick="playRandom()" title="תרגיל אקראי נוסף">
+            <i class="fas fa-random"></i>
+        </button>
+
         <button id="vAutoplayBtn" class="modal-btn hidden" onclick="toggleAutoplay()" title="ניגון רציף">
             <i class="fas fa-sync-alt"></i>
         </button>
@@ -135,10 +141,7 @@
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
             playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-            events: { 
-                'onReady': () => console.log("Player Ready"),
-                'onStateChange': onPlayerStateChange 
-            }
+            events: { 'onStateChange': onPlayerStateChange }
         });
     }
 
@@ -281,14 +284,15 @@
 
     function updateModalLayout() {
         const autoBtn = document.getElementById('vAutoplayBtn');
+        const nextRandBtn = document.getElementById('vNextRandomBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const counter = document.getElementById('vCounter');
 
-        [autoBtn, prevBtn, nextBtn].forEach(b => b.classList.add('hidden'));
+        [autoBtn, nextRandBtn, prevBtn, nextBtn].forEach(b => b.classList.add('hidden'));
 
         if (isRandomMode) {
-            // כפתור האוטופליי נשאר מוסתר במצב אקראי
+            nextRandBtn.classList.remove('hidden'); // הצג כפתור הגרלה נוספת
             counter.innerText = "אקראי";
         } else if (isFavOnly) {
             autoBtn.classList.remove('hidden');
