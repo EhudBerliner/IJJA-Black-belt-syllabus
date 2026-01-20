@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.2.2</title>
+    <title>Syllabus IJJA - v2.2.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -39,7 +39,6 @@
         .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-danger { color: var(--danger); }
 
-        /* Pull to Refresh */
         #ptr {
             position: absolute; top: var(--header-h); left: 0; width: 100%; height: 50px;
             display: flex; align-items: center; justify-content: center;
@@ -47,22 +46,42 @@
             color: var(--primary); font-weight: bold;
         }
 
-        #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
+        /* מנגנון חציצה למניעת זליגת תוכן */
+        #scrollContainer { 
+            height: 100vh; 
+            padding-top: var(--header-h); 
+            overflow-y: auto; 
+            box-sizing: border-box; 
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+
+        /* הפס הלבן שחוסם את זליגת התוכן ברווח של ה-10px */
+        #scrollContainer::before {
+            content: "";
+            position: fixed;
+            top: var(--header-h);
+            left: 0;
+            width: 100%;
+            height: 10px; /* הרווח המדויק שבו ראו את הזליגה */
+            background: #f7f9fb; /* צבע הרקע של האפליקציה */
+            z-index: 1100;
+        }
+
         .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; transition: transform 0.2s; }
         
         .cat-group { margin-bottom: 25px; }
         
-        /* תיקון ה-Sticky למניעת זליגת תוכן */
         .cat-header { 
             background: var(--primary); 
             color: white; 
-            padding: 12px 15px; 
-            border-radius: 0 0 10px 10px; /* עיגול רק למטה כדי שייצמד חלק למעלה */
+            padding: 10px 15px; 
+            border-radius: 10px; 
             font-weight: 900; 
             position: sticky; 
-            top: -1px; /* הצמדה מוחלטת ל-Header */
-            z-index: 100;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            top: 10px; /* שומר על הריווח העיצובי היפה */
+            z-index: 100; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .ser-item { background: white; padding: 12px; font-weight: 700; border-right: 4px solid var(--secondary); margin-top: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-radius: 6px; }
@@ -75,7 +94,6 @@
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
-        /* Modal & Video */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 500px; position: relative; }
         
@@ -124,7 +142,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.2.2</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.2.3</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -195,6 +213,7 @@
         ptr.style.transform = 'translateY(-100%)'; appMain.style.transform = 'translateY(0)';
     });
 
+    // PWA Update
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(reg => {
             reg.addEventListener('updatefound', () => {
@@ -208,6 +227,7 @@
         });
     }
 
+    // YouTube logic
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
@@ -316,15 +336,12 @@
         document.getElementById('vName').innerText = ex.name;
         document.getElementById('vModal').style.display = 'flex';
         updateModalLayout();
-
         const url = ex.embed || ex.link;
         let vId = '';
         if (url.includes('v=')) vId = url.split('v=')[1].split('&')[0];
         else if (url.includes('embed/')) vId = url.split('embed/')[1].split('?')[0];
         else if (url.includes('youtu.be/')) vId = url.split('youtu.be/')[1].split('?')[0];
-
         pendingVideoId = vId; pendingStart = getStartTime(url);
-
         if (isRandomMode) {
             document.getElementById('videoCover').classList.remove('hidden');
             if(ytPlayer) ytPlayer.stopVideo(); 
@@ -350,9 +367,7 @@
         const pBtn = document.getElementById('prevBtn');
         const nBtn = document.getElementById('nextBtn');
         const cnt = document.getElementById('vCounter');
-
         [autoBtn, nextRandBtn, pBtn, nBtn].forEach(b => b.classList.add('hidden'));
-
         if (isRandomMode) {
             nextRandBtn.classList.remove('hidden');
             cnt.innerText = "מצב מבחן עצמי";
