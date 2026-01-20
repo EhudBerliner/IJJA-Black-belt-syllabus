@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - v2.2.0</title>
+    <title>Syllabus IJJA - v2.2.1</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -39,7 +39,7 @@
         .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-danger { color: var(--danger); }
 
-        /* Pull to Refresh Indicator */
+        /* Pull to Refresh */
         #ptr {
             position: absolute; top: var(--header-h); left: 0; width: 100%; height: 50px;
             display: flex; align-items: center; justify-content: center;
@@ -63,26 +63,40 @@
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
+        /* Modal & Video */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 500px; position: relative; }
         
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 8px; overflow: hidden; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
+        /* עיצוב משודרג למסך הכיסוי */
         #videoCover {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #111; color: white; z-index: 20; display: flex; flex-direction: column;
+            background: radial-gradient(circle, var(--secondary) 0%, var(--primary) 100%);
+            color: white; z-index: 20; display: flex; flex-direction: column;
             align-items: center; justify-content: center; cursor: pointer; text-align: center;
+            padding: 20px; box-sizing: border-box;
         }
 
-        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        
-        .modal-btn { 
-            position: absolute; top: -45px; right: 0; 
-            width: 38px; height: 38px; border-radius: 8px;
-            border: 1px solid white; background: transparent; color: white;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em;
+        .play-trigger {
+            width: 80px; height: 80px; background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px; box-shadow: 0 0 20px rgba(255,255,255,0.4);
+            animation: pulse 2s infinite;
         }
+        .play-trigger i { color: var(--primary); font-size: 2.5rem; margin-right: -5px; } /* תיקון מרכוז קל לאייקון פליי */
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+        }
+
+        .cover-text { font-weight: 900; font-size: 1.3em; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
+        .modal-btn { position: absolute; top: -45px; right: 0; width: 38px; height: 38px; border-radius: 8px; border: 1px solid white; background: transparent; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; }
         .modal-btn.active { background: var(--success); border-color: var(--success); }
 
         .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: center; }
@@ -99,7 +113,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.2.0</small></div>
+        <div><h1>סילבוס IJJA</h1><small style="color:#888">v2.2.1</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -133,8 +147,9 @@
         <div class="video-container">
             <div id="player"></div>
             <div id="videoCover" class="hidden" onclick="revealVideo()">
-                <i class="fas fa-play-circle" style="font-size:4em; margin-bottom:12px; color:var(--secondary);"></i>
-                <div style="font-weight:900; font-size:1.2em;">לחץ לצפייה בביצוע התרגיל</div>
+                <div class="play-trigger"><i class="fas fa-play"></i></div>
+                <div class="cover-text">לחץ לצפייה בביצוע התרגיל</div>
+                <div style="margin-top:10px; font-size:0.9em; opacity:0.9;">מבחן עצמי</div>
             </div>
         </div>
     </div>
@@ -148,60 +163,45 @@
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
     let pendingVideoId = '', pendingStart = 0;
 
-    // --- Pull to Refresh Logic ---
+    // Pull to Refresh
     let startY = 0;
     const scrollContainer = document.getElementById('scrollContainer');
     const ptr = document.getElementById('ptr');
     const appMain = document.getElementById('app');
 
-    scrollContainer.addEventListener('touchstart', e => {
-        if (scrollContainer.scrollTop === 0) startY = e.touches[0].pageY;
-    }, {passive: true});
-
+    scrollContainer.addEventListener('touchstart', e => { if (scrollContainer.scrollTop === 0) startY = e.touches[0].pageY; }, {passive: true});
     scrollContainer.addEventListener('touchmove', e => {
         const y = e.touches[0].pageY;
         if (scrollContainer.scrollTop === 0 && y > startY) {
             const diff = Math.min((y - startY) * 0.4, 60);
             ptr.style.transform = `translateY(${diff - 50}px)`;
             appMain.style.transform = `translateY(${diff}px)`;
-            if (diff > 55) ptr.style.color = 'var(--secondary)';
         }
     }, {passive: true});
-
     scrollContainer.addEventListener('touchend', e => {
         const y = e.changedTouches[0].pageY;
-        if (scrollContainer.scrollTop === 0 && y - startY > 120) {
-            location.reload(); // Refresh the app
-        }
-        ptr.style.transform = 'translateY(-100%)';
-        appMain.style.transform = 'translateY(0)';
+        if (scrollContainer.scrollTop === 0 && y - startY > 120) location.reload();
+        ptr.style.transform = 'translateY(-100%)'; appMain.style.transform = 'translateY(0)';
     });
 
-    // --- PWA Update Detection (Push Mechanism) ---
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(reg => {
             reg.addEventListener('updatefound', () => {
                 const newWorker = reg.installing;
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) {
-                            location.reload();
-                        }
+                        if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) location.reload();
                     }
                 });
             });
         });
     }
 
-    // --- YouTube API ---
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
             playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-            events: { 
-                'onReady': () => { playerReady = true; },
-                'onStateChange': onPlayerStateChange 
-            }
+            events: { 'onReady': () => { playerReady = true; }, 'onStateChange': onPlayerStateChange }
         });
     }
 
@@ -217,9 +217,7 @@
         if (watchdogEnabled && currentEx && currentEx.duration > 0) {
             const start = getStartTime(currentEx.embed || currentEx.link);
             watchdogInterval = setInterval(() => {
-                if(ytPlayer.getCurrentTime() - start >= currentEx.duration) {
-                    ytPlayer.pauseVideo(); ytPlayer.seekTo(start);
-                }
+                if(ytPlayer.getCurrentTime() - start >= currentEx.duration) { ytPlayer.pauseVideo(); ytPlayer.seekTo(start); }
             }, 400);
         }
     }
@@ -306,7 +304,6 @@
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
         document.getElementById('vModal').style.display = 'flex';
-        
         updateModalLayout();
 
         const url = ex.embed || ex.link;
@@ -315,8 +312,7 @@
         else if (url.includes('embed/')) vId = url.split('embed/')[1].split('?')[0];
         else if (url.includes('youtu.be/')) vId = url.split('youtu.be/')[1].split('?')[0];
 
-        pendingVideoId = vId;
-        pendingStart = getStartTime(url);
+        pendingVideoId = vId; pendingStart = getStartTime(url);
 
         if (isRandomMode) {
             document.getElementById('videoCover').classList.remove('hidden');
@@ -334,9 +330,7 @@
 
     function revealVideo() {
         document.getElementById('videoCover').classList.add('hidden');
-        if(ytPlayer && playerReady) {
-            ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
-        }
+        if(ytPlayer && playerReady) ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
     }
 
     function updateModalLayout() {
@@ -373,8 +367,7 @@
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
         if(ytPlayer) ytPlayer.stopVideo();
-        stopWatchdog();
-        isRandomMode = false;
+        stopWatchdog(); isRandomMode = false;
     }
 
     function toggleSerList(el) {
@@ -395,15 +388,13 @@
         const all = exs.every(ex => favs.includes(ex.id));
         if (all) { const ids = exs.map(x=>x.id); favs = favs.filter(id => !ids.includes(id)); }
         else { exs.forEach(ex => { if(!favs.includes(ex.id)) favs.push(ex.id); }); }
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        render(); 
+        localStorage.setItem('ijja_favs', JSON.stringify(favs)); render(); 
     }
 
     function clearFavs() {
         if(confirm("למחוק את כל המועדפים?")) {
             favs = []; localStorage.setItem('ijja_favs', "[]");
-            isFavOnly = false;
-            document.getElementById('favFilterBtn').classList.remove('active');
+            isFavOnly = false; document.getElementById('favFilterBtn').classList.remove('active');
             render();
         }
     }
@@ -418,13 +409,11 @@
         document.querySelectorAll('.cat-group').forEach(c => {
             let catHasVisible = false;
             c.querySelectorAll('.ser-item').forEach(s => {
-                let serHasVisible = false;
-                const list = s.nextElementSibling;
+                let serHasVisible = false; const list = s.nextElementSibling;
                 list.querySelectorAll('.ex-row').forEach(row => {
                     const id = parseInt(row.dataset.id);
                     const hide = isFavOnly && !favs.includes(id);
-                    row.classList.toggle('hidden', hide);
-                    if(!hide) serHasVisible = true;
+                    row.classList.toggle('hidden', hide); if(!hide) serHasVisible = true;
                 });
                 s.classList.toggle('hidden', isFavOnly && !serHasVisible);
                 list.classList.toggle('hidden', isFavOnly && !serHasVisible);
