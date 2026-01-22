@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - Calibration Mode v2.3</title>
+    <title>Syllabus IJJA - Calibration Mode v2.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -18,58 +18,58 @@
             --secondary: #009be5;
             --border: #d2dce5;
             --header-h: 90px;
-            --fav-color: #ffc107;
             --danger: #d32f2f;
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; color: #333; }
-
+        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
+        
         header { 
-            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary); 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-sizing: border-box; 
+            height: var(--header-h); 
+            background: white; 
+            border-bottom: 3px solid var(--primary); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 20px; 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 1000; 
+            box-sizing: border-box; 
         }
 
-        #scrollContainer { height: 100vh; padding-top: var(--header-h); overflow-y: auto; box-sizing: border-box; }
-        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 120px; }
+        .logo-img { height: 45px; cursor: pointer; }
 
-        .toolbar { display: flex; gap: 10px; margin-bottom: 15px; position: sticky; top: 0; background: #f7f9fb; padding: 5px 0; z-index: 10; }
-        .btn-tool { background: white; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-        .btn-tool.active { background: var(--fav-color); border-color: #e0ac00; }
+        #scrollContainer { 
+            height: 100vh; 
+            padding-top: var(--header-h); 
+            overflow-y: auto; 
+            box-sizing: border-box; 
+        }
 
-        .cat-group { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: white; }
-        .cat-group.hidden { display: none; }
-        .cat-header { background: var(--primary); color: white; padding: 12px 15px; font-weight: 900; }
-        
-        .ser-item.hidden { display: none; }
-        .ser-btn { width: 100%; padding: 12px 15px; border: none; background: #f8fafd; display: flex; justify-content: space-between; font-weight: 700; cursor: pointer; }
-        
-        .ex-list { display: none; list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--border); }
+        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 100px; }
+
+        .cat-group { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .cat-header { background: var(--primary); color: white; padding: 12px 15px; font-weight: 900; font-size: 1.1em; }
+        .ser-item { background: #f8fafd; border-bottom: 1px solid var(--border); }
+        .ser-btn { width: 100%; padding: 12px 15px; border: none; background: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: inherit; font-weight: 700; color: #333; }
+        .ex-list { display: none; background: white; list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--border); }
         .ex-list.open { display: block; }
-
         .ex-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .ex-row.hidden { display: none; }
-        .ex-info { flex-grow: 1; display: flex; gap: 10px; font-weight: 500; }
-        .fav-btn { padding: 8px; color: #ccc; font-size: 1.2em; }
-        .fav-btn.is-fav { color: var(--fav-color); }
 
-        /* Modal & Video */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; }
         .close-x { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
 
+        /* תגיות מידע חדשות */
+        .v-context { text-align: center; font-size: 0.85em; color: #666; margin-bottom: 4px; font-weight: 700; }
+        .v-cat-tag { background: #eee; padding: 2px 8px; border-radius: 4px; margin-left: 5px; color: var(--primary); }
+
         .timer-box { background: #fff5f5; border: 2px solid #ffcfcf; padding: 10px; text-align: center; border-radius: 10px; margin-bottom: 15px; }
-        .timer-val { font-size: 2.2em; font-weight: 900; color: var(--danger); }
+        .timer-val { font-size: 2em; font-weight: 900; color: var(--danger); }
 
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-        /* כיסוי למצב מבחן */
-        #videoCover { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #222; color: white; display: none; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 10; cursor: pointer;
-        }
 
         .modal-nav { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
         .nav-btn { flex: 1; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; }
@@ -78,202 +78,171 @@
 <body>
 
 <header>
-    <img src="Logo.png" style="height:45px;" onclick="location.reload()">
+    <img src="Logo.png" class="logo-img" onclick="location.reload()">
     <div style="text-align: left;">
-        <div style="font-weight: 900; color: var(--primary);">סילבוס IJJA</div>
-        <div style="font-size: 0.75em; color: #666;">Calibration Mode v2.3</div>
+        <div style="font-weight: 900; color: var(--primary); font-size: 1.1em;">כיול זמנים</div>
+        <div style="font-size: 0.75em; color: #666;">גרסה 2.4 - מידע מורחב</div>
     </div>
 </header>
 
 <div id="scrollContainer">
-    <main class="main-content">
-        <div class="toolbar">
-            <button id="filterFavBtn" class="btn-tool" onclick="toggleFavFilter()"><i class="fas fa-star"></i> מועדפים</button>
-            <button class="btn-tool" onclick="toggleAll()"><i class="fas fa-layer-group"></i> פתח/סגור הכל</button>
-            <button class="btn-tool" onclick="playRandom()" style="margin-right: auto; color: var(--primary);"><i class="fas fa-dice"></i> מבחן</button>
-        </div>
-        <div id="app"></div>
+    <main class="main-content" id="app">
+        <div style="text-align:center; padding: 50px;">טוען נתונים...</div>
     </main>
 </div>
 
 <div id="vModal" class="modal">
     <div class="modal-box">
         <span class="close-x" onclick="closeV()">&times;</span>
-        <div id="vName" style="font-weight: 900; text-align: center; color: var(--primary); margin-bottom: 12px;"></div>
+        
+        <div class="v-context">
+            <span id="vCatDisplay" class="v-cat-tag"></span>
+            <span id="vSerDisplay"></span>
+        </div>
+
+        <div id="vName" style="font-weight: 900; text-align: center; color: var(--primary); margin-bottom: 10px; font-size: 1.2em;"></div>
 
         <div class="timer-box">
-            <div class="timer-val" id="calDuration">0</div>
+            <div style="font-size: 0.85em; color: #666; font-weight: 700;">שניות מתחילת ביצוע:</div>
+            <div class="timer-val"><span id="calDuration">0</span></div>
         </div>
 
         <div class="video-container">
-            <div id="videoCover" onclick="revealVideo()">
-                <i class="fas fa-eye-slash" style="font-size: 3em; margin-bottom: 10px;"></i>
-                <span>לחץ להצגת הפתרון</span>
-            </div>
             <div id="player"></div>
         </div>
 
         <div class="modal-nav">
-            <button class="nav-btn" onclick="globalNav(-1)">הקודם</button>
-            <button class="nav-btn" onclick="globalNav(1)">הבא</button>
+            <button class="nav-btn" onclick="globalNav(-1)"><i class="fas fa-chevron-right"></i> הקודם</button>
+            <button class="nav-btn" onclick="globalNav(1)">הבא <i class="fas fa-chevron-left"></i></button>
         </div>
     </div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
-    let db = [], favs = [], isFavOnly = false, currentEx = null, ytPlayer = null;
-    let watchdogInterval = null, currentStartTime = 0, isRandomMode = false;
+    let db = [], currentEx = null, ytPlayer = null, apiReady = false;
+    let timerInterval = null, currentStartTime = 0;
 
     async function init() {
-        const saved = localStorage.getItem('ijja_favs');
-        if(saved) favs = JSON.parse(saved);
         try {
-            const res = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
-            db = parseCSV(await res.text());
+            const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
+            const txt = await r.text();
+            db = parseCSV(txt);
             render();
-            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-        } catch(e) { document.getElementById('app').innerHTML = "שגיאה בטעינה"; }
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    reg.update(); // אילוץ עדכון לגרסה 2.4
+                });
+            }
+        } catch(e) { console.error("Load error", e); }
     }
 
-    // פארסר עמיד לפסיקים בתוך מירכאות
     function parseCSV(text) {
-        const rows = text.split(/\r?\n/).filter(l => l.length > 5);
-        const results = [];
-        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; // Split רק פסיקים שמחוץ למירכאות
-        
-        for(let i=1; i<rows.length; i++) {
-            const p = rows[i].split(regex).map(s => s.replace(/^"|"$/g, '').trim());
-            results.push({
-                id: i, cat: p[0], ser: p[1], num: p[2], name: p[3], link: p[4], embed: p[5], duration: parseInt(p[6]) || 999
-            });
-        }
-        return results;
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 10);
+        return lines.slice(1).map((line, i) => {
+            const p = line.split(',');
+            return { id: i, cat: p[0], ser: p[1], num: p[2], name: p[3], link: p[4], embed: p[5] };
+        });
     }
 
     function render() {
         const app = document.getElementById('app');
-        let html = '', lastCat = '', lastSer = '';
+        let html = '';
+        let lastCat = '', lastSer = '';
+
         db.forEach(ex => {
             if (ex.cat !== lastCat) {
                 if (lastCat !== '') html += `</div></div>`;
-                html += `<div class="cat-group" data-cat="${ex.cat}"><div class="cat-header">${ex.cat}</div>`;
+                html += `<div class="cat-group"><div class="cat-header">${ex.cat}</div>`;
                 lastCat = ex.cat; lastSer = '';
             }
             if (ex.ser !== lastSer) {
                 if (lastSer !== '') html += `</ul></div>`;
-                html += `<div class="ser-item" data-ser="${ex.ser}"><button class="ser-btn" onclick="toggleSer(this)">${ex.ser} <i class="fas fa-chevron-down"></i></button><ul class="ex-list">`;
+                html += `<div class="ser-item">
+                            <button class="ser-btn" onclick="this.nextElementSibling.classList.toggle('open')">
+                                <span>${ex.ser}</span><i class="fas fa-chevron-down"></i>
+                            </button>
+                            <ul class="ex-list">`;
                 lastSer = ex.ser;
             }
-            const isFav = favs.includes(ex.id);
-            html += `<li class="ex-row" data-id="${ex.id}"><div class="ex-info" onclick="openVById(${ex.id})"><span style="color:var(--secondary)">${ex.num}</span> ${ex.name}</div><div class="fav-btn ${isFav?'is-fav':''}" onclick="toggleFav(${ex.id}, this)"><i class="fa${isFav?'s':'r'} fa-star"></i></div></li>`;
+            html += `<li class="ex-row" onclick="openVById(${ex.id})">
+                        <span>${ex.num}. ${ex.name}</span>
+                        <i class="fas fa-stopwatch" style="color:var(--secondary)"></i>
+                     </li>`;
         });
         app.innerHTML = html + '</ul></div></div>';
-        if(isFavOnly) applyFilters();
     }
 
-    function toggleSer(btn) {
-        const list = btn.nextElementSibling;
-        list.classList.toggle('open');
-    }
-
-    function toggleFav(id, el) {
-        const idx = favs.indexOf(id);
-        if (idx > -1) favs.splice(idx, 1); else favs.push(id);
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        render();
-    }
-
-    function toggleFavFilter() {
-        isFavOnly = !isFavOnly;
-        document.getElementById('filterFavBtn').classList.toggle('active', isFavOnly);
-        applyFilters();
-    }
-
-    function applyFilters() {
-        document.querySelectorAll('.cat-group').forEach(c => {
-            let catVis = false;
-            c.querySelectorAll('.ser-item').forEach(s => {
-                let serVis = false;
-                s.querySelectorAll('.ex-row').forEach(row => {
-                    const hide = isFavOnly && !favs.includes(parseInt(row.dataset.id));
-                    row.classList.toggle('hidden', hide); if(!hide) serVis = true;
-                });
-                s.classList.toggle('hidden', isFavOnly && !serVis);
-                if(serVis) catVis = true;
-            });
-            c.classList.toggle('hidden', isFavOnly && !catVis);
+    function onYouTubeIframeAPIReady() {
+        apiReady = true;
+        ytPlayer = new YT.Player('player', {
+            height: '100%', width: '100%',
+            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'playsinline': 1, 'rel': 0 },
+            events: { 'onReady': () => console.log("Player Ready") }
         });
-    }
-
-    function toggleAll() {
-        const open = !document.querySelector('.ex-list.open');
-        document.querySelectorAll('.ex-list').forEach(l => l.classList.toggle('open', open));
-    }
-
-    function playRandom() {
-        isRandomMode = true;
-        const pool = db.filter(x => (x.link+x.embed).includes('youtu'));
-        const rnd = pool[Math.floor(Math.random() * pool.length)];
-        openVById(rnd.id);
-    }
-
-    function revealVideo() {
-        document.getElementById('videoCover').style.display = 'none';
-        if(ytPlayer) ytPlayer.playVideo();
     }
 
     function openVById(id) {
-        const ex = db.find(x => x.id === id);
+        const ex = db[id];
         if(!ex) return;
         currentEx = ex;
+
+        // עדכון טקסטים במודאל
+        document.getElementById('vCatDisplay').innerText = ex.cat;
+        document.getElementById('vSerDisplay').innerText = ex.ser;
         document.getElementById('vName').innerText = ex.name;
+        document.getElementById('calDuration').innerText = "0";
         document.getElementById('vModal').style.display = 'flex';
-        document.getElementById('videoCover').style.display = isRandomMode ? 'flex' : 'none';
 
-        const url = ex.embed || ex.link;
-        let vId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : (url.includes('embed/') ? url.split('embed/')[1].split('?')[0] : url.split('youtu.be/')[1].split('?')[0]);
-        let start = url.match(/[?&](t|start)=([0-9]+)/) ? parseInt(url.match(/[?&](t|start)=([0-9]+)/)[2]) : 0;
-        currentStartTime = start;
+        const vId = extractVideoId(ex.embed || ex.link);
+        currentStartTime = extractStartTime(ex.embed || ex.link);
 
-        if (ytPlayer && ytPlayer.loadVideoById) {
-            ytPlayer.loadVideoById({ videoId: vId, startSeconds: start });
-            if(isRandomMode) ytPlayer.pauseVideo();
+        if (apiReady && ytPlayer && ytPlayer.loadVideoById) {
+            ytPlayer.loadVideoById({ videoId: vId, startSeconds: currentStartTime });
+            startTimer();
+        } else {
+            // אם הנגן לא מוכן, ננסה שוב בעוד חצי שנייה
+            setTimeout(() => openVById(id), 500);
         }
-        startWatchdog(ex.duration);
     }
 
     function globalNav(dir) {
-        const pool = isFavOnly ? db.filter(ex => favs.includes(ex.id)) : db;
-        let idx = pool.findIndex(ex => ex.id === currentEx.id);
-        if (idx === -1) idx = 0;
-        let next = (idx + dir + pool.length) % pool.length;
-        openVById(pool[next].id);
+        let newId = (currentEx ? currentEx.id : 0) + dir;
+        if (newId < 0) newId = db.length - 1;
+        if (newId >= db.length) newId = 0;
+        openVById(newId);
     }
 
-    function startWatchdog(duration) {
-        clearInterval(watchdogInterval);
-        watchdogInterval = setInterval(() => {
-            if (ytPlayer && ytPlayer.getCurrentTime && ytPlayer.getPlayerState() === 1) {
-                let curr = ytPlayer.getCurrentTime();
-                let elapsed = Math.floor(curr - currentStartTime);
-                document.getElementById('calDuration').innerText = Math.max(0, elapsed);
-                if (elapsed >= duration) {
-                    ytPlayer.seekTo(currentStartTime);
-                }
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (ytPlayer && ytPlayer.getCurrentTime) {
+                let current = ytPlayer.getCurrentTime();
+                let diff = Math.max(0, Math.floor(current - currentStartTime));
+                document.getElementById('calDuration').innerText = diff;
             }
         }, 500);
     }
 
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
-        isRandomMode = false;
-        if(ytPlayer) ytPlayer.stopVideo();
-        clearInterval(watchdogInterval);
+        if(ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+        clearInterval(timerInterval);
     }
 
-    function onYouTubeIframeAPIReady() {
-        ytPlayer = new YT.Player('player', { height: '100%', width: '100%', playerVars: { 'autoplay': 1, 'playsinline': 1 } });
+    function extractVideoId(url) {
+        if (!url) return '';
+        if (url.includes('v=')) return url.split('v=')[1].split('&')[0];
+        if (url.includes('embed/')) return url.split('embed/')[1].split('?')[0];
+        if (url.includes('youtu.be/')) return url.split('youtu.be/')[1].split('?')[0];
+        return '';
+    }
+
+    function extractStartTime(url) {
+        if (!url) return 0;
+        const m = url.match(/[?&](t|start)=([0-9]+)/);
+        return m ? parseInt(m[2]) : 0;
     }
 
     window.onload = init;
