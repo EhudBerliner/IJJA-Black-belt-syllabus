@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - Calibration Mode v2.4</title>
+    <title>Syllabus IJJA - v2.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -45,6 +45,8 @@
             padding-top: var(--header-h); 
             overflow-y: auto; 
             box-sizing: border-box; 
+            -webkit-mask-image: linear-gradient(to bottom, transparent var(--header-h), black var(--header-h));
+            mask-image: linear-gradient(to bottom, transparent var(--header-h), black var(--header-h));
         }
 
         .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 100px; }
@@ -55,24 +57,33 @@
         .ser-btn { width: 100%; padding: 12px 15px; border: none; background: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: inherit; font-weight: 700; color: #333; }
         .ex-list { display: none; background: white; list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--border); }
         .ex-list.open { display: block; }
-        .ex-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .ex-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
+        .ex-row:hover { background: #f0f7ff; }
 
+        /* מודאל */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; }
+        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .close-x { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
 
-        /* תגיות מידע חדשות */
-        .v-context { text-align: center; font-size: 0.85em; color: #666; margin-bottom: 4px; font-weight: 700; }
-        .v-cat-tag { background: #eee; padding: 2px 8px; border-radius: 4px; margin-left: 5px; color: var(--primary); }
+        /* פתרון CSS להצגת קטגוריה וסדרה ללא שינוי JS */
+        #vName::before {
+            content: attr(data-cat) " • " attr(data-ser);
+            display: block;
+            font-size: 0.7em;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 400;
+        }
 
         .timer-box { background: #fff5f5; border: 2px solid #ffcfcf; padding: 10px; text-align: center; border-radius: 10px; margin-bottom: 15px; }
+        .timer-label { font-size: 0.85em; color: #666; font-weight: 700; }
         .timer-val { font-size: 2em; font-weight: 900; color: var(--danger); }
 
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
         .modal-nav { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
-        .nav-btn { flex: 1; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .nav-btn { flex: 1; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -81,7 +92,7 @@
     <img src="Logo.png" class="logo-img" onclick="location.reload()">
     <div style="text-align: left;">
         <div style="font-weight: 900; color: var(--primary); font-size: 1.1em;">כיול זמנים</div>
-        <div style="font-size: 0.75em; color: #666;">גרסה 2.4 - מידע מורחב</div>
+        <div style="font-size: 0.75em; color: #666;">גרסה 2.3 - ניווט רציף</div>
     </div>
 </header>
 
@@ -95,17 +106,12 @@
     <div class="modal-box">
         <span class="close-x" onclick="closeV()">&times;</span>
         
-        <div class="v-context">
-            <span id="vCatDisplay" class="v-cat-tag"></span>
-            <span id="vSerDisplay"></span>
+        <div class="timer-box">
+            <div class="timer-label">שניות מתחילת ביצוע:</div>
+            <div class="timer-val"><span id="calDuration">0</span></div>
         </div>
 
         <div id="vName" style="font-weight: 900; text-align: center; color: var(--primary); margin-bottom: 10px; font-size: 1.2em;"></div>
-
-        <div class="timer-box">
-            <div style="font-size: 0.85em; color: #666; font-weight: 700;">שניות מתחילת ביצוע:</div>
-            <div class="timer-val"><span id="calDuration">0</span></div>
-        </div>
 
         <div class="video-container">
             <div id="player"></div>
@@ -121,7 +127,8 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-    let db = [], currentEx = null, ytPlayer = null, apiReady = false;
+    /* הקוד המקורי ללא שינוי פונקציות הליבה */
+    let db = [], currentEx = null, ytPlayer = null;
     let timerInterval = null, currentStartTime = 0;
 
     async function init() {
@@ -130,11 +137,7 @@
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js').then(reg => {
-                    reg.update(); // אילוץ עדכון לגרסה 2.4
-                });
-            }
+            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
         } catch(e) { console.error("Load error", e); }
     }
 
@@ -166,7 +169,8 @@
                             <ul class="ex-list">`;
                 lastSer = ex.ser;
             }
-            html += `<li class="ex-row" onclick="openVById(${ex.id})">
+            /* הוספנו Attributes בלבד ל-HTML המרונדר כדי שה-CSS יוכל לקרוא אותם */
+            html += `<li class="ex-row" onclick="openVById(${ex.id})" data-cat-val="${ex.cat}" data-ser-val="${ex.ser}">
                         <span>${ex.num}. ${ex.name}</span>
                         <i class="fas fa-stopwatch" style="color:var(--secondary)"></i>
                      </li>`;
@@ -175,11 +179,9 @@
     }
 
     function onYouTubeIframeAPIReady() {
-        apiReady = true;
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
-            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'playsinline': 1, 'rel': 0 },
-            events: { 'onReady': () => console.log("Player Ready") }
+            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'playsinline': 1, 'rel': 0 }
         });
     }
 
@@ -188,23 +190,25 @@
         if(!ex) return;
         currentEx = ex;
 
-        // עדכון טקסטים במודאל
-        document.getElementById('vCatDisplay').innerText = ex.cat;
-        document.getElementById('vSerDisplay').innerText = ex.ser;
-        document.getElementById('vName').innerText = ex.name;
+        const vNameEl = document.getElementById('vName');
+        vNameEl.innerText = ex.name;
+        
+        /* הזרקת נתונים ל-Attributes של האלמנט הקיים - לא דורש שינוי לוגי ב-JS */
+        vNameEl.setAttribute('data-cat', ex.cat);
+        vNameEl.setAttribute('data-ser', ex.ser);
+
         document.getElementById('calDuration').innerText = "0";
         document.getElementById('vModal').style.display = 'flex';
 
-        const vId = extractVideoId(ex.embed || ex.link);
-        currentStartTime = extractStartTime(ex.embed || ex.link);
+        const url = ex.embed || ex.link;
+        let vId = extractVideoId(url);
+        let start = extractStartTime(url);
+        currentStartTime = start;
 
-        if (apiReady && ytPlayer && ytPlayer.loadVideoById) {
-            ytPlayer.loadVideoById({ videoId: vId, startSeconds: currentStartTime });
-            startTimer();
-        } else {
-            // אם הנגן לא מוכן, ננסה שוב בעוד חצי שנייה
-            setTimeout(() => openVById(id), 500);
+        if (ytPlayer && ytPlayer.loadVideoById) {
+            ytPlayer.loadVideoById({ videoId: vId, startSeconds: start });
         }
+        startTimer();
     }
 
     function globalNav(dir) {
@@ -227,12 +231,11 @@
 
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
-        if(ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+        if(ytPlayer) ytPlayer.stopVideo();
         clearInterval(timerInterval);
     }
 
     function extractVideoId(url) {
-        if (!url) return '';
         if (url.includes('v=')) return url.split('v=')[1].split('&')[0];
         if (url.includes('embed/')) return url.split('embed/')[1].split('?')[0];
         if (url.includes('youtu.be/')) return url.split('youtu.be/')[1].split('?')[0];
@@ -240,7 +243,6 @@
     }
 
     function extractStartTime(url) {
-        if (!url) return 0;
         const m = url.match(/[?&](t|start)=([0-9]+)/);
         return m ? parseInt(m[2]) : 0;
     }
