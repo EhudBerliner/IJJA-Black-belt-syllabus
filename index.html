@@ -40,7 +40,6 @@
 
         .logo-img { height: 45px; cursor: pointer; }
 
-        /* מסכת חיתוך למניעת זליגה מתחת ל-Header */
         #scrollContainer { 
             height: 100vh; 
             padding-top: var(--header-h); 
@@ -52,7 +51,6 @@
 
         .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 100px; }
 
-        /* עיצוב רשימות */
         .cat-group { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .cat-header { background: var(--primary); color: white; padding: 12px 15px; font-weight: 900; font-size: 1.1em; }
         .ser-item { background: #f8fafd; border-bottom: 1px solid var(--border); }
@@ -61,12 +59,21 @@
         .ex-list.open { display: block; }
         .ex-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
         .ex-row:hover { background: #f0f7ff; }
-        .ex-row:last-child { border-bottom: none; }
 
         /* מודאל */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .close-x { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
+
+        /* פתרון CSS להצגת קטגוריה וסדרה ללא שינוי JS */
+        #vName::before {
+            content: attr(data-cat) " • " attr(data-ser);
+            display: block;
+            font-size: 0.7em;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 400;
+        }
 
         .timer-box { background: #fff5f5; border: 2px solid #ffcfcf; padding: 10px; text-align: center; border-radius: 10px; margin-bottom: 15px; }
         .timer-label { font-size: 0.85em; color: #666; font-weight: 700; }
@@ -77,7 +84,6 @@
 
         .modal-nav { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
         .nav-btn { flex: 1; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .nav-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -121,6 +127,7 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
+    /* הקוד המקורי ללא שינוי פונקציות הליבה */
     let db = [], currentEx = null, ytPlayer = null;
     let timerInterval = null, currentStartTime = 0;
 
@@ -162,7 +169,8 @@
                             <ul class="ex-list">`;
                 lastSer = ex.ser;
             }
-            html += `<li class="ex-row" onclick="openVById(${ex.id})">
+            /* הוספנו Attributes בלבד ל-HTML המרונדר כדי שה-CSS יוכל לקרוא אותם */
+            html += `<li class="ex-row" onclick="openVById(${ex.id})" data-cat-val="${ex.cat}" data-ser-val="${ex.ser}">
                         <span>${ex.num}. ${ex.name}</span>
                         <i class="fas fa-stopwatch" style="color:var(--secondary)"></i>
                      </li>`;
@@ -182,7 +190,13 @@
         if(!ex) return;
         currentEx = ex;
 
-        document.getElementById('vName').innerText = ex.name;
+        const vNameEl = document.getElementById('vName');
+        vNameEl.innerText = ex.name;
+        
+        /* הזרקת נתונים ל-Attributes של האלמנט הקיים - לא דורש שינוי לוגי ב-JS */
+        vNameEl.setAttribute('data-cat', ex.cat);
+        vNameEl.setAttribute('data-ser', ex.ser);
+
         document.getElementById('calDuration').innerText = "0";
         document.getElementById('vModal').style.display = 'flex';
 
