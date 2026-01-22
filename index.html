@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Syllabus IJJA - Calibration Mode</title>
+    <title>Syllabus IJJA - Calibration Mode v2.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -18,98 +18,102 @@
             --secondary: #009be5;
             --border: #d2dce5;
             --header-h: 90px;
-            --fav-color: #ffc107;
             --danger: #d32f2f;
         }
 
         html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
-
-        header {
-            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
+        
+        header { 
+            height: var(--header-h); 
+            background: white; 
+            border-bottom: 3px solid var(--primary); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 20px; 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 1000; 
+            box-sizing: border-box; 
         }
 
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .logo-img { height: 45px; width: auto; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
+        .logo-img { height: 45px; cursor: pointer; }
 
-        .action-bar { display: flex; gap: 6px; }
-        .btn {
-            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
-            background: white; color: var(--primary); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1em;
-        }
-        .btn.active { background: var(--primary); color: white; }
-
+        /* מסכת חיתוך למניעת זליגה מתחת ל-Header */
         #scrollContainer { 
-            height: 100vh; padding-top: var(--header-h); 
-            overflow-y: auto; -webkit-overflow-scrolling: touch; box-sizing: border-box; 
-        }
-        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; }
-        
-        .cat-group { margin-bottom: 25px; }
-        .cat-header {
-            background: var(--primary); color: white; padding: 10px 15px;
-            border-radius: 10px; font-size: 1.2em; font-weight: 900;
-            position: sticky; top: 10px; z-index: 100; margin-bottom: 8px;
+            height: 100vh; 
+            padding-top: var(--header-h); 
+            overflow-y: auto; 
+            box-sizing: border-box; 
+            -webkit-mask-image: linear-gradient(to bottom, transparent var(--header-h), black var(--header-h));
+            mask-image: linear-gradient(to bottom, transparent var(--header-h), black var(--header-h));
         }
 
-        .ser-item {
-            background: white; padding: 12px; font-weight: 700;
-            border-right: 4px solid var(--secondary); border-radius: 6px;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; margin-bottom: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
+        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 100px; }
 
-        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
-        .ex-list.open { display: block; margin-bottom: 10px; border-radius: 0 0 6px 6px; }
-        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
-        .ex-no-link { color: #888; flex: 1; cursor: default; }
+        /* עיצוב רשימות */
+        .cat-group { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .cat-header { background: var(--primary); color: white; padding: 12px 15px; font-weight: 900; font-size: 1.1em; }
+        .ser-item { background: #f8fafd; border-bottom: 1px solid var(--border); }
+        .ser-btn { width: 100%; padding: 12px 15px; border: none; background: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-family: inherit; font-weight: 700; color: #333; }
+        .ex-list { display: none; background: white; list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--border); }
+        .ex-list.open { display: block; }
+        .ex-row { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s; }
+        .ex-row:hover { background: #f0f7ff; }
+        .ex-row:last-child { border-bottom: none; }
 
-        /* Modal Styles */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; }
-        
-        /* Calibration UI */
-        .cal-header { background: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
-        .cal-time { font-size: 2em; font-weight: 900; color: #856404; display: block; }
+        /* מודאל */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .close-x { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
+
+        .timer-box { background: #fff5f5; border: 2px solid #ffcfcf; padding: 10px; text-align: center; border-radius: 10px; margin-bottom: 15px; }
+        .timer-label { font-size: 0.85em; color: #666; font-weight: 700; }
+        .timer-val { font-size: 2em; font-weight: 900; color: var(--danger); }
 
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        
-        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .hidden { display: none !important; }
+
+        .modal-nav { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+        .nav-btn { flex: 1; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .nav-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-right">
-        <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>מצב כיול זמנים</h1><small>v1.8.1</small></div>
+    <img src="Logo.png" class="logo-img" onclick="location.reload()">
+    <div style="text-align: left;">
+        <div style="font-weight: 900; color: var(--primary); font-size: 1.1em;">כיול זמנים</div>
+        <div style="font-size: 0.75em; color: #666;">גרסה 2.3 - ניווט רציף</div>
     </div>
 </header>
 
 <div id="scrollContainer">
-    <main class="main-content" id="app">טוען נתונים...</main>
+    <main class="main-content" id="app">
+        <div style="text-align:center; padding: 50px;">טוען נתונים...</div>
+    </main>
 </div>
 
-<div id="vModal" class="modal" onclick="closeV()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <i class="fas fa-times close-btn" onclick="closeV()"></i>
+<div id="vModal" class="modal">
+    <div class="modal-box">
+        <span class="close-x" onclick="closeV()">&times;</span>
         
-        <div class="cal-header">
-            <span style="font-size: 0.9em;">משך זמן מההתחלה (בשניות):</span>
-            <span id="calDuration" class="cal-time">0</span>
-            <small style="color: #666;">עצור את הסרטון והעתק מספר זה לעמודה G</small>
+        <div class="timer-box">
+            <div class="timer-label">שניות מתחילת ביצוע:</div>
+            <div class="timer-val"><span id="calDuration">0</span></div>
         </div>
 
-        <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800; margin-bottom:10px; text-align: center;"></div>
-        
+        <div id="vName" style="font-weight: 900; text-align: center; color: var(--primary); margin-bottom: 10px; font-size: 1.2em;"></div>
+
         <div class="video-container">
             <div id="player"></div>
+        </div>
+
+        <div class="modal-nav">
+            <button class="nav-btn" onclick="globalNav(-1)"><i class="fas fa-chevron-right"></i> הקודם</button>
+            <button class="nav-btn" onclick="globalNav(1)">הבא <i class="fas fa-chevron-left"></i></button>
         </div>
     </div>
 </div>
@@ -117,138 +121,116 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-    let db = [];
-    let ytPlayer = null;
-    let timerInterval = null;
-    let currentStartTime = 0;
+    let db = [], currentEx = null, ytPlayer = null;
+    let timerInterval = null, currentStartTime = 0;
 
-    // 1. YouTube API Initialization
-    function onYouTubeIframeAPIReady() {
-        ytPlayer = new YT.Player('player', {
-            height: '100%',
-            width: '100%',
-            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-            events: { 'onStateChange': onPlayerStateChange }
-        });
-    }
-
-    function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING) {
-            startTimer();
-        } else {
-            stopTimer();
-        }
-    }
-
-    function startTimer() {
-        stopTimer();
-        timerInterval = setInterval(() => {
-            if (ytPlayer && ytPlayer.getCurrentTime) {
-                const elapsed = Math.max(0, Math.floor(ytPlayer.getCurrentTime() - currentStartTime));
-                document.getElementById('calDuration').innerText = elapsed;
-            }
-        }, 200);
-    }
-
-    function stopTimer() { clearInterval(timerInterval); }
-
-    // 2. Data Parsing
     async function init() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
             const txt = await r.text();
             db = parseCSV(txt);
             render();
-        } catch(e) { document.getElementById('app').innerText = "שגיאה בטעינת ה-CSV"; }
+            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+        } catch(e) { console.error("Load error", e); }
     }
 
     function parseCSV(text) {
-        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 10);
         return lines.slice(1).map((line, i) => {
-            let row = [], cur = '', inQ = false;
-            for(let char of line) {
-                if(char === '"') inQ = !inQ;
-                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
-                else cur += char;
-            }
-            row.push(cur.trim());
-            return { id: i + 1, cat: row[0], ser: row[1], num: row[2], name: row[3], link: row[4] || "", embed: row[5] || "" };
+            const p = line.split(',');
+            return { id: i, cat: p[0], ser: p[1], num: p[2], name: p[3], link: p[4], embed: p[5] };
         });
     }
 
     function render() {
         const app = document.getElementById('app');
-        app.innerHTML = '';
-        const groups = db.reduce((acc, x) => {
-            if(!acc[x.cat]) acc[x.cat] = {};
-            if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
-            acc[x.cat][x.ser].push(x);
-            return acc;
-        }, {});
+        let html = '';
+        let lastCat = '', lastSer = '';
 
-        for(let cat in groups) {
-            const cDiv = document.createElement('div');
-            cDiv.className = 'cat-group';
-            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
-            for(let ser in groups[cat]) {
-                const sBtn = document.createElement('div');
-                sBtn.className = 'ser-item';
-                sBtn.innerHTML = `<div><i class="fas fa-chevron-down" style="margin-left:8px"></i>${ser}</div>`;
-                sBtn.onclick = () => {
-                    const list = sBtn.nextElementSibling;
-                    const open = list.classList.toggle('open');
-                    sBtn.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-                };
-
-                const list = document.createElement('ul');
-                list.className = 'ex-list';
-                groups[cat][ser].forEach(ex => {
-                    const li = document.createElement('li');
-                    li.className = 'ex-row';
-                    const hasL = ex.link.length > 5 || ex.embed.length > 5;
-                    li.innerHTML = `<span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL? `openVById(${ex.id})` : ''}">${ex.num}. ${ex.name}</span>`;
-                    list.appendChild(li);
-                });
-                cDiv.appendChild(sBtn); cDiv.appendChild(list);
+        db.forEach(ex => {
+            if (ex.cat !== lastCat) {
+                if (lastCat !== '') html += `</div></div>`;
+                html += `<div class="cat-group"><div class="cat-header">${ex.cat}</div>`;
+                lastCat = ex.cat; lastSer = '';
             }
-            app.appendChild(cDiv);
-        }
+            if (ex.ser !== lastSer) {
+                if (lastSer !== '') html += `</ul></div>`;
+                html += `<div class="ser-item">
+                            <button class="ser-btn" onclick="this.nextElementSibling.classList.toggle('open')">
+                                <span>${ex.ser}</span><i class="fas fa-chevron-down"></i>
+                            </button>
+                            <ul class="ex-list">`;
+                lastSer = ex.ser;
+            }
+            html += `<li class="ex-row" onclick="openVById(${ex.id})">
+                        <span>${ex.num}. ${ex.name}</span>
+                        <i class="fas fa-stopwatch" style="color:var(--secondary)"></i>
+                     </li>`;
+        });
+        app.innerHTML = html + '</ul></div></div>';
+    }
+
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('player', {
+            height: '100%', width: '100%',
+            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'playsinline': 1, 'rel': 0 }
+        });
     }
 
     function openVById(id) {
-        const ex = db.find(x => x.id === id);
+        const ex = db[id];
         if(!ex) return;
+        currentEx = ex;
 
         document.getElementById('vName').innerText = ex.name;
         document.getElementById('calDuration').innerText = "0";
         document.getElementById('vModal').style.display = 'flex';
 
-        // Parse ID and Start Time
         const url = ex.embed || ex.link;
-        let videoId = '';
-        let start = 0;
-
-        if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
-        else if (url.includes('embed/')) videoId = url.split('embed/')[1].split('?')[0];
-        else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
-        
-        const tMatch = url.match(/[?&](t|start)=([0-9]+)/);
-        if (tMatch) start = parseInt(tMatch[2]);
-
+        let vId = extractVideoId(url);
+        let start = extractStartTime(url);
         currentStartTime = start;
 
         if (ytPlayer && ytPlayer.loadVideoById) {
-            ytPlayer.loadVideoById({
-                videoId: videoId,
-                startSeconds: start
-            });
+            ytPlayer.loadVideoById({ videoId: vId, startSeconds: start });
         }
+        startTimer();
+    }
+
+    function globalNav(dir) {
+        let newId = (currentEx ? currentEx.id : 0) + dir;
+        if (newId < 0) newId = db.length - 1;
+        if (newId >= db.length) newId = 0;
+        openVById(newId);
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (ytPlayer && ytPlayer.getCurrentTime) {
+                let current = ytPlayer.getCurrentTime();
+                let diff = Math.max(0, Math.floor(current - currentStartTime));
+                document.getElementById('calDuration').innerText = diff;
+            }
+        }, 500);
     }
 
     function closeV() {
         document.getElementById('vModal').style.display = 'none';
-        if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
-        stopTimer();
+        if(ytPlayer) ytPlayer.stopVideo();
+        clearInterval(timerInterval);
+    }
+
+    function extractVideoId(url) {
+        if (url.includes('v=')) return url.split('v=')[1].split('&')[0];
+        if (url.includes('embed/')) return url.split('embed/')[1].split('?')[0];
+        if (url.includes('youtu.be/')) return url.split('youtu.be/')[1].split('?')[0];
+        return '';
+    }
+
+    function extractStartTime(url) {
+        const m = url.match(/[?&](t|start)=([0-9]+)/);
+        return m ? parseInt(m[2]) : 0;
     }
 
     window.onload = init;
