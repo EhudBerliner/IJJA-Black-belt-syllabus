@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.2.6</title>
+    <title>Black belt syllabus - v2.2.7</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,488 +14,191 @@
 
     <style>
         :root {
-            --primary: #0056a6;   /* כחול מותג ראשי */
-            --secondary: #009be5; /* כחול בהיר לאלמנטים משניים */
-            --border: #d2dce5;    /* צבע גבולות עדין */
-            --header-h: 90px;     /* גובה קבוע לראש הדף */
-            --fav-color: #ffc107; /* צבע זהב לכפתור מועדפים */
-            --danger: #d32f2f;    /* אדום להתראות/מחיקה */
-            --success: #2e7d32;   /* ירוק לאישור פעולות */
+            --primary: #0056a6;
+            --secondary: #009be5;
+            --border: #d2dce5;
+            --header-h: 90px;
+            --fav-color: #ffc107;
         }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: 'Heebo', sans-serif; background: #f7f9fb; color: #333; overflow: hidden; }
 
-        /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
-        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
-
-        /* כותרת עליונה קבועה */
-        header {
-            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
+        header { 
+            position: fixed; top: 0; width: 100%; height: var(--header-h);
+            background: var(--primary); color: white; padding: 10px 15px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .header-bottom { display: flex; gap: 10px; margin-bottom: 5px; }
 
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .logo-img { height: 45px; width: auto; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
-
-        /* סרגל כפתורי פעולה */
-        .action-bar { display: flex; gap: 6px; }
-        .btn {
-            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
-            background: white; color: var(--primary); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1em;
-        }
-        .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .btn-danger { color: var(--danger); }
-
-        /* אלמנט ויזואלי לרענון במשיכה */
-        #ptr {
-            position: absolute; top: var(--header-h); left: 0; width: 100%; height: 50px;
-            display: flex; align-items: center; justify-content: center;
-            transform: translateY(-100%); transition: transform 0.2s; z-index: 1000;
-            color: var(--primary); font-weight: bold;
-        }
-
-        /* מיכל הגלילה הראשי של רשימת התכנים */
-        #scrollContainer { 
-            height: 100vh; 
-            padding-top: var(--header-h); 
-            overflow-y: auto; 
-            box-sizing: border-box; 
-            -webkit-overflow-scrolling: touch;
-            position: relative;
-        }
-
-        /* "הפס הלבן" - מונע זליגת תוכן מתחת ל-Header בזמן גלילה */
-        #scrollContainer::before {
-            content: "";
-            position: fixed;
-            top: var(--header-h);
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background: #f7f9fb;
-            z-index: 1100;
-        }
-
-        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; transition: transform 0.2s; }
+        #app { margin-top: var(--header-h); height: calc(100vh - var(--header-h)); overflow-y: auto; padding: 10px; }
         
-        /* כותרת קטגוריה - נדבקת לראש הדף בגלילה */
-        .cat-group { margin-bottom: 25px; }
-        .cat-header { 
-            background: var(--primary); color: white; padding: 10px 15px; border-radius: 10px; 
-            font-weight: 900; position: sticky; top: 10px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
+        .cat-box { background: white; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); overflow: hidden; }
+        .cat-title { background: #eee; padding: 12px; font-weight: 900; border-bottom: 1px solid var(--border); color: var(--primary); }
+        .ser-title { padding: 10px 15px; font-weight: 700; background: #fdfdfd; display: flex; justify-content: space-between; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
+        .ex-list { display: none; list-style: none; padding: 0; margin: 0; background: white; }
+        .ex-list.open { display: block; }
+        .ex-row { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #f9f9f9; }
+        .ex-info { flex: 1; font-weight: 400; cursor: pointer; }
+        .fav-btn { padding: 5px 10px; cursor: pointer; color: #ccc; font-size: 1.2em; }
+        .fav-btn.active { color: var(--fav-color); }
+        .hidden { display: none !important; }
 
-        /* שורת סדרה (לחיצה פותחת רשימת תרגילים) */
-        .ser-item { 
-            background: white; padding: 12px; font-weight: 700; border-right: 4px solid var(--secondary); 
-            margin-top: 8px; display: flex; justify-content: space-between; align-items: center; 
-            cursor: pointer; border-radius: 6px; 
-        }
-
-        /* רשימת תרגילים בתוך סדרה */
-        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
-        .ex-list.open { display: block; border-radius: 0 0 6px 6px; }
-        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        
-        .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
-        .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
-        .star.active { color: var(--fav-color); }
-
-        /* מודאל נגן הוידיאו */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 500px; position: relative; }
-        
-        /* מיכל הסרטון - יחס 16:9 */
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        /* Modal */
+        #vModal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; flex-direction: column; }
+        .modal-box { position: relative; width: 100%; max-width: 600px; margin: auto; background: white; padding-bottom: 20px; border-radius: 15px; overflow: hidden; }
+        .video-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
-        /* מסך כיסוי למצב "מבחן עצמי" */
-        #videoCover {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, var(--secondary) 0%, var(--primary) 100%);
-            color: white; z-index: 20; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; cursor: pointer; text-align: center;
-            padding: 20px; box-sizing: border-box;
+        /* Video Cover (Mask) */
+        #videoCover { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #111; z-index: 10; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; color: white; cursor: pointer;
         }
 
-        /* אנימציית פעימה לכפתור ה-Play בכיסוי */
-        .play-trigger {
-            width: 80px; height: 80px; background: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 15px; box-shadow: 0 0 20px rgba(255,255,255,0.4);
-            animation: pulse 2s infinite;
-        }
-        .play-trigger i { color: var(--primary); font-size: 2.5rem; margin-right: -5px; }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(255,255,255,0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-        }
-
-        .cover-text { font-weight: 900; font-size: 1.3em; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
-        /* כפתורי שליטה במודאל */
-        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .modal-btn { position: absolute; top: -45px; right: 0; width: 38px; height: 38px; border-radius: 8px; border: 1px solid white; background: transparent; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; }
-        .modal-btn.active { background: var(--success); border-color: var(--success); }
-
-        .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: center; }
-        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .nav-btn:disabled { background: #eee !important; color: #bbb; }
-
-        .hidden { display: none !important; }
+        .btn { border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-family: inherit; }
+        .btn-fav-filter { background: white; color: var(--primary); display: flex; align-items: center; gap: 5px; }
+        .btn-fav-filter.active { background: var(--fav-color); color: #000; }
+        .btn-random { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; }
+        .close-modal { position: absolute; top: 10px; right: 10px; font-size: 2em; color: white; z-index: 1100; cursor: pointer; text-shadow: 0 2px 5px #000; }
     </style>
 </head>
 <body>
 
-<div id="ptr"><i class="fas fa-sync fa-spin"></i>&nbsp; מעדכן נתונים...</div>
-
 <header>
-    <div class="header-right">
-        <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.2.4</small></div>
+    <div class="header-top">
+        <div style="font-weight:900; font-size:1.2em;">סילבוס חגורה שחורה <small style="font-size:0.6em; opacity:0.8;">v2.2.7</small></div>
+        <button class="btn btn-random" onclick="playRandom()"><i class="fas fa-dice"></i> מבחן אקראי</button>
     </div>
-    <div class="action-bar">
-        <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
-        <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
-        <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
-        <button title="פתח/סגור הכל" class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
-        <button title="מחיקת מועדפים" class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
+    <div class="header-bottom">
+        <button id="favFilterBtn" class="btn btn-fav-filter" onclick="toggleFavFilter()">
+            <i class="fas fa-star"></i> מועדפים
+        </button>
+        <button class="btn" style="background:rgba(255,255,255,0.2); color:white;" onclick="toggleAll()">
+            <i class="fas fa-expand-arrows-alt"></i> פתיחת הכל
+        </button>
     </div>
 </header>
 
-<div id="scrollContainer">
-    <main class="main-content" id="app">
-        </main>
-</div>
+<div id="app">טוען נתונים...</div>
 
-<div id="vModal" class="modal" onclick="closeV()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" onclick="playRandom()"><i class="fas fa-random"></i></button>
-        <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
-        
-        <div class="modal-nav">
-            <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
-            <div style="flex: 1; overflow: hidden; padding: 0 5px;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-                <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800; line-height:1.2;"></div>
-                <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top:2px;"></div>
-            </div>
-            <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
-        </div>
-        
+<div id="vModal">
+    <span class="close-modal" onclick="closeV()">&times;</span>
+    <div class="modal-box">
         <div class="video-container">
             <div id="player"></div>
             <div id="videoCover" class="hidden" onclick="revealVideo()">
-                <div class="play-trigger"><i class="fas fa-play"></i></div>
-                <div class="cover-text">לחץ לצפייה בביצוע התרגיל</div>
-                <div style="margin-top:10px; font-size:0.9em; opacity:0.9;">מבחן עצמי</div>
+                <i class="fas fa-question-circle" style="font-size: 4em; margin-bottom: 15px; color: var(--fav-color);"></i>
+                <div style="font-size: 1.2em; font-weight: 900;">נחש את הטכניקה</div>
+                <div style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">לחץ כאן לצפייה בפתרון</div>
             </div>
+        </div>
+        <div style="padding:15px; text-align:center;">
+            <h3 id="vName" style="margin:0 0 5px 0;"></h3>
+            <div id="calDuration" style="font-size:0.8em; color:#666;"></div>
         </div>
     </div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
-    /** משתנים גלובליים **/
-    let db = [], favs = [];
-    
-    try {
-        favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    } catch (e) {
-        favs = [];
-        localStorage.setItem('ijja_favs', "[]");
-    }
-    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
-    let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
-    let pendingVideoId = '', pendingStart = 0;
+    let db = [];
+    let favs = [];
+    let isFavOnly = false;
+    let ytPlayer = null;
+    let currentEx = null;
+    let watchdog = null;
+    let isRandomMode = false;
 
-    /** לוגיקת Pull-to-Refresh (משיכה למטה לרענון) **/
-    let startY = 0;
-    const scrollContainer = document.getElementById('scrollContainer');
-    const ptr = document.getElementById('ptr');
-    const appMain = document.getElementById('app');
-
-    scrollContainer.addEventListener('touchstart', e => { if (scrollContainer.scrollTop === 0) startY = e.touches[0].pageY; }, {passive: true});
-    scrollContainer.addEventListener('touchmove', e => {
-        const y = e.touches[0].pageY;
-        if (scrollContainer.scrollTop === 0 && y > startY) {
-            const diff = Math.min((y - startY) * 0.4, 60);
-            ptr.style.transform = `translateY(${diff - 50}px)`;
-            appMain.style.transform = `translateY(${diff}px)`;
-        }
-    }, {passive: true});
-    scrollContainer.addEventListener('touchend', e => {
-        const y = e.changedTouches[0].pageY;
-        if (scrollContainer.scrollTop === 0 && y - startY > 120) location.reload();
-        ptr.style.transform = 'translateY(-100%)'; appMain.style.transform = 'translateY(0)';
-    });
-
-    /** רישום וניהול עדכוני PWA **/
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    
-        navigator.serviceWorker.ready.then(reg => {
-            reg.addEventListener('updatefound', () => {
-                const newWorker = reg.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) {
-                            location.reload();
-                        }
-                    }
-                });
-            });
-        });
-    }
-
-
-    /** הגדרות נגן YouTube **/
-    function onYouTubeIframeAPIReady() {
-        ytPlayer = new YT.Player('player', {
-            height: '100%', width: '100%',
-            playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-            events: { 'onReady': () => { playerReady = true; }, 'onStateChange': onPlayerStateChange }
-        });
-    }
-
-    function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING) startWatchdog();
-        else if (event.data == YT.PlayerState.ENDED) {
-            // מעבר אוטומטי לתרגיל הבא רק בסינון מועדפים ובמצב Autoplay
-            if (isAutoplay && isFavOnly && !isRandomMode) nav(1);
-        } else stopWatchdog();
-    }
-
-    /** מנגנון Watchdog - מגביל את משך הצפייה וחוזר להתחלה **/
-    function startWatchdog() {
-        stopWatchdog();
-        if (watchdogEnabled && currentEx && currentEx.duration > 0) {
-            const start = getStartTime(currentEx.embed || currentEx.link);
-            watchdogInterval = setInterval(() => {
-                if(ytPlayer.getCurrentTime() - start >= currentEx.duration) { 
-                    ytPlayer.pauseVideo(); 
-                    ytPlayer.seekTo(start); 
-                }
-            }, 400);
-        }
-    }
-    function stopWatchdog() { clearInterval(watchdogInterval); }
-
-    function toggleWatchdog() {
-        watchdogEnabled = !watchdogEnabled;
-        document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
-    }
-
-    /** ניהול ניגון רצוף (Autoplay) **/
-    function toggleAutoplay() { 
-        isAutoplay = !isAutoplay; 
-        if (isAutoplay) { watchdogEnabled = false; document.getElementById('watchdogToggle').classList.remove('active'); }
-        updateModalLayout(); 
-    }
-
-    /** טעינה ראשונית של הנתונים מהשרת **/
+    /** 1. טעינת נתונים **/
     async function init() {
+        const savedFavs = localStorage.getItem('ijja_favs');
+        if(savedFavs) favs = JSON.parse(savedFavs);
+
         try {
-            const r = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
-            const txt = await r.text();
-            db = parseCSV(txt);
+            const res = await fetch('Black_belt_syllabus_IJJA.csv?v=' + Date.now());
+            const text = await res.text();
+            db = parseCSV(text);
             render();
-        } catch (e) {
-            console.error("CSV Load Fail", e);
-            document.getElementById('app').innerHTML =
-            '<div style="color:#d32f2f; font-weight:bold; padding:20px;">שגיאה בטעינת הנתונים. בדוק חיבור אינטרנט.</div>';
-        }
+        } catch(e) { document.getElementById('app').innerText = "שגיאה בטעינת הקובץ."; }
     }
 
-    /** פיענוח קובץ CSV עם תמיכה במירכאות **/
+    /** 2. פארסר CSV עמיד לפסיקים **/
     function parseCSV(text) {
-        // פיצול לשורות תוך תמיכה בכל סוגי ה-Line Breaks (\n או \r\n)
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
         const results = [];
-
-        // ביטוי רגולרי חכם: מפצל לפי פסיקים, אך מתעלם מפסיקים שבתוך מרכאות
+        // Regex שמזהה פסיק רק אם הוא מחוץ למירכאות
         const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
 
-        for (let i = 1; i < lines.length; i++) {
-            const cols = lines[i].split(regex).map(col => {
-                // הסרת מרכאות עוטפות (אם יש) ורווחים מיותרים
-                return col.replace(/^"|"$/g, '').trim();
-            });
-
-            if (cols.length < 7) continue;
-
+        for(let i=1; i<lines.length; i++) {
+            const cols = lines[i].split(regex).map(c => c.replace(/^"|"$/g, '').trim());
+            if(cols.length < 6) continue;
             results.push({
-                id: i - 1,
-                cat: cols[0],
-                ser: cols[1],
-                num: cols[2],
-                name: cols[3],
-                link: cols[4],
-                embed: cols[5],
-                duration: Number(cols[6]) || 0 // שמירה על עמודת משך הזמן
+                id: i-1, cat: cols[0], ser: cols[1], num: cols[2],
+                name: cols[3], link: cols[4], embed: cols[5],
+                duration: parseInt(cols[6]) || 10
             });
         }
         return results;
     }
 
-    /** בניית רשימת התצוגה (DOM) **/
+    /** 3. תצוגה **/
     function render() {
-        const app = document.getElementById('app'); app.innerHTML = '';
-        const groups = db.reduce((acc, x) => {
-            if(!acc[x.cat]) acc[x.cat] = {};
-            if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
-            acc[x.cat][x.ser].push(x);
-            return acc;
-        }, {});
+        const app = document.getElementById('app');
+        let html = '';
+        const structure = {};
 
-        for(let cat in groups) {
-            const cDiv = document.createElement('div');
-            cDiv.className = 'cat-group';
-            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
-            for(let ser in groups[cat]) {
-                const exercises = groups[cat][ser];
-                const sBtn = document.createElement('div');
-                sBtn.className = 'ser-item';
-                sBtn.innerHTML = `<div style="flex:1" onclick="toggleSerList(this)"><i class="fas fa-chevron-down" style="margin-left:8px"></i><span>${ser}</span></div>
-                                  <i class="fas fa-star star ${exercises.every(ex=>favs.includes(ex.id))?'active':''}" onclick="toggleSeriesFav(this,'${cat}','${ser}')"></i>`;
-                const list = document.createElement('ul');
-                list.className = 'ex-list';
-                exercises.forEach(ex => {
-                    const li = document.createElement('li');
-                    li.className = 'ex-row'; li.dataset.id = ex.id;
-                    const hasL = (ex.link+ex.embed).length > 10;
-                    li.innerHTML = `<span class="${hasL?'ex-link':'ex-no-link'}" onclick="${hasL?`openVById(${ex.id},false)` : ''}">${ex.num}. ${ex.name}</span>
-                                    <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id},this)"></i>`;
-                    list.appendChild(li);
+        db.forEach(ex => {
+            if(!structure[ex.cat]) structure[ex.cat] = {};
+            if(!structure[ex.cat][ex.ser]) structure[ex.cat][ex.ser] = [];
+            structure[ex.cat][ex.ser].push(ex);
+        });
+
+        for(let cat in structure) {
+            html += `<div class="cat-box">
+                <div class="cat-title">${cat}</div>`;
+            for(let ser in structure[cat]) {
+                html += `<div class="ser-title" onclick="toggleSer(this)">
+                    <span>${ser}</span> <i class="fas fa-chevron-down"></i>
+                </div>
+                <ul class="ex-list">`;
+                structure[cat][ser].forEach(ex => {
+                    const isFav = favs.includes(ex.id);
+                    html += `<li class="ex-row" data-id="${ex.id}">
+                        <div class="ex-info" onclick="openV(${db.indexOf(ex)})">
+                            <span style="color:var(--secondary); font-weight:900;">${ex.num}</span> ${ex.name}
+                        </div>
+                        <div class="fav-btn ${isFav?'active':''}" onclick="toggleFav(${ex.id}, this)">
+                            <i class="fa${isFav?'s':'r'} fa-star"></i>
+                        </div>
+                    </li>`;
                 });
-                cDiv.appendChild(sBtn); cDiv.appendChild(list);
+                html += `</ul>`;
             }
-            app.appendChild(cDiv);
+            html += `</div>`;
         }
-        if(isFavOnly) applyFilters();
+        app.innerHTML = html;
+        applyFilters();
     }
 
-    /** פתיחת וידיאו לפי מזהה **/
-    function openVById(id, isRand) {
-        isRandomMode = isRand;
-        const ex = db.find(x => x.id === id);
-        if(ex) openV(ex);
+    function toggleSer(el) {
+        const list = el.nextElementSibling;
+        list.classList.toggle('open');
+        const icon = el.querySelector('i');
+        icon.className = list.classList.contains('open') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
     }
 
-    /** ניהול המודאל וטעינת הוידיאו לנגן **/
-    function openV(ex) {
-        currentEx = ex;
-        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
-        document.getElementById('vName').innerText = ex.name;
-        document.getElementById('vModal').style.display = 'flex';
-        updateModalLayout();
-        
-        // חילוץ מזהה וידיאו (YouTube ID)
-        const url = ex.embed || ex.link;
-        let vId = '';
-        if (url.includes('v=')) vId = url.split('v=')[1].split('&')[0];
-        else if (url.includes('embed/')) vId = url.split('embed/')[1].split('?')[0];
-        else if (url.includes('youtu.be/')) vId = url.split('youtu.be/')[1].split('?')[0];
-        
-        pendingVideoId = vId; pendingStart = getStartTime(url);
-        
-        if (isRandomMode) {
-            document.getElementById('videoCover').classList.remove('hidden');
-            if(ytPlayer) ytPlayer.stopVideo(); 
-        } else {
-            document.getElementById('videoCover').classList.add('hidden');
-            if(ytPlayer && playerReady) ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
-        }
-    }
-
-    /** חילוץ זמן התחלה מכתובת ה-URL **/
-    function getStartTime(url) {
-        const m = url.match(/[?&](t|start)=([0-9]+)/);
-        return m ? parseInt(m[2]) : 0;
-    }
-
-    /** חשיפת הוידיאו במצב מבחן **/
-    function revealVideo() {
-        document.getElementById('videoCover').classList.add('hidden');
-        if(ytPlayer && playerReady) ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
-    }
-
-    /** עדכון הממשק הפנימי של המודאל (כפתורים/מונים) **/
-    function updateModalLayout() {
-        const autoBtn = document.getElementById('vAutoplayBtn');
-        const nextRandBtn = document.getElementById('vNextRandomBtn');
-        const pBtn = document.getElementById('prevBtn');
-        const nBtn = document.getElementById('nextBtn');
-        const cnt = document.getElementById('vCounter');
-        
-        [autoBtn, nextRandBtn, pBtn, nBtn].forEach(b => b.classList.add('hidden'));
-        
-        if (isRandomMode) {
-            nextRandBtn.classList.remove('hidden');
-            cnt.innerText = "מצב מבחן עצמי";
-        } else {
-            let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-            let idx = list.findIndex(x => x.id === currentEx.id);
-            if(isFavOnly) autoBtn.classList.remove('hidden');
-            pBtn.classList.remove('hidden'); nBtn.classList.remove('hidden');
-            pBtn.disabled = idx <= 0; nBtn.disabled = idx >= list.length - 1;
-            cnt.innerText = `${isFavOnly?'מועדף':'תרגיל'} ${idx+1} מתוך ${list.length}`;
-        }
-        autoBtn.classList.toggle('active', isAutoplay);
-    }
-
-    /** ניווט קדימה/אחורה בתוך המודאל **/
-    function nav(dir) {
-        if(isRandomMode) return;
-        let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        const idx = list.findIndex(x => x.id === currentEx.id);
-        if(list[idx+dir]) openV(list[idx+dir]);
-        else if(isAutoplay) closeV();
-    }
-
-    function closeV() {
-        document.getElementById('vModal').style.display = 'none';
-        if(ytPlayer) ytPlayer.stopVideo();
-        stopWatchdog(); isRandomMode = false;
-    }
-
-    /** שליטה בפתיחה/סגירה של רשימות סדרות **/
-    function toggleSerList(el) {
-        const list = el.parentElement.nextElementSibling;
-        const open = list.classList.toggle('open');
-        el.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-    }
-
-    /** ניהול מועדפים **/
-    function toggleStar(id, el) {
-        if(favs.includes(id)) favs = favs.filter(f => f !== id); else favs.push(id);
-        el.classList.toggle('active');
+    function toggleFav(id, el) {
+        if(favs.includes(id)) favs = favs.filter(i => i !== id);
+        else favs.push(id);
         localStorage.setItem('ijja_favs', JSON.stringify(favs));
+        el.classList.toggle('active');
+        el.querySelector('i').className = favs.includes(id) ? 'fas fa-star' : 'far fa-star';
         if(isFavOnly) applyFilters();
     }
 
-    function toggleSeriesFav(el, cat, ser) {
-        const exs = db.filter(x => x.cat === cat && x.ser === ser);
-        const all = exs.every(ex => favs.includes(ex.id));
-        if (all) { const ids = exs.map(x=>x.id); favs = favs.filter(id => !ids.includes(id)); }
-        else { exs.forEach(ex => { if(!favs.includes(ex.id)) favs.push(ex.id); }); }
-        localStorage.setItem('ijja_favs', JSON.stringify(favs)); render(); 
-    }
-
-    function clearFavs() {
-        if(confirm("למחוק את כל המועדפים?")) {
-            favs = []; localStorage.setItem('ijja_favs', "[]");
-            isFavOnly = false; document.getElementById('favFilterBtn').classList.remove('active');
-            render();
-        }
-    }
-
-    /** פונקציות סינון וחיפוש **/
     function toggleFavFilter() {
         isFavOnly = !isFavOnly;
         document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
@@ -503,14 +206,16 @@
     }
 
     function applyFilters() {
-        document.querySelectorAll('.cat-group').forEach(c => {
+        document.querySelectorAll('.cat-box').forEach(c => {
             let catHasVisible = false;
-            c.querySelectorAll('.ser-item').forEach(s => {
-                let serHasVisible = false; const list = s.nextElementSibling;
+            c.querySelectorAll('.ser-title').forEach(s => {
+                const list = s.nextElementSibling;
+                let serHasVisible = false;
                 list.querySelectorAll('.ex-row').forEach(row => {
                     const id = parseInt(row.dataset.id);
                     const hide = isFavOnly && !favs.includes(id);
-                    row.classList.toggle('hidden', hide); if(!hide) serHasVisible = true;
+                    row.classList.toggle('hidden', hide);
+                    if(!hide) serHasVisible = true;
                 });
                 s.classList.toggle('hidden', isFavOnly && !serHasVisible);
                 list.classList.toggle('hidden', isFavOnly && !serHasVisible);
@@ -520,30 +225,95 @@
         });
     }
 
-    /** פתיחה/סגירה גורפת של כל הסדרות **/
     function toggleAll() {
-        const anyClosed = Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l => !l.classList.contains('open'));
-        document.querySelectorAll('.ex-list').forEach(l => {
-            if(!l.classList.contains('hidden')) {
-                l.classList.toggle('open', anyClosed);
-                const icon = l.previousElementSibling.querySelector('i.fas');
-                if(icon) icon.className = anyClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-            }
+        const lists = document.querySelectorAll('.ex-list:not(.hidden)');
+        const anyClosed = Array.from(lists).some(l => !l.classList.contains('open'));
+        lists.forEach(l => {
+            l.classList.toggle('open', anyClosed);
+            const icon = l.previousElementSibling.querySelector('i');
+            if(icon) icon.className = anyClosed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
         });
     }
 
-    /** הפעלת תרגיל אקראי (מצב מבחן) **/
+    /** 4. נגן וידאו **/
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('player', {
+            playerVars: { 'autoplay': 0, 'modestbranding': 1, 'rel': 0, 'iv_load_policy': 3, 'playsinline': 1 },
+            events: { 'onStateChange': onPlayerStateChange }
+        });
+    }
+
+    function onPlayerStateChange(event) {
+        if(event.data == YT.PlayerState.PLAYING) startWatchdog();
+        else clearInterval(watchdog);
+    }
+
+    function openV(idx) {
+        currentEx = db[idx];
+        document.getElementById('vName').innerText = currentEx.name;
+        document.getElementById('calDuration').innerText = "זמן מוצג: " + currentEx.duration + " שניות";
+        document.getElementById('vModal').style.display = 'flex';
+        
+        // וידוא שהכיסוי מוסתר בפתיחה רגילה
+        if(!isRandomMode) document.getElementById('videoCover').classList.add('hidden');
+
+        const videoId = extractId(currentEx.embed);
+        const startSec = extractStart(currentEx.embed);
+        
+        ytPlayer.loadVideoById({
+            videoId: videoId,
+            startSeconds: startSec
+        });
+    }
+
+    function startWatchdog() {
+        clearInterval(watchdog);
+        const startSec = extractStart(currentEx.embed);
+        watchdog = setInterval(() => {
+            const curr = ytPlayer.getCurrentTime();
+            if(curr - startSec >= currentEx.duration) {
+                ytPlayer.seekTo(startSec);
+            }
+        }, 500);
+    }
+
+    function closeV() {
+        document.getElementById('vModal').style.display = 'none';
+        ytPlayer.stopVideo();
+        clearInterval(watchdog);
+        isRandomMode = false; // איפוס תמיד בסגירה
+    }
+
+    function extractId(url) {
+        const parts = url.split('/');
+        return parts[parts.length-1].split('?')[0];
+    }
+
+    function extractStart(url) {
+        const match = url.match(/start=(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+    }
+
+    /** 5. מצב מבחן אקראי **/
     function playRandom() {
-        const pool = db.filter(x => (x.link+x.embed).length > 10);
-        if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id, true);
+        const pool = db.filter(x => x.duration > 0);
+        if(pool.length === 0) return;
+        
+        isRandomMode = true;
+        const randEx = pool[Math.floor(Math.random() * pool.length)];
+        
+        // הצגת הכיסוי לפני טעינת הסרטון
+        document.getElementById('videoCover').classList.remove('hidden');
+        openV(db.indexOf(randEx));
+    }
+
+    function revealVideo() {
+        document.getElementById('videoCover').classList.add('hidden');
+        ytPlayer.playVideo();
     }
 
     window.onload = init;
 </script>
+
 </body>
 </html>
-
-
-
-
-
