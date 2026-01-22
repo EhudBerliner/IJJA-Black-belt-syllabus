@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.2.6</title>
+    <title>Black belt syllabus - v2.2.7</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -274,12 +274,16 @@
     /** מנגנון Watchdog - מגביל את משך הצפייה וחוזר להתחלה **/
     function startWatchdog() {
         stopWatchdog();
+    
+        // 🔁 בזמן Autoplay – לא מפעילים Watchdog
+        if (isAutoplay) return;
+    
         if (watchdogEnabled && currentEx && currentEx.duration > 0) {
             const start = getStartTime(currentEx.embed || currentEx.link);
             watchdogInterval = setInterval(() => {
-                if(ytPlayer.getCurrentTime() - start >= currentEx.duration) { 
-                    ytPlayer.pauseVideo(); 
-                    ytPlayer.seekTo(start); 
+                if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
+                    ytPlayer.pauseVideo();
+                    ytPlayer.seekTo(start);
                 }
             }, 400);
         }
@@ -293,10 +297,18 @@
 
     /** ניהול ניגון רצוף (Autoplay) **/
     function toggleAutoplay() { 
-        isAutoplay = !isAutoplay; 
-        if (isAutoplay) { watchdogEnabled = false; document.getElementById('watchdogToggle').classList.remove('active'); }
-        updateModalLayout(); 
+    isAutoplay = !isAutoplay;
+
+    if (isAutoplay) {
+        watchdogEnabled = false;
+        document.getElementById('watchdogToggle').classList.remove('active');
+    } else {
+        watchdogEnabled = true;
+        document.getElementById('watchdogToggle').classList.add('active');
     }
+    updateModalLayout(); 
+    }
+
 
     /** טעינה ראשונית של הנתונים מהשרת **/
     async function init() {
@@ -542,6 +554,7 @@
 </script>
 </body>
 </html>
+
 
 
 
