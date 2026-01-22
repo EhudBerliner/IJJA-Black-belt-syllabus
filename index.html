@@ -298,21 +298,33 @@
 
     /** פיענוח קובץ CSV עם תמיכה במירכאות **/
     function parseCSV(text) {
-        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 5);
-        return lines.slice(1).map((line, i) => {
-            let row = [], cur = '', inQ = false;
-            for(let char of line) {
-                if(char === '"') inQ = !inQ;
-                else if(char === ',' && !inQ) { row.push(cur.trim()); cur = ''; }
-                else cur += char;
-            }
-            row.push(cur.trim());
-            return { 
-                id: i+1, cat: row[0], ser: row[1], num: row[2], 
-                name: row[3], link: row[4]||"", embed: row[5]||"", 
-                duration: parseInt(row[6]) || 0 
-            };
-        });
+        // פיצול לשורות תוך תמיכה בכל סוגי ה-Line Breaks (\n או \r\n)
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+        const results = [];
+
+        // ביטוי רגולרי חכם: מפצל לפי פסיקים, אך מתעלם מפסיקים שבתוך מרכאות
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+
+        for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(regex).map(col => {
+                // הסרת מרכאות עוטפות (אם יש) ורווחים מיותרים
+                return col.replace(/^"|"$/g, '').trim();
+            });
+
+            if (cols.length < 6) continue;
+
+            results.push({
+                id: i - 1,
+                cat: cols[0],
+                ser: cols[1],
+                num: cols[2],
+                name: cols[3],
+                link: cols[4],
+                embed: cols[5],
+                duration: cols[6] || 0 // שמירה על עמודת משך הזמן
+            });
+        }
+        return results;
     }
 
     /** בניית רשימת התצוגה (DOM) **/
@@ -514,5 +526,6 @@
 </script>
 </body>
 </html>
+
 
 
