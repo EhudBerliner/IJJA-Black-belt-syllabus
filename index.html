@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.2.9</title>
+    <title>Black belt syllabus - v2.3.0</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -155,7 +155,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.2.9</small></div>
+        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.3.0</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -259,7 +259,19 @@
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
             playerVars: { 'autoplay': 1, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-            events: { 'onReady': () => { playerReady = true; }, 'onStateChange': onPlayerStateChange }
+            events: { 
+                'onReady': () => { 
+                    playerReady = true;
+                    if (pendingVideoId) {
+                        ytPlayer.loadVideoById({
+                            videoId: pendingVideoId,
+                            startSeconds: pendingStart || 0
+                            });
+                        }
+                    }, 
+                    'onStateChange': onPlayerStateChange 
+                }
+
         });
     }
 
@@ -421,7 +433,14 @@
             if(ytPlayer) ytPlayer.stopVideo(); 
         } else {
             document.getElementById('videoCover').classList.add('hidden');
-            if(ytPlayer && playerReady) ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
+        if (ytPlayer && playerReady) {
+            ytPlayer.loadVideoById({
+                videoId: pendingVideoId,
+                startSeconds: pendingStart
+            });
+        }
+        // אחרת – onReady כבר יטפל בזה
+
         }
     }
 
@@ -554,6 +573,7 @@
 </script>
 </body>
 </html>
+
 
 
 
