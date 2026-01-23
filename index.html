@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.13</title>
+    <title>Black belt syllabus - v2.3.14</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -203,7 +203,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v2.3.13</small>
+            <small id="appVersion" style="color:#888">v2.3.14</small>
         </div>
     </div>
     <div class="action-bar">
@@ -513,16 +513,16 @@
         if(ex) openV(ex); 
     }
 
-    function openV(ex) {
-        currentEx=ex;
-        document.getElementById('vPath').innerText=`${ex.cat} > ${ex.ser}`;
-        document.getElementById('vName').innerText=ex.name;
-        document.getElementById('vModal').style.display='flex';
-        updateModalLayout();
+function openV(ex) {
+    currentEx = ex;
+    document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
+    document.getElementById('vName').innerText = ex.name;
+    document.getElementById('vModal').style.display = 'flex';
+    updateModalLayout();
 
-        const url = ex.embed || ex.link;
-        
-        function extractVideoId(url){
+    const url = ex.embed || ex.link;
+
+    function extractVideoId(url){
         if(!url) return '';
         let id = '';
         if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
@@ -534,24 +534,23 @@
     pendingVideoId = extractVideoId(url);
     pendingStart = getStartTime(url);
 
-        const cover = document.getElementById('videoCover');
-        if (isRandomMode) {
-            cover.classList.remove('hidden');
-            if (ytPlayer && playerReady) ytPlayer.stopVideo();
-        } else {
-            cover.classList.add('hidden');
-            if (ytPlayer && playerReady && pendingVideoId) {
-                const currentId = ytPlayer.getVideoData ? ytPlayer.getVideoData().video_id : null;
-                const start = getStartTime(ex.embed || ex.link);
-                if (currentId !== pendingVideoId || pendingStart !== start) {
-                    ytPlayer.loadVideoById({
-                        videoId: pendingVideoId,
-                        startSeconds: pendingStart
-                    });
-                }
-            }
+    const cover = document.getElementById('videoCover');
+
+    if (isRandomMode) {
+        cover.classList.remove('hidden');
+        if (ytPlayer && playerReady) ytPlayer.stopVideo();
+    } else {
+        cover.classList.add('hidden');
+        // ✅ תמיד טען מחדש את הסרטון
+        if (ytPlayer && playerReady && pendingVideoId) {
+            ytPlayer.loadVideoById({
+                videoId: pendingVideoId,
+                startSeconds: pendingStart
+            });
         }
     }
+}
+
 
     /** חילוץ זמן התחלה מ-URL **/
     function getStartTime(url){ 
@@ -611,25 +610,19 @@
     }
         
     /** ניווט בין תרגילים (קדימה/אחורה) **/
-    function nav(dir) {
-        if(isRandomMode) return;
-        const list = getCurrentListFull();
-        const idx = list.findIndex(x => x.id === currentEx.id);
+function nav(dir) {
+    if(isRandomMode) return;
+    const list = getCurrentListFull();
+    const idx = list.findIndex(x => x.id === currentEx.id);
+    if(idx === -1) return; // לא נמצא ברשימה, עצור
 
-        if(list[idx + dir]) {
-            openV(list[idx + dir]);
-        } else {
-            if(!isFavOnly) {
-                closeV();
-            } else if(isAutoplay && isFavOnly) {
-                const remaining = list.slice(idx + 1);
-                if(remaining.length) openV(remaining[0]);
-                else closeV();
-            } else {
-                closeV();
-            }
-        }
+    if(list[idx + dir]) {
+        openV(list[idx + dir]);
+    } else {
+        closeV();
     }
+}
+
 
     /** סגירת מודאל **/
     function closeV() { 
@@ -729,5 +722,6 @@
 </script>
 </body>
 </html>
+
 
 
