@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.10</title>
+    <title>Black belt syllabus - v2.3.11</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -155,7 +155,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small id="appVersion" style="color:#888">v2.3.10</small></div>
+        <div><h1>סילבוס חגורה שחורה</h1><small id="appVersion" style="color:#888">v2.3.11</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -289,9 +289,12 @@ function onYouTubeIframeAPIReady() {
             'onReady': () => { 
                 playerReady = true;
                 if (pendingVideoId) {
-                    ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
-                    ytPlayer.playVideo();
+                    ytPlayer.loadVideoById({
+                        videoId: pendingVideoId,
+                        startSeconds: pendingStart
+                    });
                 }
+
             },
             'onStateChange': onPlayerStateChange
         }
@@ -489,17 +492,19 @@ function openV(ex) {
     pendingVideoId=vId; pendingStart=getStartTime(url);
 
 const cover = document.getElementById('videoCover');
-        if(isRandomMode) {
-            cover.classList.remove('hidden'); 
-            if(ytPlayer && playerReady) ytPlayer.stopVideo();
+        if (isRandomMode) {
+            cover.classList.remove('hidden');
+            if (ytPlayer && playerReady) ytPlayer.stopVideo();
         } else {
             cover.classList.add('hidden');
-            // אם player מוכן - טען והפעל וידיאו
-            if(ytPlayer && playerReady) {
-                ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
-                ytPlayer.playVideo();
+        
+            // ✅ מקור אמת יחיד לטעינת וידאו
+            if (ytPlayer && playerReady) {
+                ytPlayer.loadVideoById({
+                    videoId: pendingVideoId,
+                    startSeconds: pendingStart
+                });
             }
-            // אחרת pendingVideoId יטופל ב-onReady
         }
 }
 
@@ -651,6 +656,7 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
 
 
