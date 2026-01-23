@@ -491,21 +491,25 @@ function openV(ex) {
 
     pendingVideoId=vId; pendingStart=getStartTime(url);
 
-const cover = document.getElementById('videoCover');
-        if (isRandomMode) {
-            cover.classList.remove('hidden');
-            if (ytPlayer && playerReady) ytPlayer.stopVideo();
-        } else {
-            cover.classList.add('hidden');
-        
-            // ✅ מקור אמת יחיד לטעינת וידאו
-            if (ytPlayer && playerReady) {
+    const cover = document.getElementById('videoCover');
+    if (isRandomMode) {
+        cover.classList.remove('hidden');
+        if (ytPlayer && playerReady) ytPlayer.stopVideo();
+    } else {
+        cover.classList.add('hidden');
+    
+        // ✅ מקור אמת יחיד לטעינת וידאו – טעינה רק אם משתנה
+        if (ytPlayer && playerReady) {
+            const currentId = ytPlayer.getVideoData ? ytPlayer.getVideoData().video_id : null;
+            if (currentId !== pendingVideoId || pendingStart !== getStartTime(ex.embed || ex.link)) {
                 ytPlayer.loadVideoById({
                     videoId: pendingVideoId,
                     startSeconds: pendingStart
                 });
             }
         }
+    }
+
 }
 
 /** Start Time **/
@@ -656,6 +660,7 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
 
 
