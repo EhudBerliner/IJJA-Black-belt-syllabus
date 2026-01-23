@@ -237,40 +237,45 @@ scrollContainer.addEventListener('touchend', e => {
 
 /** Service Worker PWA **/
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-    navigator.serviceWorker.ready.then(reg => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
         reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // עדכון אוטומטי ללא בקשה
-                    location.reload();
+                    // עדכון אוטומטי פעם אחת בלבד
+                    if (!sessionStorage.getItem('reloaded')) {
+                        sessionStorage.setItem('reloaded','true');
+                        location.reload();
+                    }
                 }
             });
         });
     });
 }
 
-async function loadVersion() {
-    try {
+/** Load version.json **/
+async function loadVersion(){
+    try{
         const r = await fetch(`version.json?t=${Date.now()}`);
         const v = await r.json();
         const currentVersion = document.getElementById('appVersion').innerText.replace('v','');
-
-        // אם הגרסה שונה מהנוכחית – טוען מחדש אוטומטית
-        if(currentVersion !== v.version && navigator.onLine) {
+        
+        // אם הגרסה שונה מהנוכחית – טוען מחדש אוטומטית פעם אחת בלבד
+        if(currentVersion !== v.version && navigator.onLine){
             document.getElementById('appVersion').innerText = 'v' + v.version;
-            location.reload();
+            if (!sessionStorage.getItem('reloaded')) {
+                sessionStorage.setItem('reloaded','true');
+                location.reload();
+            }
         } else {
             document.getElementById('appVersion').innerText = 'v' + v.version;
         }
-
         return v.version;
-    } catch (e) {
+    } catch(e){
         console.warn('version.json לא נטען');
         return null;
     }
-}
+}  
     
     /** קבלת התרגיל הבא עבור Autoplay **/
 function getNextExercise() {
@@ -674,6 +679,7 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
 
 
