@@ -293,22 +293,23 @@
 
 
     /** מנגנון Watchdog - מגביל את משך הצפייה וחוזר להתחלה **/
-    function startWatchdog() {
-        stopWatchdog();
-    
-        // 🔁 בזמן Autoplay – מתעלמים מה-Watchdog
-        if (isAutoplay) return;
-    
-        if (watchdogEnabled && currentEx && currentEx.duration > 0) {
-            const start = getStartTime(currentEx.embed || currentEx.link);
-            watchdogInterval = setInterval(() => {
-                if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
-                    ytPlayer.pauseVideo();
-                    ytPlayer.seekTo(start);
+   function startWatchdog() {
+    stopWatchdog();
+
+    // ✅ תיקון: בזמן Autoplay לא מפעילים Watchdog
+    if (isAutoplay) return;
+
+    if (watchdogEnabled && currentEx && currentEx.duration > 0) {
+        const start = getStartTime(currentEx.embed || currentEx.link);
+        watchdogInterval = setInterval(() => {
+            if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
+                ytPlayer.pauseVideo();
+                ytPlayer.seekTo(start);
                 }
             }, 400);
         }
     }
+
 
     function stopWatchdog() { clearInterval(watchdogInterval); }
 
@@ -574,6 +575,7 @@
 </script>
 </body>
 </html>
+
 
 
 
