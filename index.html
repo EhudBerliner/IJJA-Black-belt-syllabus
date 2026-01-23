@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.4</title>
+    <title>Black belt syllabus - v2.3.5</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -155,7 +155,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.3.4</small></div>
+        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.3.5</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -421,8 +421,8 @@ function updateModalLayout() {
 
     if(isRandomMode) { nextRandBtn.classList.remove('hidden'); cnt.innerText="מצב מבחן עצמי"; }
     else {
-        let list = isFavOnly ? db.filter(x => favs.includes(x.id)) : db.filter(x=>x.cat===currentEx.cat && x.ser===currentEx.ser);
-        let idx = list.findIndex(x=>x.id===currentEx.id);
+        let list = getCurrentListFull();
+        let idx = list.findIndex(x => x.id === currentEx.id);
         if(isFavOnly) autoBtn.classList.remove('hidden');
         pBtn.classList.remove('hidden'); nBtn.classList.remove('hidden');
         pBtn.disabled = idx<=0; nBtn.disabled=idx>=list.length-1;
@@ -432,29 +432,37 @@ function updateModalLayout() {
 }
 
 /** רשימת התרגילים לפי מצב נוכחי **/
-function getCurrentList() {
-    if(isFavOnly) return db.filter(x => favs.includes(x.id));
-    return db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+function getCurrentListFull() {
+    if (!currentEx) return [];
+    if (isFavOnly) {
+        // כל התרגילים המועדפים מכל הסדרות
+        return db.filter(x => favs.includes(x.id));
+    } else {
+        // רק הסדרה הנוכחית
+        return db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+    }
 }
     
 /** Navigation **/
 function nav(dir) {
     if(isRandomMode) return;
-    const list = getCurrentList();
+
+    const list = getCurrentListFull();
     const idx = list.findIndex(x => x.id === currentEx.id);
 
-    // אם יש תרגיל הבא/הקודם
     if(list[idx + dir]) {
         openV(list[idx + dir]);
-    }
-    else {
-        // אם Autoplay דלוק ומצב מועדפים, נסה לעבור לתרגיל הבא ברשימת מועדפים
-        if(isAutoplay && isFavOnly) {
+    } else {
+        // עצירה בסוף הסדרה (לא במצב מועדפים)
+        if(!isFavOnly) {
+            closeV();
+        } else if(isAutoplay && isFavOnly) {
             const remaining = list.slice(idx + 1);
             if(remaining.length) openV(remaining[0]);
             else closeV(); // אין יותר תרגילים
+        } else {
+            closeV();
         }
-        else closeV();
     }
 }
 
@@ -526,6 +534,7 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
 
 
