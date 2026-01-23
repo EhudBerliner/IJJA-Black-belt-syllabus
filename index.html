@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
+        /* משתני עיצוב גלובליים */
         :root {
             --primary: #0056a6;   /* כחול מותג ראשי */
             --secondary: #009be5; /* כחול בהיר לאלמנטים משניים */
@@ -24,13 +25,28 @@
         }
 
         /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
-        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Heebo', sans-serif; background: #f7f9fb; }
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: 'Heebo', sans-serif; 
+            background: #f7f9fb; 
+        }
 
-        /* כותרת עליונה קבועה */
+        /* כותרת עליונה קבועה (Header) */
         header {
-            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
+            height: var(--header-h); 
+            background: white; 
+            border-bottom: 3px solid var(--primary);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 0 20px; 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 1200; 
+            box-sizing: border-box;
         }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
@@ -47,7 +63,7 @@
         .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-danger { color: var(--danger); }
 
-        /* אלמנט ויזואלי לרענון במשיכה */
+        /* אלמנט ויזואלי לרענון במשיכה (Pull to Refresh) */
         #ptr {
             position: absolute; top: var(--header-h); left: 0; width: 100%; height: 50px;
             display: flex; align-items: center; justify-content: center;
@@ -77,7 +93,13 @@
             z-index: 1100;
         }
 
-        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; transition: transform 0.2s; }
+        .main-content { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 15px; 
+            padding-bottom: 80px; 
+            transition: transform 0.2s; 
+        }
         
         /* כותרת קטגוריה - נדבקת לראש הדף בגלילה */
         .cat-group { margin-bottom: 25px; }
@@ -103,11 +125,17 @@
         .star.active { color: var(--fav-color); }
 
         /* מודאל נגן הוידיאו */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; 
+        }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 500px; position: relative; }
         
         /* מיכל הסרטון - יחס 16:9 */
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .video-container { 
+            position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; 
+            background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+        }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
         /* מסך כיסוי למצב "מבחן עצמי" */
@@ -138,11 +166,18 @@
 
         /* כפתורי שליטה במודאל */
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .modal-btn { position: absolute; top: -45px; right: 0; width: 38px; height: 38px; border-radius: 8px; border: 1px solid white; background: transparent; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; }
+        .modal-btn { 
+            position: absolute; top: -45px; right: 0; width: 38px; height: 38px; border-radius: 8px; 
+            border: 1px solid white; background: transparent; color: white; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.1em; 
+        }
         .modal-btn.active { background: var(--success); border-color: var(--success); }
 
         .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: center; }
-        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .nav-btn { 
+            background: var(--primary); color: white; border: none; width: 35px; height: 35px; 
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+        }
         .nav-btn:disabled { background: #eee !important; color: #bbb; }
 
         .hidden { display: none !important; }
@@ -155,7 +190,10 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small id="appVersion" style="color:#888">v2.3.11</small></div>
+        <div>
+            <h1>סילבוס חגורה שחורה</h1>
+            <small id="appVersion" style="color:#888">v2.3.11</small>
+        </div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -201,487 +239,476 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-/** משתנים גלובליים **/
-let prevWatchdogState = null;   // לשחזור מצב Watchdog
-let db = [], favs = [];
-try {
-    favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-} catch (e) {
-    favs = [];
-    localStorage.setItem('ijja_favs', "[]");
-}
-let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
-let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
-let pendingVideoId = '', pendingStart = 0;
-
-/** Pull-to-Refresh **/
-let startY = 0;
-const scrollContainer = document.getElementById('scrollContainer');
-const ptr = document.getElementById('ptr');
-const appMain = document.getElementById('app');
-
-scrollContainer.addEventListener('touchstart', e => { if (scrollContainer.scrollTop === 0) startY = e.touches[0].pageY; }, {passive: true});
-scrollContainer.addEventListener('touchmove', e => {
-    const y = e.touches[0].pageY;
-    if (scrollContainer.scrollTop === 0 && y > startY) {
-        const diff = Math.min((y - startY) * 0.4, 60);
-        ptr.style.transform = `translateY(${diff - 50}px)`;
-        appMain.style.transform = `translateY(${diff}px)`;
+    /** משתנים גלובליים **/
+    let prevWatchdogState = null;   // לשחזור מצב Watchdog
+    let db = [], favs = [];
+    
+    // טעינת מועדפים מהזיכרון המקומי
+    try {
+        favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
+    } catch (e) {
+        favs = [];
+        localStorage.setItem('ijja_favs', "[]");
     }
-}, {passive: true});
-scrollContainer.addEventListener('touchend', e => {
-    const y = e.changedTouches[0].pageY;
-    if (scrollContainer.scrollTop === 0 && y - startY > 120) location.reload();
-    ptr.style.transform = 'translateY(-100%)'; appMain.style.transform = 'translateY(0)';
-});
 
-/** Service Worker PWA **/
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-    navigator.serviceWorker.ready.then(reg => {
-        reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) location.reload();
-                }
+    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
+    let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
+    let pendingVideoId = '', pendingStart = 0;
+
+    /** Pull-to-Refresh: מנגנון עדכון במשיכה כלפי מטה **/
+    let startY = 0;
+    const scrollContainer = document.getElementById('scrollContainer');
+    const ptr = document.getElementById('ptr');
+    const appMain = document.getElementById('app');
+
+    scrollContainer.addEventListener('touchstart', e => { 
+        if (scrollContainer.scrollTop === 0) startY = e.touches[0].pageY; 
+    }, {passive: true});
+
+    scrollContainer.addEventListener('touchmove', e => {
+        const y = e.touches[0].pageY;
+        if (scrollContainer.scrollTop === 0 && y > startY) {
+            const diff = Math.min((y - startY) * 0.4, 60);
+            ptr.style.transform = `translateY(${diff - 50}px)`;
+            appMain.style.transform = `translateY(${diff}px)`;
+        }
+    }, {passive: true});
+
+    scrollContainer.addEventListener('touchend', e => {
+        const y = e.changedTouches[0].pageY;
+        if (scrollContainer.scrollTop === 0 && y - startY > 120) location.reload();
+        ptr.style.transform = 'translateY(-100%)'; 
+        appMain.style.transform = 'translateY(0)';
+    });
+
+    /** Service Worker PWA: רישום וניהול גרסאות אפליקציה **/
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+        navigator.serviceWorker.ready.then(reg => {
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) location.reload();
+                    }
+                });
             });
         });
-    });
-}
-
-async function loadVersion() {
-    try {
-        const r = await fetch('version.json', { cache: 'no-store' });
-        const v = await r.json();
-        document.getElementById('appVersion').innerText = 'v' + v.version;
-        return v.version;
-    } catch (e) {
-        console.warn('version.json not loaded');
-        return null;
-    }
-}
-    
-    /** קבלת התרגיל הבא עבור Autoplay **/
-function getNextExercise() {
-    if (!currentEx) return null;
-
-    let list = [];
-    if(isFavOnly) {
-        // כל התרגילים המועדפים
-        list = db.filter(x => favs.includes(x.id));
-    } else {
-        // כל התרגילים בסדרה הנוכחית
-        list = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
     }
 
-    const idx = list.findIndex(x => x.id === currentEx.id);
-    if(idx < 0 || idx + 1 >= list.length) return null; // אין תרגיל הבא
-    return list[idx + 1];
-}
-    
-/** YouTube Player **/
-function onYouTubeIframeAPIReady() {
-    ytPlayer = new YT.Player('player', {
-        height: '100%', width: '100%',
-        playerVars: { 'modestbranding': 1, 'rel': 0, 'playsinline': 1 }, // הסר autoplay
-        events: { 
-            'onReady': () => { 
-                playerReady = true;
-                if (pendingVideoId) {
+    // טעינת גרסה מקובץ חיצוני
+    async function loadVersion() {
+        try {
+            const r = await fetch('version.json', { cache: 'no-store' });
+            const v = await r.json();
+            document.getElementById('appVersion').innerText = 'v' + v.version;
+            return v.version;
+        } catch (e) {
+            console.warn('version.json not loaded');
+            return null;
+        }
+    }
+        
+    /** לוגיקת ניווט: קבלת התרגיל הבא עבור Autoplay **/
+    function getNextExercise() {
+        if (!currentEx) return null;
+        let list = [];
+        if(isFavOnly) {
+            list = db.filter(x => favs.includes(x.id));
+        } else {
+            list = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+        }
+        const idx = list.findIndex(x => x.id === currentEx.id);
+        if(idx < 0 || idx + 1 >= list.length) return null;
+        return list[idx + 1];
+    }
+        
+    /** YouTube Player: אתחול הנגן **/
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('player', {
+            height: '100%', width: '100%',
+            playerVars: { 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
+            events: { 
+                'onReady': () => { 
+                    playerReady = true;
+                    if (pendingVideoId) {
+                        ytPlayer.loadVideoById({
+                            videoId: pendingVideoId,
+                            startSeconds: pendingStart
+                        });
+                    }
+                },
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    /** ניהול מצבי נגן **/
+    function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+            if (watchdogEnabled) startWatchdog();
+        }
+
+        if (event.data === YT.PlayerState.ENDED) {
+            stopWatchdog();
+            // מעבר אוטומטי בסיום סרטון
+            if (!watchdogEnabled && isAutoplay && isFavOnly) {
+                const list = getCurrentListFull();
+                const idx = list.findIndex(x => x.id === currentEx.id);
+                if (list[idx + 1]) openV(list[idx + 1]);
+                else if (list.length) openV(list[0]);
+            }
+        }
+
+        if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
+    }
+
+    /** Watchdog: מנגנון הגבלת זמן ניגון וחזרה להתחלה **/
+    function startWatchdog() {
+        stopWatchdog();
+        if (!watchdogEnabled || !currentEx || currentEx.duration <= 0) return;
+        const start = getStartTime(currentEx.embed || currentEx.link);
+
+        watchdogInterval = setInterval(() => {
+            if (!ytPlayer) return;
+            if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
+                stopWatchdog();
+                if (isAutoplay && isFavOnly) {
+                    const list = getCurrentListFull();
+                    const idx = list.findIndex(x => x.id === currentEx.id);
+                    if (list[idx + 1]) openV(list[idx + 1]);
+                    else if (list.length) openV(list[0]);
+                } else {
+                    ytPlayer.pauseVideo();
+                    ytPlayer.seekTo(start);
+                }
+            }
+        }, 400);
+    }
+
+    function stopWatchdog() { clearInterval(watchdogInterval); }
+
+    function toggleWatchdog() {
+        watchdogEnabled = !watchdogEnabled;
+        document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
+    }
+
+    /** Autoplay: מצב ניגון רצוף **/
+    function toggleAutoplay() {
+        if (!isFavOnly) return; // מותר רק במועדפים
+        isAutoplay = !isAutoplay;
+        if (isAutoplay) {
+            prevWatchdogState = watchdogEnabled;
+            watchdogEnabled = true;
+            document.getElementById('watchdogToggle').classList.toggle('active', true);
+            if (currentEx && ytPlayer && playerReady) revealVideo();
+        } else {
+            if (prevWatchdogState !== null) {
+                watchdogEnabled = prevWatchdogState;
+                document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
+            }
+        }
+        updateModalLayout();
+    }
+
+    /** טעינת נתונים ראשונית מה-CSV **/
+    async function init() {
+        try {
+            const r = await fetch('Black_belt_syllabus_IJJA.csv', { cache: 'no-cache' });
+            const txt = await r.text();
+            db = parseCSV(txt);
+            render();
+        } catch (e) {
+            console.error("CSV Load Fail", e);
+            document.getElementById('app').innerHTML =
+            '<div style="color:#d32f2f; font-weight:bold; padding:20px;">שגיאה בטעינת הנתונים. בדוק חיבור אינטרנט.</div>';
+        }
+    }
+
+    /** ניתוח מבנה ה-CSV **/
+    function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+        const results = [];
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; // התעלמות מפסיקים בתוך גרשיים
+        for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(regex).map(c => c.replace(/^"|"$/g,'').trim());
+            if (cols.length < 7) continue;
+            results.push({
+                id: i-1, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3],
+                link: cols[4], embed: cols[5], duration: Number(cols[6]) || 0
+            });
+        }
+        return results;
+    }
+
+    /** בניית ממשק המשתמש (DOM Rendering) **/
+    function render() {
+        const app = document.getElementById('app'); 
+        app.innerHTML = '';
+        
+        // קיבוץ נתונים לפי קטגוריה וסדרה
+        const groups = db.reduce((acc, x) => {
+            if(!acc[x.cat]) acc[x.cat] = {};
+            if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
+            acc[x.cat][x.ser].push(x);
+            return acc;
+        }, {});
+
+        for(let cat in groups) {
+            const cDiv = document.createElement('div'); 
+            cDiv.className='cat-group';
+            cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
+            
+            for(let ser in groups[cat]) {
+                const exercises = groups[cat][ser];
+                const sBtn = document.createElement('div'); 
+                sBtn.className='ser-item';
+                sBtn.innerHTML = `
+                    <div style="flex:1" onclick="toggleSerList(this)">
+                        <i class="fas fa-chevron-down" style="margin-left:8px"></i>
+                        <span>${ser}</span>
+                    </div>
+                    <i class="fas fa-star star ${exercises.every(ex=>favs.includes(ex.id))?'active':''}" 
+                       onclick="toggleSeriesFav(this,'${cat}','${ser}')"></i>`;
+                
+                const list = document.createElement('ul'); 
+                list.className='ex-list';
+                
+                exercises.forEach(ex=>{
+                    const li = document.createElement('li'); 
+                    li.className='ex-row'; 
+                    li.dataset.id=ex.id;
+                    const hasL = (ex.link+ex.embed).length>10;
+                    li.innerHTML = `
+                        <span class="${hasL?'ex-link':'ex-no-link'}" 
+                              onclick="${hasL?`openVById(${ex.id},false)` : ''}">
+                              ${ex.num}. ${ex.name}</span>
+                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" 
+                           onclick="toggleStar(${ex.id},this)"></i>`;
+                    list.appendChild(li);
+                });
+                cDiv.appendChild(sBtn); 
+                cDiv.appendChild(list);
+            }
+            app.appendChild(cDiv);
+        }
+        if(isFavOnly) applyFilters();
+    }
+
+    /** פתיחת סרטון לפי מזהה **/
+    function openVById(id, isRand) { 
+        isRandomMode=isRand; 
+        const ex=db.find(x=>x.id===id); 
+        if(ex) openV(ex); 
+    }
+
+    function openV(ex) {
+        currentEx=ex;
+        document.getElementById('vPath').innerText=`${ex.cat} > ${ex.ser}`;
+        document.getElementById('vName').innerText=ex.name;
+        document.getElementById('vModal').style.display='flex';
+        updateModalLayout();
+
+        const url = ex.embed || ex.link;
+        let vId='';
+        if(url.includes('v=')) vId=url.split('v=')[1].split('&')[0];
+        else if(url.includes('embed/')) vId=url.split('embed/')[1].split('?')[0];
+        else if(url.includes('youtu.be/')) vId=url.split('youtu.be/')[1].split('?')[0];
+
+        pendingVideoId=vId; 
+        pendingStart=getStartTime(url);
+
+        const cover = document.getElementById('videoCover');
+        if (isRandomMode) {
+            cover.classList.remove('hidden');
+            if (ytPlayer && playerReady) ytPlayer.stopVideo();
+        } else {
+            cover.classList.add('hidden');
+            if (ytPlayer && playerReady) {
+                const currentId = ytPlayer.getVideoData ? ytPlayer.getVideoData().video_id : null;
+                if (currentId !== pendingVideoId || pendingStart !== getStartTime(ex.embed || ex.link)) {
                     ytPlayer.loadVideoById({
                         videoId: pendingVideoId,
                         startSeconds: pendingStart
                     });
                 }
-
-            },
-            'onStateChange': onPlayerStateChange
+            }
         }
-    });
-}
-
-/** Player State Change **/
-function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.PLAYING) {
-    if (watchdogEnabled) startWatchdog();
     }
 
+    /** חילוץ זמן התחלה מ-URL **/
+    function getStartTime(url){ 
+        const m=url.match(/[?&](t|start)=([0-9]+)/); 
+        return m?parseInt(m[2]):0; 
+    }
 
-    if (event.data === YT.PlayerState.ENDED) {
-    stopWatchdog();
+    /** הצגת הוידאו במצב מבחן עצמי **/
+    function revealVideo() {
+        const cover = document.getElementById('videoCover');
+        cover.classList.add('hidden');
+        if (!ytPlayer || !playerReady) return;
+        const state = ytPlayer.getPlayerState();
+        if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.PAUSED) {
+            ytPlayer.playVideo();
+        } else {
+            ytPlayer.loadVideoById({
+                videoId: pendingVideoId,
+                startSeconds: pendingStart
+            });
+        }
+    }
 
-    // סיום טבעי מטופל רק אם Watchdog לא פעיל
-    if (!watchdogEnabled && isAutoplay && isFavOnly) {
+    /** עדכון נראות כפתורים במודאל **/
+    function updateModalLayout() {
+        const autoBtn=document.getElementById('vAutoplayBtn');
+        const nextRandBtn=document.getElementById('vNextRandomBtn');
+        const pBtn=document.getElementById('prevBtn');
+        const nBtn=document.getElementById('nextBtn');
+        const cnt=document.getElementById('vCounter');
+        [autoBtn,nextRandBtn,pBtn,nBtn].forEach(b=>b.classList.add('hidden'));
+
+        if(isRandomMode) { 
+            nextRandBtn.classList.remove('hidden'); 
+            cnt.innerText="מצב מבחן עצמי"; 
+        } else {
+            let list = getCurrentListFull();
+            let idx = list.findIndex(x => x.id === currentEx.id);
+            if(isFavOnly) autoBtn.classList.remove('hidden');
+            pBtn.classList.remove('hidden'); 
+            nBtn.classList.remove('hidden');
+            pBtn.disabled = idx<=0; 
+            nBtn.disabled=idx>=list.length-1;
+            cnt.innerText=`${isFavOnly?'מועדף':'תרגיל'} ${idx+1} מתוך ${list.length}`;
+        }
+        autoBtn.classList.toggle('active',isAutoplay);
+    }
+
+    /** קבלת הרשימה הרלוונטית לניווט **/
+    function getCurrentListFull() {
+        if (!currentEx) return [];
+        if (isFavOnly) {
+            return db.filter(x => favs.includes(x.id));
+        } else {
+            return db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+        }
+    }
+        
+    /** ניווט בין תרגילים (קדימה/אחורה) **/
+    function nav(dir) {
+        if(isRandomMode) return;
         const list = getCurrentListFull();
         const idx = list.findIndex(x => x.id === currentEx.id);
 
-        if (list[idx + 1]) openV(list[idx + 1]);
-        else if (list.length) openV(list[0]);
-        }
-    }
-
-
-    if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
-}
-
-/** Watchdog **/
-function startWatchdog() {
-    stopWatchdog();
-
-    if (!watchdogEnabled || !currentEx || currentEx.duration <= 0) return;
-
-    const start = getStartTime(currentEx.embed || currentEx.link);
-
-    watchdogInterval = setInterval(() => {
-        if (!ytPlayer) return;
-
-        if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
-
-            stopWatchdog();
-
-            // מצב Autoplay + מועדפים ⇒ מעבר אוטומטי
-            if (isAutoplay && isFavOnly) {
-                const list = getCurrentListFull();
-                const idx = list.findIndex(x => x.id === currentEx.id);
-
-                // אם יש הבא – עבור אליו
-                if (list[idx + 1]) {
-                    openV(list[idx + 1]);
-                }
-                // אם זה האחרון – חזור לראשון
-                else if (list.length) {
-                    openV(list[0]);
-                }
-            }
-            // Watchdog רגיל – עצירה וחזרה להתחלה
-            else {
-                ytPlayer.pauseVideo();
-                ytPlayer.seekTo(start);
-            }
-        }
-    }, 400);
-}
-
-
-function stopWatchdog() { clearInterval(watchdogInterval); }
-
-function toggleWatchdog() {
-    watchdogEnabled = !watchdogEnabled;
-    document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
-}
-
-/** Autoplay **/
-function toggleAutoplay() {
-
-    // Autoplay מותר אך ורק ברשימת מועדפים
-    if (!isFavOnly) return;
-
-    isAutoplay = !isAutoplay;
-
-    if (isAutoplay) {
-        // שמירת מצב Watchdog קודם
-        prevWatchdogState = watchdogEnabled;
-
-        // Autoplay מחייב Watchdog
-        watchdogEnabled = true;
-        document.getElementById('watchdogToggle')
-            .classList.toggle('active', true);
-
-        // התחלת ניגון מיידית אם יש סרטון
-        if (currentEx && ytPlayer && playerReady) {
-            revealVideo();
-        }
-
-    } else {
-        // יציאה מ-Autoplay ⇒ שחזור Watchdog
-        if (prevWatchdogState !== null) {
-            watchdogEnabled = prevWatchdogState;
-            document.getElementById('watchdogToggle')
-                .classList.toggle('active', watchdogEnabled);
-        }
-    }
-
-    updateModalLayout();
-}
-
-/** CSV Load **/
-async function init() {
-    try {
-        const r = await fetch('Black_belt_syllabus_IJJA.csv', { cache: 'no-cache' });
-        const txt = await r.text();
-        db = parseCSV(txt);
-        render();
-    } catch (e) {
-        console.error("CSV Load Fail", e);
-        document.getElementById('app').innerHTML =
-        '<div style="color:#d32f2f; font-weight:bold; padding:20px;">שגיאה בטעינת הנתונים. בדוק חיבור אינטרנט.</div>';
-    }
-}
-
-/** Parse CSV **/
-function parseCSV(text) {
-    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
-    const results = [];
-    const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-    for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(regex).map(c => c.replace(/^"|"$/g,'').trim());
-        if (cols.length < 7) continue;
-        results.push({
-            id: i-1, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3],
-            link: cols[4], embed: cols[5], duration: Number(cols[6]) || 0
-        });
-    }
-    return results;
-}
-
-/** Render DOM **/
-function render() {
-    const app = document.getElementById('app'); app.innerHTML = '';
-    const groups = db.reduce((acc, x) => {
-        if(!acc[x.cat]) acc[x.cat] = {};
-        if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
-        acc[x.cat][x.ser].push(x);
-        return acc;
-    }, {});
-    for(let cat in groups) {
-        const cDiv = document.createElement('div'); cDiv.className='cat-group';
-        cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
-        for(let ser in groups[cat]) {
-            const exercises = groups[cat][ser];
-            const sBtn = document.createElement('div'); sBtn.className='ser-item';
-            sBtn.innerHTML = `<div style="flex:1" onclick="toggleSerList(this)">
-                                <i class="fas fa-chevron-down" style="margin-left:8px"></i>
-                                <span>${ser}</span>
-                              </div>
-                              <i class="fas fa-star star ${exercises.every(ex=>favs.includes(ex.id))?'active':''}" 
-                                 onclick="toggleSeriesFav(this,'${cat}','${ser}')"></i>`;
-            const list = document.createElement('ul'); list.className='ex-list';
-            exercises.forEach(ex=>{
-                const li = document.createElement('li'); li.className='ex-row'; li.dataset.id=ex.id;
-                const hasL = (ex.link+ex.embed).length>10;
-                li.innerHTML = `<span class="${hasL?'ex-link':'ex-no-link'}" 
-                                  onclick="${hasL?`openVById(${ex.id},false)` : ''}">
-                                  ${ex.num}. ${ex.name}</span>
-                                <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" 
-                                   onclick="toggleStar(${ex.id},this)"></i>`;
-                list.appendChild(li);
-            });
-            cDiv.appendChild(sBtn); cDiv.appendChild(list);
-        }
-        app.appendChild(cDiv);
-    }
-    if(isFavOnly) applyFilters();
-}
-
-/** Open Video **/
-function openVById(id, isRand) { isRandomMode=isRand; const ex=db.find(x=>x.id===id); if(ex) openV(ex); }
-function openV(ex) {
-    currentEx=ex;
-    document.getElementById('vPath').innerText=`${ex.cat} > ${ex.ser}`;
-    document.getElementById('vName').innerText=ex.name;
-    document.getElementById('vModal').style.display='flex';
-    updateModalLayout();
-
-    const url = ex.embed || ex.link;
-    let vId='';
-    if(url.includes('v=')) vId=url.split('v=')[1].split('&')[0];
-    else if(url.includes('embed/')) vId=url.split('embed/')[1].split('?')[0];
-    else if(url.includes('youtu.be/')) vId=url.split('youtu.be/')[1].split('?')[0];
-
-    pendingVideoId=vId; pendingStart=getStartTime(url);
-
-    const cover = document.getElementById('videoCover');
-    if (isRandomMode) {
-        cover.classList.remove('hidden');
-        if (ytPlayer && playerReady) ytPlayer.stopVideo();
-    } else {
-        cover.classList.add('hidden');
-    
-        // ✅ מקור אמת יחיד לטעינת וידאו – טעינה רק אם משתנה
-        if (ytPlayer && playerReady) {
-            const currentId = ytPlayer.getVideoData ? ytPlayer.getVideoData().video_id : null;
-            if (currentId !== pendingVideoId || pendingStart !== getStartTime(ex.embed || ex.link)) {
-                ytPlayer.loadVideoById({
-                    videoId: pendingVideoId,
-                    startSeconds: pendingStart
-                });
-            }
-        }
-    }
-
-}
-
-/** Start Time **/
-function getStartTime(url){ const m=url.match(/[?&](t|start)=([0-9]+)/); return m?parseInt(m[2]):0; }
-
-/** Reveal Video (Self-test) **/
-function revealVideo() {
-    const cover = document.getElementById('videoCover');
-    cover.classList.add('hidden');
-
-    if (!ytPlayer || !playerReady) return;
-
-    const state = ytPlayer.getPlayerState();
-
-    // אם כבר נטען / מנגן – רק המשך
-    if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.PAUSED) {
-        ytPlayer.playVideo();
-    } else {
-        ytPlayer.loadVideoById({
-            videoId: pendingVideoId,
-            startSeconds: pendingStart
-        });
-    }
-}
-
-
-/** Modal Layout **/
-function updateModalLayout() {
-    const autoBtn=document.getElementById('vAutoplayBtn');
-    const nextRandBtn=document.getElementById('vNextRandomBtn');
-    const pBtn=document.getElementById('prevBtn');
-    const nBtn=document.getElementById('nextBtn');
-    const cnt=document.getElementById('vCounter');
-    [autoBtn,nextRandBtn,pBtn,nBtn].forEach(b=>b.classList.add('hidden'));
-
-    if(isRandomMode) { nextRandBtn.classList.remove('hidden'); cnt.innerText="מצב מבחן עצמי"; }
-    else {
-        let list = getCurrentListFull();
-        let idx = list.findIndex(x => x.id === currentEx.id);
-        if(isFavOnly) autoBtn.classList.remove('hidden');
-        pBtn.classList.remove('hidden'); nBtn.classList.remove('hidden');
-        pBtn.disabled = idx<=0; nBtn.disabled=idx>=list.length-1;
-        cnt.innerText=`${isFavOnly?'מועדף':'תרגיל'} ${idx+1} מתוך ${list.length}`;
-    }
-    autoBtn.classList.toggle('active',isAutoplay);
-}
-
-/** רשימת התרגילים לפי מצב נוכחי **/
-function getCurrentListFull() {
-    if (!currentEx) return [];
-    if (isFavOnly) {
-        // כל התרגילים המועדפים מכל הסדרות
-        return db.filter(x => favs.includes(x.id));
-    } else {
-        // רק הסדרה הנוכחית
-        return db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-    }
-}
-    
-/** Navigation **/
-function nav(dir) {
-    if(isRandomMode) return;
-
-    const list = getCurrentListFull();
-    const idx = list.findIndex(x => x.id === currentEx.id);
-
-    if(list[idx + dir]) {
-        openV(list[idx + dir]);
-    } else {
-        // עצירה בסוף הסדרה (לא במצב מועדפים)
-        if(!isFavOnly) {
-            closeV();
-        } else if(isAutoplay && isFavOnly) {
-            const remaining = list.slice(idx + 1);
-            if(remaining.length) openV(remaining[0]);
-            else closeV(); // אין יותר תרגילים
+        if(list[idx + dir]) {
+            openV(list[idx + dir]);
         } else {
-            closeV();
+            if(!isFavOnly) {
+                closeV();
+            } else if(isAutoplay && isFavOnly) {
+                const remaining = list.slice(idx + 1);
+                if(remaining.length) openV(remaining[0]);
+                else closeV();
+            } else {
+                closeV();
+            }
         }
     }
-}
 
-/** Close Modal **/
-function closeV() { document.getElementById('vModal').style.display='none'; if(ytPlayer) ytPlayer.stopVideo(); stopWatchdog(); isRandomMode=false; }
+    /** סגירת מודאל **/
+    function closeV() { 
+        document.getElementById('vModal').style.display='none'; 
+        if(ytPlayer) ytPlayer.stopVideo(); 
+        stopWatchdog(); 
+        isRandomMode=false; 
+    }
 
-/** Toggle Series List **/
-function toggleSerList(el){ const list=el.parentElement.nextElementSibling; const open=list.classList.toggle('open'); el.querySelector('i').className=open?'fas fa-chevron-up':'fas fa-chevron-down'; }
+    /** פתיחת/סגירת רשימת סדרות **/
+    function toggleSerList(el){ 
+        const list=el.parentElement.nextElementSibling; 
+        const open=list.classList.toggle('open'); 
+        el.querySelector('i').className=open?'fas fa-chevron-up':'fas fa-chevron-down'; 
+    }
 
-/** Favorites **/
-function toggleStar(id,el){ if(favs.includes(id)) favs=favs.filter(f=>f!==id); else favs.push(id); el.classList.toggle('active'); localStorage.setItem('ijja_favs',JSON.stringify(favs)); if(isFavOnly) applyFilters(); }
-function toggleSeriesFav(el,cat,ser){ 
-    const exs=db.filter(x=>x.cat===cat && x.ser===ser);
-    const all=exs.every(ex=>favs.includes(ex.id));
-    if(all){ const ids=exs.map(x=>x.id); favs=favs.filter(id=>!ids.includes(id)); }
-    else { exs.forEach(ex=>{ if(!favs.includes(ex.id)) favs.push(ex.id); }); }
-    localStorage.setItem('ijja_favs',JSON.stringify(favs)); render();
-}
-    
-function clearFavs(){ 
-    if(confirm("למחוק את כל המועדפים?")){ 
-        favs=[]; localStorage.setItem('ijja_favs',"[]");
-        isFavOnly=false; document.getElementById('favFilterBtn').classList.remove('active');
+    /** ניהול מועדפים (כוכבים) **/
+    function toggleStar(id,el){ 
+        if(favs.includes(id)) favs=favs.filter(f=>f!==id); 
+        else favs.push(id); 
+        el.classList.toggle('active'); 
+        localStorage.setItem('ijja_favs',JSON.stringify(favs)); 
+        if(isFavOnly) applyFilters(); 
+    }
+
+    function toggleSeriesFav(el,cat,ser){ 
+        const exs=db.filter(x=>x.cat===cat && x.ser===ser);
+        const all=exs.every(ex=>favs.includes(ex.id));
+        if(all){ 
+            const ids=exs.map(x=>x.id); 
+            favs=favs.filter(id=>!ids.includes(id)); 
+        } else { 
+            exs.forEach(ex=>{ if(!favs.includes(ex.id)) favs.push(ex.id); }); 
+        }
+        localStorage.setItem('ijja_favs',JSON.stringify(favs)); 
         render();
     }
-}
-
-/** Filter **/
-function toggleFavFilter(){ isFavOnly=!isFavOnly; document.getElementById('favFilterBtn').classList.toggle('active',isFavOnly); applyFilters(); }
-function applyFilters(){
-    document.querySelectorAll('.cat-group').forEach(c=>{
-        let catHasVisible=false;
-        c.querySelectorAll('.ser-item').forEach(s=>{
-            let serHasVisible=false; const list=s.nextElementSibling;
-            list.querySelectorAll('.ex-row').forEach(row=>{
-                const id=parseInt(row.dataset.id);
-                const hide=isFavOnly && !favs.includes(id);
-                row.classList.toggle('hidden',hide);
-                if(!hide) serHasVisible=true;
-            });
-            s.classList.toggle('hidden',isFavOnly && !serHasVisible);
-            list.classList.toggle('hidden',isFavOnly && !serHasVisible);
-            if(serHasVisible) catHasVisible=true;
-        });
-        c.classList.toggle('hidden',isFavOnly && !catHasVisible);
-    });
-}
-
-/** Toggle All **/
-function toggleAll(){
-    const anyClosed=Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l=>!l.classList.contains('open'));
-    document.querySelectorAll('.ex-list').forEach(l=>{
-        if(!l.classList.contains('hidden')){
-            l.classList.toggle('open',anyClosed);
-            const icon=l.previousElementSibling.querySelector('i.fas');
-            if(icon) icon.className=anyClosed?'fas fa-chevron-up':'fas fa-chevron-down';
+        
+    function clearFavs(){ 
+        if(confirm("למחוק את כל המועדפים?")){ 
+            favs=[]; 
+            localStorage.setItem('ijja_favs',"[]");
+            isFavOnly=false; 
+            document.getElementById('favFilterBtn').classList.remove('active');
+            render();
         }
-    });
-}
+    }
 
-/** Random Exercise **/
-function playRandom(){
-    const pool=db.filter(x=>(x.link+x.embed).length>10);
-    if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
-}
+    /** פילטר מועדפים **/
+    function toggleFavFilter(){ 
+        isFavOnly=!isFavOnly; 
+        document.getElementById('favFilterBtn').classList.toggle('active',isFavOnly); 
+        applyFilters(); 
+    }
 
-window.onload = init;
+    function applyFilters(){
+        document.querySelectorAll('.cat-group').forEach(c=>{
+            let catHasVisible=false;
+            c.querySelectorAll('.ser-item').forEach(s=>{
+                let serHasVisible=false; 
+                const list=s.nextElementSibling;
+                list.querySelectorAll('.ex-row').forEach(row=>{
+                    const id=parseInt(row.dataset.id);
+                    const hide=isFavOnly && !favs.includes(id);
+                    row.classList.toggle('hidden',hide);
+                    if(!hide) serHasVisible=true;
+                });
+                s.classList.toggle('hidden',isFavOnly && !serHasVisible);
+                list.classList.toggle('hidden',isFavOnly && !serHasVisible);
+                if(serHasVisible) catHasVisible=true;
+            });
+            c.classList.toggle('hidden',isFavOnly && !catHasVisible);
+        });
+    }
+
+    /** פתיחת/סגירת כל הסדרות בלחיצה אחת **/
+    function toggleAll(){
+        const anyClosed=Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l=>!l.classList.contains('open'));
+        document.querySelectorAll('.ex-list').forEach(l=>{
+            if(!l.classList.contains('hidden')){
+                l.classList.toggle('open',anyClosed);
+                const icon=l.previousElementSibling.querySelector('i.fas');
+                if(icon) icon.className=anyClosed?'fas fa-chevron-up':'fas fa-chevron-down';
+            }
+        });
+    }
+
+    /** הפעלת תרגיל אקראי **/
+    function playRandom(){
+        const pool=db.filter(x=>(x.link+x.embed).length>10);
+        if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
+    }
+
+    // הפעלה בטעינת הדף
+    window.onload = init;
 
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
