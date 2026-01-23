@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.12</title>
+    <title>Black belt syllabus - v2.3.13</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -203,7 +203,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v2.3.12</small>
+            <small id="appVersion" style="color:#888">v2.3.13</small>
         </div>
     </div>
     <div class="action-bar">
@@ -377,7 +377,7 @@
     /** Watchdog: מנגנון הגבלת זמן ניגון וחזרה להתחלה **/
     function startWatchdog() {
         stopWatchdog();
-        if (!watchdogEnabled || !currentEx || currentEx.duration <= 0) return;
+        if (!watchdogEnabled || !currentEx || currentEx.duration <= 0 || !pendingVideoId) return;
         const start = getStartTime(currentEx.embed || currentEx.link);
 
         watchdogInterval = setInterval(() => {
@@ -521,13 +521,18 @@
         updateModalLayout();
 
         const url = ex.embed || ex.link;
-        let vId='';
-        if(url.includes('v=')) vId=url.split('v=')[1].split('&')[0];
-        else if(url.includes('embed/')) vId=url.split('embed/')[1].split('?')[0];
-        else if(url.includes('youtu.be/')) vId=url.split('youtu.be/')[1].split('?')[0];
+        
+        function extractVideoId(url){
+        if(!url) return '';
+        let id = '';
+        if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
+        else if(url.includes('embed/')) id = url.split('embed/')[1].split('?')[0];
+        else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
+        return decodeURIComponent(id.trim());
+    }
 
-        pendingVideoId=vId; 
-        pendingStart=getStartTime(url);
+    pendingVideoId = extractVideoId(url);
+    pendingStart = getStartTime(url);
 
         const cover = document.getElementById('videoCover');
         if (isRandomMode) {
@@ -535,9 +540,10 @@
             if (ytPlayer && playerReady) ytPlayer.stopVideo();
         } else {
             cover.classList.add('hidden');
-            if (ytPlayer && playerReady) {
+            if (ytPlayer && playerReady && pendingVideoId) {
                 const currentId = ytPlayer.getVideoData ? ytPlayer.getVideoData().video_id : null;
-                if (currentId !== pendingVideoId || pendingStart !== getStartTime(ex.embed || ex.link)) {
+                const start = getStartTime(ex.embed || ex.link);
+                if (currentId !== pendingVideoId || pendingStart !== start) {
                     ytPlayer.loadVideoById({
                         videoId: pendingVideoId,
                         startSeconds: pendingStart
@@ -557,7 +563,7 @@
     function revealVideo() {
         const cover = document.getElementById('videoCover');
         cover.classList.add('hidden');
-        if (!ytPlayer || !playerReady) return;
+        if (!ytPlayer || !playerReady || !pendingVideoId) return;
         const state = ytPlayer.getPlayerState();
         if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.PAUSED) {
             ytPlayer.playVideo();
@@ -723,4 +729,5 @@
 </script>
 </body>
 </html>
+
 
