@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.3</title>
+    <title>Black belt syllabus - v2.3.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -155,7 +155,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.3.3</small></div>
+        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.3.4</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -431,13 +431,31 @@ function updateModalLayout() {
     autoBtn.classList.toggle('active',isAutoplay);
 }
 
+/** רשימת התרגילים לפי מצב נוכחי **/
+function getCurrentList() {
+    if(isFavOnly) return db.filter(x => favs.includes(x.id));
+    return db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
+}
+    
 /** Navigation **/
 function nav(dir) {
     if(isRandomMode) return;
-    let list = isFavOnly ? db.filter(x=>favs.includes(x.id)) : db.filter(x=>x.cat===currentEx.cat && x.ser===currentEx.ser);
-    const idx = list.findIndex(x=>x.id===currentEx.id);
-    if(list[idx+dir]) openV(list[idx+dir]);
-    else if(isAutoplay) closeV();
+    const list = getCurrentList();
+    const idx = list.findIndex(x => x.id === currentEx.id);
+
+    // אם יש תרגיל הבא/הקודם
+    if(list[idx + dir]) {
+        openV(list[idx + dir]);
+    }
+    else {
+        // אם Autoplay דלוק ומצב מועדפים, נסה לעבור לתרגיל הבא ברשימת מועדפים
+        if(isAutoplay && isFavOnly) {
+            const remaining = list.slice(idx + 1);
+            if(remaining.length) openV(remaining[0]);
+            else closeV(); // אין יותר תרגילים
+        }
+        else closeV();
+    }
 }
 
 /** Close Modal **/
@@ -455,6 +473,7 @@ function toggleSeriesFav(el,cat,ser){
     else { exs.forEach(ex=>{ if(!favs.includes(ex.id)) favs.push(ex.id); }); }
     localStorage.setItem('ijja_favs',JSON.stringify(favs)); render();
 }
+    
 function clearFavs(){ 
     if(confirm("למחוק את כל המועדפים?")){ 
         favs=[]; localStorage.setItem('ijja_favs',"[]");
@@ -507,6 +526,7 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
 
 
