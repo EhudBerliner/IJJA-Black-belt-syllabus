@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.11</title>
+    <title>Black belt syllabus - v2.3.12</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -35,7 +35,36 @@
 
         .header-right { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 45px; width: auto; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
+        header h1 { 
+        margin: 0; 
+        font-weight: 800; 
+        color: var(--primary); 
+        font-size: 1.1em; 
+        white-space: normal;      /* מאפשר שבירת שורות */
+        letter-spacing: 0;        /* מצמצם ריווח אותיות */
+        }
+        
+        .header-right { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            flex-wrap: wrap;           /* מאפשר לשבור לשורה נוספת במידת הצורך */
+        }
+        
+        /* התאמה מיוחדת למסכים קטנים */
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1em;       /* מקטין גופן במובייל */
+            }
+            .header-right {
+                flex-direction: column; /* מחליף לסטאק אנכי */
+                align-items: flex-start; 
+                gap: 4px;               /* מצמצם ריווח בין הלוגו לכותרת */
+            }
+            .header-right small {
+                font-size: 0.8em;       /* גרסת version מותאמת נייד */
+            }
+        }
 
         /* סרגל כפתורי פעולה */
         .action-bar { display: flex; gap: 6px; }
@@ -155,7 +184,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small id="appVersion" style="color:#888">v2.3.11</small></div>
+        <div><h1>סילבוס חגורה שחורה</h1><small id="appVersion" style="color:#888">v2.3.12</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -660,6 +689,7 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
 
 
