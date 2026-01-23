@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.14</title>
+    <title>Black belt syllabus - v2.3.11</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -155,7 +155,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small id="appVersion" style="color:#888">v2.3.14</small></div>
+        <div><h1>סילבוס חגורה שחורה</h1><small id="appVersion" style="color:#888">v2.3.11</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -237,45 +237,30 @@ scrollContainer.addEventListener('touchend', e => {
 
 /** Service Worker PWA **/
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(reg => {
+    navigator.serviceWorker.register('sw.js');
+    navigator.serviceWorker.ready.then(reg => {
         reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // עדכון אוטומטי פעם אחת בלבד
-                    if (!sessionStorage.getItem('reloaded')) {
-                        sessionStorage.setItem('reloaded','true');
-                        location.reload();
-                    }
+                    if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) location.reload();
                 }
             });
         });
     });
 }
 
-/** Load version.json **/
-async function loadVersion(){
-    try{
-        const r = await fetch(`version.json?t=${Date.now()}`);
+async function loadVersion() {
+    try {
+        const r = await fetch('version.json', { cache: 'no-store' });
         const v = await r.json();
-        const currentVersion = document.getElementById('appVersion').innerText.replace('v','');
-        
-        // אם הגרסה שונה מהנוכחית – טוען מחדש אוטומטית פעם אחת בלבד
-        if(currentVersion !== v.version && navigator.onLine){
-            document.getElementById('appVersion').innerText = 'v' + v.version;
-            if (!sessionStorage.getItem('reloaded')) {
-                sessionStorage.setItem('reloaded','true');
-                location.reload();
-            }
-        } else {
-            document.getElementById('appVersion').innerText = 'v' + v.version;
-        }
+        document.getElementById('appVersion').innerText = 'v' + v.version;
         return v.version;
-    } catch(e){
-        console.warn('version.json לא נטען');
+    } catch (e) {
+        console.warn('version.json not loaded');
         return null;
     }
-}  
+}
     
     /** קבלת התרגיל הבא עבור Autoplay **/
 function getNextExercise() {
@@ -422,12 +407,8 @@ function toggleAutoplay() {
 
 /** CSV Load **/
 async function init() {
-    // קודם בודקים גרסת אפליקציה
-    await loadVersion();
-
     try {
-        // טעינת CSV עם cache-busting
-        const r = await fetch(`Black_belt_syllabus_IJJA.csv?t=${Date.now()}`);
+        const r = await fetch('Black_belt_syllabus_IJJA.csv', { cache: 'no-cache' });
         const txt = await r.text();
         db = parseCSV(txt);
         render();
@@ -679,9 +660,6 @@ window.onload = init;
 </script>
 </body>
 </html>
-
-
-
 
 
 
