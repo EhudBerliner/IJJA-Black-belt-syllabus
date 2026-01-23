@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.7</title>
+    <title>Black belt syllabus - v2.3.8</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -155,7 +155,7 @@
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
-        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.3.7</small></div>
+        <div><h1>סילבוס חגורה שחורה</h1><small style="color:#888">v2.3.8</small></div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
@@ -202,6 +202,7 @@
 
 <script>
 /** משתנים גלובליים **/
+let prevWatchdogState = null;   // לשחזור מצב Watchdog
 let db = [], favs = [];
 try {
     favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
@@ -291,14 +292,19 @@ function onPlayerStateChange(event) {
         if(!isAutoplay) startWatchdog();
     }
 
-    if(event.data === YT.PlayerState.ENDED) {
-        stopWatchdog();
-        if(isAutoplay) {
-            const nextEx = getNextExercise();
-            if(nextEx) openV(nextEx);
-            else closeV();
+    if (event.data === YT.PlayerState.ENDED) {
+    stopWatchdog();
+
+    // סיום טבעי מטופל רק אם Watchdog לא פעיל
+    if (!watchdogEnabled && isAutoplay && isFavOnly) {
+        const list = getCurrentListFull();
+        const idx = list.findIndex(x => x.id === currentEx.id);
+
+        if (list[idx + 1]) openV(list[idx + 1]);
+        else if (list.length) openV(list[0]);
         }
     }
+
 
     if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
 }
@@ -306,18 +312,44 @@ function onPlayerStateChange(event) {
 /** Watchdog **/
 function startWatchdog() {
     stopWatchdog();
+
     if (!watchdogEnabled || !currentEx || currentEx.duration <= 0) return;
-    if (watchdogEnabled && currentEx && currentEx.duration > 0) {
-        const start = getStartTime(currentEx.embed || currentEx.link);
-        watchdogInterval = setInterval(() => {
-            if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
+
+    const start = getStartTime(currentEx.embed || currentEx.link);
+
+    watchdogInterval = setInterval(() => {
+        if (!ytPlayer) return;
+
+        if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
+
+            stopWatchdog();
+
+            // מצב Autoplay + מועדפים ⇒ מעבר אוטומטי
+            if (isAutoplay && isFavOnly) {
+                const list = getCurrentListFull();
+                const idx = list.findIndex(x => x.id === currentEx.id);
+
+                // אם יש הבא – עבור אליו
+                if (list[idx + 1]) {
+                    openV(list[idx + 1]);
+                }
+                // אם זה האחרון – חזור לראשון
+                else if (list.length) {
+                    openV(list[0]);
+                }
+            }
+            // Watchdog רגיל – עצירה וחזרה להתחלה
+            else {
                 ytPlayer.pauseVideo();
                 ytPlayer.seekTo(start);
             }
-        }, 400);
-    }
+        }
+    }, 400);
 }
+
+
 function stopWatchdog() { clearInterval(watchdogInterval); }
+
 function toggleWatchdog() {
     watchdogEnabled = !watchdogEnabled;
     document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
@@ -325,26 +357,37 @@ function toggleWatchdog() {
 
 /** Autoplay **/
 function toggleAutoplay() {
-    isAutoplay = !isAutoplay;
-    updateModalLayout();
 
-    // אם הפעלנו autoplay ויש תרגיל נוכחי
-    if(isAutoplay && currentEx) {
-        const cover = document.getElementById('videoCover');
-        if(cover.classList.contains('hidden')) {
-            // אם הוידאו כבר גלוי, התחלת ניגון רציף מיד
-            if(ytPlayer && playerReady) {
-                ytPlayer.playVideo();
-            }
-        } else {
-            // אם הוידאו מוסתר עדיין, הסיר את הכיסוי והפעל
-            cover.classList.add('hidden');
-            if(ytPlayer && playerReady) {
-                ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
-                ytPlayer.playVideo();
-            }
+    // Autoplay מותר אך ורק ברשימת מועדפים
+    if (!isFavOnly) return;
+
+    isAutoplay = !isAutoplay;
+
+    if (isAutoplay) {
+        // שמירת מצב Watchdog קודם
+        prevWatchdogState = watchdogEnabled;
+
+        // Autoplay מחייב Watchdog
+        watchdogEnabled = true;
+        document.getElementById('watchdogToggle')
+            .classList.toggle('active', true);
+
+        // התחלת ניגון מיידית אם יש סרטון
+        if (currentEx && ytPlayer && playerReady) {
+            revealVideo();
+        }
+
+    } else {
+        // יציאה מ-Autoplay ⇒ שחזור Watchdog
+        if (prevWatchdogState !== null) {
+            watchdogEnabled = prevWatchdogState;
+            document.getElementById('watchdogToggle')
+                .classList.toggle('active', watchdogEnabled);
         }
     }
+
+    updateModalLayout();
+}
 }
 
 /** CSV Load **/
@@ -586,6 +629,7 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
 
 
