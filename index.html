@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.11</title>
+    <title>Black belt syllabus - v2.3.12</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -181,6 +181,17 @@
         .nav-btn:disabled { background: #eee !important; color: #bbb; }
 
         .hidden { display: none !important; }
+        @media (max-width: 600px) {
+        header h1 {
+            font-size: 1rem;       /* הקטנת הגופן מעט כדי למנוע שבירה מיותרת */
+            line-height: 1.1;     /* שליטה בריווח - הקטן/הגדל לפי הצורך */
+            max-width: 180px;     /* הגבלת רוחב כדי שהטקסט לא ייצמד לשוליים */
+            display: block;
+            }
+        
+        header { padding: 0 10px;      /* צמצום שולי ה-header במובייל */
+            }
+        }
     </style>
 </head>
 <body>
@@ -192,7 +203,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v2.3.11</small>
+            <small id="appVersion" style="color:#888">v2.3.12</small>
         </div>
     </div>
     <div class="action-bar">
@@ -712,3 +723,4 @@
 </script>
 </body>
 </html>
+
