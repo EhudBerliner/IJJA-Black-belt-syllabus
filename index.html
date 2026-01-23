@@ -265,8 +265,9 @@
                     if (pendingVideoId) {
                         ytPlayer.loadVideoById({
                             videoId: pendingVideoId,
-                            startSeconds: pendingStart || 0
-                            });
+                            startSeconds: pendingStart
+                        });
+                        ytPlayer.playVideo();
                         }
                     }, 
                     'onStateChange': onPlayerStateChange 
@@ -573,6 +574,7 @@
 </script>
 </body>
 </html>
+
 
 
 
