@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.2</title>
+    <title>Black belt syllabus - v12.0.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -22,6 +22,7 @@
             --fav-color: #ffc107; /* צבע זהב לכפתור מועדפים */
             --danger: #d32f2f;    /* אדום להתראות/מחיקה */
             --success: #2e7d32;   /* ירוק לאישור פעולות */
+            --yt-red: #ff0000;    /* צבע יוטיוב לסימון חיצוני */
         }
 
         /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
@@ -59,8 +60,11 @@
             width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
             background: white; color: var(--primary); cursor: pointer;
             display: flex; align-items: center; justify-content: center; font-size: 1em;
+            transition: all 0.2s;
         }
         .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        /* עיצוב ספציפי לכפתור יוטיוב כשהוא פעיל */
+        .btn#ytModeToggle.active { background: var(--yt-red); border-color: var(--yt-red); color: white; }
         .btn-danger { color: var(--danger); }
 
         /* אלמנט ויזואלי לרענון במשיכה (Pull to Refresh) */
@@ -203,10 +207,13 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.2</small>
+            <small id="appVersion" style="color:#888">v12.0.3</small>
         </div>
     </div>
     <div class="action-bar">
+        <button id="ytModeToggle" title="מעבר לקישור חיצוני (Youtube) / נגן פנימי" class="btn" onclick="toggleYtMode()">
+            <i class="fab fa-youtube"></i>
+        </button>
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
         <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
@@ -263,6 +270,7 @@
     }
 
     let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
+    let useExternalYt = false; // NEW: משתנה למצב יוטיוב חיצוני
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
     let pendingVideoId = '', pendingStart = 0;
 
@@ -416,6 +424,14 @@
         document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
     }
 
+    // NEW: פונקציה להחלפת מצב יוטיוב חיצוני
+    function toggleYtMode() {
+        useExternalYt = !useExternalYt;
+        const btn = document.getElementById('ytModeToggle');
+        btn.classList.toggle('active', useExternalYt);
+        localStorage.setItem('ijja_useExternalYt', useExternalYt ? '1' : '0');
+    }
+
     /** Autoplay: מצב ניגון רצוף **/
     function toggleAutoplay() {
         if (!isFavOnly) return; // מותר רק במועדפים
@@ -473,6 +489,13 @@
             document.getElementById('favFilterBtn').classList.add('active');
             applyFilters();
         }
+
+        // NEW: שחזור מצב יוטיוב חיצוני
+        const ytState = localStorage.getItem('ijja_useExternalYt');
+        if(ytState === '1') {
+            useExternalYt = true;
+            document.getElementById('ytModeToggle').classList.add('active');
+        }
     }
     
     // בסוף init()
@@ -480,7 +503,7 @@
         await init();
         restoreState();
     }
-   
+    
 
     /** ניתוח מבנה ה-CSV **/
     function parseCSV(text) {
@@ -561,7 +584,14 @@
     function openVById(id, isRand) { 
         isRandomMode=isRand; 
         const ex=db.find(x=>x.id===id); 
-        if(ex) openV(ex); 
+        if(!ex) return; 
+
+        // NEW: בדיקה אם אנחנו במצב יוטיוב חיצוני. אם כן (ולא במצב מבחן), פתח קישור.
+        if (useExternalYt && !isRand) {
+            window.open(ex.link || ex.embed, '_blank');
+        } else {
+            openV(ex); 
+        }
     }
 
 function openV(ex) {
@@ -805,10 +835,3 @@ function saveOpenSeries() {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
