@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.15</title>
+    <title>Black belt syllabus - v2.3.16</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -203,7 +203,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v2.3.15</small>
+            <small id="appVersion" style="color:#888">v2.3.16</small>
         </div>
     </div>
     <div class="action-bar">
@@ -343,10 +343,17 @@
                 'onReady': () => { 
                     playerReady = true;
                     if (pendingVideoId) {
-                        ytPlayer.loadVideoById({
+                        ytPlayer.cueVideoById({
                             videoId: pendingVideoId,
                             startSeconds: pendingStart
                         });
+                        
+                        setTimeout(() => {
+                            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                                ytPlayer.playVideo();
+                            }
+                        }, 0);
+
                     }
                 },
                 'onStateChange': onPlayerStateChange
@@ -728,6 +735,7 @@ function nav(dir) {
 </script>
 </body>
 </html>
+
 
 
 
