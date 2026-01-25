@@ -278,7 +278,7 @@
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
         
-        <div class="video-container">
+        <div id="videoContainer" class="video-container">
             <div id="player"></div>
             <div class="video-loader">
                 <i class="fas fa-circle-notch fa-spin"></i>
@@ -796,100 +796,43 @@ function saveOpenSeries() {
         if(isFavOnly) applyFilters(); 
     }
 
-    function toggleSeriesFav(el,cat,ser){ 
-        const exs=db.filter(x=>x.cat===cat && x.ser===ser);
-        const all=exs.every(ex=>favs.includes(ex.id));
-        if(all){ 
-            const ids=exs.map(x=>x.id); 
-            favs=favs.filter(id=>!ids.includes(id)); 
-        } else { 
-            exs.forEach(ex=>{ if(!favs.includes(ex.id)) favs.push(ex.id); }); 
-        }
-        localStorage.setItem('ijja_favs',JSON.stringify(favs)); 
-        render();
-    }
-        
-    function clearFavs(){ 
-        if(confirm("למחוק את כל המועדפים?")){ 
-            favs=[]; 
-            localStorage.setItem('ijja_favs',"[]");
-            isFavOnly=false; 
-            document.getElementById('favFilterBtn').classList.remove('active');
-            render();
-        }
-    }
+    // פונקציה לסימון סדרה שלמה כמועדפת
+    function toggleSeriesFav(el, cat, ser) {
+        const exs = db.filter(x => x.cat === cat && x.ser === ser);
+        const all = exs.every(ex => favs.includes(ex.id));
 
-    /** פילטר מועדפים **/
-    function toggleFavFilter(){ 
-        isFavOnly=!isFavOnly; 
-        document.getElementById('favFilterBtn').classList.toggle('active',isFavOnly); 
-        applyFilters(); 
-    
-        // שמירה למקומי
-        saveFavFilter();
-    }
-    
-    // פונקציה חדשה לשמירה
-    function saveFavFilter() {
-        localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
-    }
-
-    function applyFilters(){
-        document.querySelectorAll('.cat-group').forEach(c=>{
-            let catHasVisible=false;
-            c.querySelectorAll('.ser-item').forEach(s=>{
-                let serHasVisible=false; 
-                const list=s.nextElementSibling;
-                list.querySelectorAll('.ex-row').forEach(row=>{
-                    const id=parseInt(row.dataset.id);
-                    const hide=isFavOnly && !favs.includes(id);
-                    row.classList.toggle('hidden',hide);
-                    if(!hide) serHasVisible=true;
-                });
-                s.classList.toggle('hidden',isFavOnly && !serHasVisible);
-                list.classList.toggle('hidden',isFavOnly && !serHasVisible);
-                if(serHasVisible) catHasVisible=true;
+        if (all) {
+            // אם כולם כבר במועדפים - הסר את כולם
+            const ids = exs.map(x => x.id);
+            favs = favs.filter(id => !ids.includes(id));
+        } else {
+            // אם לא כולם במועדפים - הוסף את החסרים
+            exs.forEach(ex => {
+                if (!favs.includes(ex.id)) favs.push(ex.id);
             });
-            c.classList.toggle('hidden',isFavOnly && !catHasVisible);
-        });
+        }
+
+        // עדכון האייקון, שמירה בזיכרון ורינדור מחדש של הרשימה
+        el.classList.toggle('active', !all);
+        localStorage.setItem('ijja_favs', JSON.stringify(favs));
+        render(); 
     }
 
-    /** פתיחת/סגירת כל הסדרות בלחיצה אחת **/
-    function toggleAll(){
-        const anyClosed=Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l=>!l.classList.contains('open'));
-        document.querySelectorAll('.ex-list').forEach(l=>{
-            if(!l.classList.contains('hidden')){
-                l.classList.toggle('open',anyClosed);
-                const icon=l.previousElementSibling.querySelector('i.fas');
-                if(icon) icon.className=anyClosed?'fas fa-chevron-up':'fas fa-chevron-down';
-            }
-        });
-    
-        // שמירה למקומי
-        saveOpenSeries();
+    // פונקציית העזר לסינון מועדפים (כדי שהכפתור ב-Header יעבוד)
+    function toggleFavFilter() {
+        isFavOnly = !isFavOnly;
+        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
+        localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
+        applyFilters();
     }
 
-    /** הפעלת תרגיל אקראי **/
-    function playRandom(){
-        const pool=db.filter(x=>(x.link+x.embed).length>10);
-        if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
+    function applyFilters() {
+        render(); // ה-Render כבר יודע להתחשב ב-isFavOnly
     }
+
+    // הפעלת האפליקציה
+    init();
 
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
