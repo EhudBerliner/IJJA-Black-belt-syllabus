@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.1</title>
+    <title>Black belt syllabus - v12.0.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -203,7 +203,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.1</small>
+            <small id="appVersion" style="color:#888">v12.0.2</small>
         </div>
     </div>
     <div class="action-bar">
@@ -290,6 +290,11 @@
         if (scrollContainer.scrollTop === 0 && y - startY > 120) location.reload();
         ptr.style.transform = 'translateY(-100%)'; 
         appMain.style.transform = 'translateY(0)';
+    });
+
+        // 🔹 שמירת Scroll בזמן גלילה
+    scrollContainer.addEventListener('scroll', () => {
+        localStorage.setItem('ijja_scroll', scrollContainer.scrollTop);
     });
 
     /** Service Worker PWA: רישום וניהול גרסאות אפליקציה **/
@@ -443,6 +448,40 @@
         }
     }
 
+     function restoreState() {
+        // 1. Scroll
+        const scrollTop = parseInt(localStorage.getItem('ijja_scroll'));
+        if(scrollTop) scrollContainer.scrollTop = scrollTop;
+    
+        // 2. סדרות פתוחות
+        const openSeries = JSON.parse(localStorage.getItem('ijja_openSeries') || '[]');
+        document.querySelectorAll('.ser-item').forEach(s=>{
+            const list = s.nextElementSibling;
+            const cat = s.parentElement.querySelector('.cat-header').innerText;
+            const ser = s.querySelector('span').innerText;
+            if(openSeries.includes(cat + '||' + ser)) {
+                list.classList.add('open');
+                const icon = s.querySelector('i.fas');
+                if(icon) icon.className='fas fa-chevron-up';
+            }
+        });
+    
+        // 3. פילטר מועדפים
+        const favState = localStorage.getItem('ijja_isFavOnly');
+        if(favState==='1') {
+            isFavOnly = true;
+            document.getElementById('favFilterBtn').classList.add('active');
+            applyFilters();
+        }
+    }
+    
+    // בסוף init()
+    window.onload = async function() {
+        await init();
+        restoreState();
+    }
+   
+
     /** ניתוח מבנה ה-CSV **/
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
@@ -511,6 +550,11 @@
             app.appendChild(cDiv);
         }
         if(isFavOnly) applyFilters();
+
+        if(scrollContainer && localStorage.getItem('ijja_scroll')) {
+            scrollContainer.scrollTop = parseInt(localStorage.getItem('ijja_scroll')) || 0;
+}
+
     }
 
     /** פתיחת סרטון לפי מזהה **/
@@ -650,7 +694,25 @@ function nav(dir) {
         const list=el.parentElement.nextElementSibling; 
         const open=list.classList.toggle('open'); 
         el.querySelector('i').className=open?'fas fa-chevron-up':'fas fa-chevron-down'; 
+    
+        // שמירה למקומי
+        saveOpenSeries();
     }
+
+// פונקציה חדשה לשמירה
+function saveOpenSeries() {
+    const openSeries = [];
+    document.querySelectorAll('.ser-item').forEach(s=>{
+        const list = s.nextElementSibling;
+        if(list.classList.contains('open')) {
+            const cat = s.parentElement.querySelector('.cat-header').innerText;
+            const ser = s.querySelector('span').innerText;
+            openSeries.push(cat + '||' + ser);
+        }
+    });
+    localStorage.setItem('ijja_openSeries', JSON.stringify(openSeries));
+}
+
 
     /** ניהול מועדפים (כוכבים) **/
     function toggleStar(id,el){ 
@@ -689,6 +751,14 @@ function nav(dir) {
         isFavOnly=!isFavOnly; 
         document.getElementById('favFilterBtn').classList.toggle('active',isFavOnly); 
         applyFilters(); 
+    
+        // שמירה למקומי
+        saveFavFilter();
+    }
+    
+    // פונקציה חדשה לשמירה
+    function saveFavFilter() {
+        localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
     }
 
     function applyFilters(){
@@ -721,6 +791,9 @@ function nav(dir) {
                 if(icon) icon.className=anyClosed?'fas fa-chevron-up':'fas fa-chevron-down';
             }
         });
+    
+        // שמירה למקומי
+        saveOpenSeries();
     }
 
     /** הפעלת תרגיל אקראי **/
@@ -729,12 +802,10 @@ function nav(dir) {
         if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
     }
 
-    // הפעלה בטעינת הדף
-    window.onload = init;
-
 </script>
 </body>
 </html>
+
 
 
 
