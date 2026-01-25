@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v2.3.14</title>
+    <title>Black belt syllabus - v2.3.15</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -203,7 +203,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v2.3.14</small>
+            <small id="appVersion" style="color:#888">v2.3.15</small>
         </div>
     </div>
     <div class="action-bar">
@@ -543,14 +543,20 @@ function openV(ex) {
         cover.classList.add('hidden');
         // ✅ תמיד טען מחדש את הסרטון
         if (ytPlayer && playerReady && pendingVideoId) {
-            ytPlayer.loadVideoById({
-                videoId: pendingVideoId,
-                startSeconds: pendingStart
-            });
+            // 🛡️ Reset בטוח למניעת race condition
+            ytPlayer.stopVideo();
+        
+            // דחייה קצרה – מאפשרת ל־YT לצאת ממצב ביניים
+            setTimeout(() => {
+                ytPlayer.loadVideoById({
+                    videoId: pendingVideoId,
+                    startSeconds: pendingStart
+                });
+            }, 80);
         }
+
     }
 }
-
 
     /** חילוץ זמן התחלה מ-URL **/
     function getStartTime(url){ 
@@ -722,6 +728,7 @@ function nav(dir) {
 </script>
 </body>
 </html>
+
 
 
 
