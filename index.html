@@ -6,56 +6,39 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.3</title>
+    <title>Black belt syllabus - v12.0.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* משתני עיצוב גלובליים */
         :root {
-            --primary: #0056a6;   /* כחול מותג ראשי */
-            --secondary: #009be5; /* כחול בהיר לאלמנטים משניים */
-            --border: #d2dce5;    /* צבע גבולות עדין */
-            --header-h: 90px;     /* גובה קבוע לראש הדף */
-            --fav-color: #ffc107; /* צבע זהב לכפתור מועדפים */
-            --danger: #d32f2f;    /* אדום להתראות/מחיקה */
-            --success: #2e7d32;   /* ירוק לאישור פעולות */
-            --yt-red: #ff0000;    /* צבע יוטיוב לסימון חיצוני */
+            --primary: #0056a6;
+            --secondary: #009be5;
+            --border: #d2dce5;
+            --header-h: 90px;
+            --fav-color: #ffc107;
+            --danger: #d32f2f;
+            --yt-red: #ff0000;
         }
 
-        /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
         html, body { 
-            height: 100%; 
-            margin: 0; 
-            overflow: hidden; 
-            font-family: 'Heebo', sans-serif; 
-            background: #f7f9fb; 
+            height: 100%; margin: 0; overflow: hidden; 
+            font-family: 'Heebo', sans-serif; background: #f7f9fb; 
         }
 
-        /* כותרת עליונה קבועה (Header) */
         header {
-            height: var(--header-h); 
-            background: white; 
-            border-bottom: 3px solid var(--primary);
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between;
-            padding: 0 20px; 
-            position: fixed; 
-            top: 0; 
-            width: 100%; 
-            z-index: 1200; 
-            box-sizing: border-box;
+            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1200; box-sizing: border-box;
         }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 45px; width: auto; }
         header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
 
-        /* סרגל כפתורי פעולה */
-        .action-bar { display: flex; gap: 6px; }
+        .action-bar { display: flex; gap: 6px; position: relative; }
         .btn {
             width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
             background: white; color: var(--primary); cursor: pointer;
@@ -63,11 +46,27 @@
             transition: all 0.2s;
         }
         .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        /* עיצוב ספציפי לכפתור יוטיוב כשהוא פעיל */
         .btn#ytModeToggle.active { background: var(--yt-red); border-color: var(--yt-red); color: white; }
-        .btn-danger { color: var(--danger); }
 
-        /* אלמנט ויזואלי לרענון במשיכה (Pull to Refresh) */
+        /* Dropdown Menu Style */
+        .extra-menu {
+            display: none; position: absolute; top: 45px; left: 0;
+            background: white; border-radius: 10px; border: 1px solid var(--border);
+            flex-direction: column; z-index: 1300; min-width: 180px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .extra-menu.show { display: flex; }
+        .menu-item {
+            padding: 12px 15px; border: none; background: none;
+            text-align: right; font-family: 'Heebo'; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; font-size: 0.95em;
+            color: var(--primary); border-bottom: 1px solid #eee;
+        }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item i { width: 20px; text-align: center; }
+        .item-danger { color: var(--danger); }
+
+        /* Pull to Refresh */
         #ptr {
             position: absolute; top: var(--header-h); left: 0; width: 100%; height: 50px;
             display: flex; align-items: center; justify-content: center;
@@ -75,126 +74,63 @@
             color: var(--primary); font-weight: bold;
         }
 
-        /* מיכל הגלילה הראשי של רשימת התכנים */
         #scrollContainer { 
-            height: 100vh; 
-            padding-top: var(--header-h); 
-            overflow-y: auto; 
-            box-sizing: border-box; 
-            -webkit-overflow-scrolling: touch;
-            position: relative;
+            height: 100vh; padding-top: var(--header-h); overflow-y: auto; 
+            box-sizing: border-box; -webkit-overflow-scrolling: touch; position: relative;
         }
 
-        /* "הפס הלבן" - מונע זליגת תוכן מתחת ל-Header בזמן גלילה */
-        #scrollContainer::before {
-            content: "";
-            position: fixed;
-            top: var(--header-h);
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background: #f7f9fb;
-            z-index: 1100;
-        }
-
-        .main-content { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 15px; 
-            padding-bottom: 80px; 
-            transition: transform 0.2s; 
-        }
+        .main-content { max-width: 800px; margin: 0 auto; padding: 15px; padding-bottom: 80px; transition: transform 0.2s; }
         
-        /* כותרת קטגוריה - נדבקת לראש הדף בגלילה */
         .cat-group { margin-bottom: 25px; }
         .cat-header { 
             background: var(--primary); color: white; padding: 10px 15px; border-radius: 10px; 
             font-weight: 900; position: sticky; top: 10px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* שורת סדרה (לחיצה פותחת רשימת תרגילים) */
         .ser-item { 
             background: white; padding: 12px; font-weight: 700; border-right: 4px solid var(--secondary); 
             margin-top: 8px; display: flex; justify-content: space-between; align-items: center; 
             cursor: pointer; border-radius: 6px; 
         }
 
-        /* רשימת תרגילים בתוך סדרה */
         .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
         .ex-list.open { display: block; border-radius: 0 0 6px 6px; }
         .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        
+        .ex-row.hidden { display: none; }
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
+        
         .star { cursor: pointer; color: #ccc; font-size: 1.2rem; padding: 0 5px; }
         .star.active { color: var(--fav-color); }
 
-        /* מודאל נגן הוידיאו */
+        /* Modal & Player */
         .modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; 
         }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 500px; position: relative; }
-        
-        /* מיכל הסרטון - יחס 16:9 */
-        .video-container { 
-            position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; 
-            background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-        }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; background: #000; border-radius: 12px; overflow: hidden; }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
-        /* מסך כיסוי למצב "מבחן עצמי" */
         #videoCover {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, var(--secondary) 0%, var(--primary) 100%);
             color: white; z-index: 20; display: flex; flex-direction: column;
             align-items: center; justify-content: center; cursor: pointer; text-align: center;
-            padding: 20px; box-sizing: border-box;
         }
 
-        /* אנימציית פעימה לכפתור ה-Play בכיסוי */
-        .play-trigger {
-            width: 80px; height: 80px; background: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 15px; box-shadow: 0 0 20px rgba(255,255,255,0.4);
-            animation: pulse 2s infinite;
-        }
+        .play-trigger { width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; animation: pulse 2s infinite; }
         .play-trigger i { color: var(--primary); font-size: 2.5rem; margin-right: -5px; }
+        @keyframes pulse { 0% { transform: scale(0.95); } 70% { transform: scale(1); } 100% { transform: scale(0.95); } }
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(255,255,255,0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-        }
-
-        .cover-text { font-weight: 900; font-size: 1.3em; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
-        /* כפתורי שליטה במודאל */
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
-        .modal-btn { 
-            position: absolute; top: -45px; right: 0; width: 38px; height: 38px; border-radius: 8px; 
-            border: 1px solid white; background: transparent; color: white; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.1em; 
-        }
-        .modal-btn.active { background: var(--success); border-color: var(--success); }
+        .nav-btn { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .nav-btn:disabled { background: #eee; color: #bbb; }
 
-        .modal-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: center; }
-        .nav-btn { 
-            background: var(--primary); color: white; border: none; width: 35px; height: 35px; 
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; 
-        }
-        .nav-btn:disabled { background: #eee !important; color: #bbb; }
-
-        .hidden { display: none !important; }
         @media (max-width: 600px) {
-        header h1 {
-            font-size: 1rem;       /* הקטנת הגופן מעט כדי למנוע שבירה מיותרת */
-            line-height: 1.1;     /* שליטה בריווח - הקטן/הגדל לפי הצורך */
-            max-width: 180px;     /* הגבלת רוחב כדי שהטקסט לא ייצמד לשוליים */
-            display: block;
-            }
-        
-        header { padding: 0 10px;      /* צמצום שולי ה-header במובייל */
-            }
+            header { padding: 0 10px; --header-h: 75px; }
+            header h1 { font-size: 1rem; max-width: 150px; }
+            .logo-img { height: 38px; }
+            .btn { width: 35px; height: 35px; }
         }
     </style>
 </head>
@@ -207,83 +143,69 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.3</small>
+            <small id="appVersion" style="color:#888">v12.0.4</small>
         </div>
     </div>
     <div class="action-bar">
-        <button id="ytModeToggle" title="מעבר לקישור חיצוני (Youtube) / נגן פנימי" class="btn" onclick="toggleYtMode()">
-            <i class="fab fa-youtube"></i>
-        </button>
-        <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
-        <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
-        <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
-        <button title="פתח/סגור הכל" class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
-        <button title="מחיקת מועדפים" class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
+        <button id="ytModeToggle" title="YouTube Mode" class="btn" onclick="toggleYtMode()"><i class="fab fa-youtube"></i></button>
+        <button id="watchdogToggle" title="Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
+        <button title="אקראי" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
+        <button id="favFilterBtn" title="מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
+        
+        <button id="moreBtn" title="עוד אפשרויות" class="btn" onclick="toggleMoreMenu(event)"><i class="fas fa-ellipsis-v"></i></button>
+        
+        <div id="moreMenu" class="extra-menu">
+            <button class="menu-item" onclick="toggleAll()">
+                <i class="fas fa-arrows-alt-v"></i> פתח/סגור הכל
+            </button>
+            <button class="menu-item item-danger" onclick="clearFavs()">
+                <i class="fas fa-trash-alt"></i> מחיקת מועדפים
+            </button>
+        </div>
     </div>
 </header>
 
 <div id="scrollContainer">
-    <main class="main-content" id="app">
-        </main>
+    <main class="main-content" id="app"></main>
 </div>
 
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" onclick="playRandom()"><i class="fas fa-random"></i></button>
-        <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
-        
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
-            <div style="flex: 1; overflow: hidden; padding: 0 5px;">
-                <div id="vPath" style="color:var(--secondary); font-weight:bold; font-size:0.85em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-                <div id="vName" style="color:var(--primary); font-size:1.1em; font-weight: 800; line-height:1.2;"></div>
-                <div id="vCounter" style="font-size: 0.8em; color: #888; margin-top:2px;"></div>
+            <div style="flex: 1; text-align: center; overflow: hidden;">
+                <div id="vPath" style="color:var(--secondary); font-size:0.8em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+                <div id="vName" style="color:var(--primary); font-weight:800; font-size:1.1em;"></div>
+                <div id="vCounter" style="font-size: 0.75em; color: #888;"></div>
             </div>
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
-        
         <div class="video-container">
             <div id="player"></div>
             <div id="videoCover" class="hidden" onclick="revealVideo()">
                 <div class="play-trigger"><i class="fas fa-play"></i></div>
-                <div class="cover-text">לחץ לצפייה בביצוע התרגיל</div>
-                <div style="margin-top:10px; font-size:0.9em; opacity:0.9;">מבחן עצמי</div>
+                <div class="cover-text">לחץ לצפייה (מבחן עצמי)</div>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
     /** משתנים גלובליים **/
-    let prevWatchdogState = null;   // לשחזור מצב Watchdog
     let db = [], favs = [];
-    
-    // טעינת מועדפים מהזיכרון המקומי
-    try {
-        favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    } catch (e) {
-        favs = [];
-        localStorage.setItem('ijja_favs', "[]");
-    }
+    let isFavOnly = false, isRandomMode = false, watchdogEnabled = true, useExternalYt = false;
+    let currentEx = null, ytPlayer = null, playerReady = false, pendingVideoId = '', pendingStart = 0;
+    let watchdogInterval = null;
 
-    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
-    let useExternalYt = false; // NEW: משתנה למצב יוטיוב חיצוני
-    let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
-    let pendingVideoId = '', pendingStart = 0;
-
-    /** Pull-to-Refresh: מנגנון עדכון במשיכה כלפי מטה **/
+    /** Pull to Refresh **/
     let startY = 0;
     const scrollContainer = document.getElementById('scrollContainer');
     const ptr = document.getElementById('ptr');
     const appMain = document.getElementById('app');
 
-    scrollContainer.addEventListener('touchstart', e => { 
-        if (scrollContainer.scrollTop === 0) startY = e.touches[0].pageY; 
-    }, {passive: true});
-
+    scrollContainer.addEventListener('touchstart', e => { if (scrollContainer.scrollTop === 0) startY = e.touches[0].pageY; }, {passive: true});
     scrollContainer.addEventListener('touchmove', e => {
         const y = e.touches[0].pageY;
         if (scrollContainer.scrollTop === 0 && y > startY) {
@@ -292,241 +214,42 @@
             appMain.style.transform = `translateY(${diff}px)`;
         }
     }, {passive: true});
-
-    scrollContainer.addEventListener('touchend', e => {
-        const y = e.changedTouches[0].pageY;
-        if (scrollContainer.scrollTop === 0 && y - startY > 120) location.reload();
-        ptr.style.transform = 'translateY(-100%)'; 
-        appMain.style.transform = 'translateY(0)';
+    scrollContainer.addEventListener('touchend', () => {
+        ptr.style.transform = 'translateY(-100%)'; appMain.style.transform = 'translateY(0)';
     });
 
-        // 🔹 שמירת Scroll בזמן גלילה
-    scrollContainer.addEventListener('scroll', () => {
-        localStorage.setItem('ijja_scroll', scrollContainer.scrollTop);
-    });
-
-    /** Service Worker PWA: רישום וניהול גרסאות אפליקציה **/
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-        navigator.serviceWorker.ready.then(reg => {
-            reg.addEventListener('updatefound', () => {
-                const newWorker = reg.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) location.reload();
-                    }
-                });
-            });
-        });
+    /** Dropdown Menu **/
+    function toggleMoreMenu(e) {
+        e.stopPropagation();
+        document.getElementById('moreMenu').classList.toggle('show');
+    }
+    window.onclick = function(event) {
+        if (!event.target.closest('.action-bar')) document.getElementById('moreMenu').classList.remove('show');
     }
 
-    // טעינת גרסה מקובץ חיצוני
-    async function loadVersion() {
-        try {
-            const r = await fetch('version.json', { cache: 'no-store' });
-            const v = await r.json();
-            document.getElementById('appVersion').innerText = 'v' + v.version;
-            return v.version;
-        } catch (e) {
-            console.warn('version.json not loaded');
-            return null;
-        }
-    }
-        
-    /** לוגיקת ניווט: קבלת התרגיל הבא עבור Autoplay **/
-    function getNextExercise() {
-        if (!currentEx) return null;
-        let list = [];
-        if(isFavOnly) {
-            list = db.filter(x => favs.includes(x.id));
-        } else {
-            list = db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        }
-        const idx = list.findIndex(x => x.id === currentEx.id);
-        if(idx < 0 || idx + 1 >= list.length) return null;
-        return list[idx + 1];
-    }
-        
-    /** YouTube Player: אתחול הנגן **/
-    function onYouTubeIframeAPIReady() {
-        ytPlayer = new YT.Player('player', {
-            height: '100%', width: '100%',
-            playerVars: { 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-            events: { 
-                'onReady': () => { 
-                    playerReady = true;
-                    if (pendingVideoId) {
-                        ytPlayer.cueVideoById({
-                            videoId: pendingVideoId,
-                            startSeconds: pendingStart
-                        });
-                        
-                        setTimeout(() => {
-                            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                                ytPlayer.playVideo();
-                            }
-                        }, 0);
-
-                    }
-                },
-                'onStateChange': onPlayerStateChange
-            }
-        });
-    }
-
-    /** ניהול מצבי נגן **/
-    function onPlayerStateChange(event) {
-        if (event.data === YT.PlayerState.PLAYING) {
-            if (watchdogEnabled) startWatchdog();
-        }
-
-        if (event.data === YT.PlayerState.ENDED) {
-            stopWatchdog();
-            // מעבר אוטומטי בסיום סרטון
-            if (!watchdogEnabled && isAutoplay && isFavOnly) {
-                const list = getCurrentListFull();
-                const idx = list.findIndex(x => x.id === currentEx.id);
-                if (list[idx + 1]) openV(list[idx + 1]);
-                else if (list.length) openV(list[0]);
-            }
-        }
-
-        if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
-    }
-
-    /** Watchdog: מנגנון הגבלת זמן ניגון וחזרה להתחלה **/
-    function startWatchdog() {
-        stopWatchdog();
-        if (!watchdogEnabled || !currentEx || currentEx.duration <= 0 || !pendingVideoId) return;
-        const start = getStartTime(currentEx.embed || currentEx.link);
-
-        watchdogInterval = setInterval(() => {
-            if (!ytPlayer) return;
-            if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
-                stopWatchdog();
-                if (isAutoplay && isFavOnly) {
-                    const list = getCurrentListFull();
-                    const idx = list.findIndex(x => x.id === currentEx.id);
-                    if (list[idx + 1]) openV(list[idx + 1]);
-                    else if (list.length) openV(list[0]);
-                } else {
-                    ytPlayer.pauseVideo();
-                    ytPlayer.seekTo(start);
-                }
-            }
-        }, 400);
-    }
-
-    function stopWatchdog() { clearInterval(watchdogInterval); }
-
-    function toggleWatchdog() {
-        watchdogEnabled = !watchdogEnabled;
-        document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
-    }
-
-    // NEW: פונקציה להחלפת מצב יוטיוב חיצוני
-    function toggleYtMode() {
-        useExternalYt = !useExternalYt;
-        const btn = document.getElementById('ytModeToggle');
-        btn.classList.toggle('active', useExternalYt);
-        localStorage.setItem('ijja_useExternalYt', useExternalYt ? '1' : '0');
-    }
-
-    /** Autoplay: מצב ניגון רצוף **/
-    function toggleAutoplay() {
-        if (!isFavOnly) return; // מותר רק במועדפים
-        isAutoplay = !isAutoplay;
-        if (isAutoplay) {
-            prevWatchdogState = watchdogEnabled;
-            watchdogEnabled = true;
-            document.getElementById('watchdogToggle').classList.toggle('active', true);
-            if (currentEx && ytPlayer && playerReady) revealVideo();
-        } else {
-            if (prevWatchdogState !== null) {
-                watchdogEnabled = prevWatchdogState;
-                document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
-            }
-        }
-        updateModalLayout();
-    }
-
-    /** טעינת נתונים ראשונית מה-CSV **/
+    /** טעינה ונתונים **/
     async function init() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv', { cache: 'no-cache' });
             const txt = await r.text();
             db = parseCSV(txt);
+            favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
             render();
-        } catch (e) {
-            console.error("CSV Load Fail", e);
-            document.getElementById('app').innerHTML =
-            '<div style="color:#d32f2f; font-weight:bold; padding:20px;">שגיאה בטעינת הנתונים. בדוק חיבור אינטרנט.</div>';
-        }
+            restoreState();
+        } catch (e) { console.error("Load error", e); }
     }
 
-     function restoreState() {
-        // 1. Scroll
-        const scrollTop = parseInt(localStorage.getItem('ijja_scroll'));
-        if(scrollTop) scrollContainer.scrollTop = scrollTop;
-    
-        // 2. סדרות פתוחות
-        const openSeries = JSON.parse(localStorage.getItem('ijja_openSeries') || '[]');
-        document.querySelectorAll('.ser-item').forEach(s=>{
-            const list = s.nextElementSibling;
-            const cat = s.parentElement.querySelector('.cat-header').innerText;
-            const ser = s.querySelector('span').innerText;
-            if(openSeries.includes(cat + '||' + ser)) {
-                list.classList.add('open');
-                const icon = s.querySelector('i.fas');
-                if(icon) icon.className='fas fa-chevron-up';
-            }
-        });
-    
-        // 3. פילטר מועדפים
-        const favState = localStorage.getItem('ijja_isFavOnly');
-        if(favState==='1') {
-            isFavOnly = true;
-            document.getElementById('favFilterBtn').classList.add('active');
-            applyFilters();
-        }
-
-        // NEW: שחזור מצב יוטיוב חיצוני
-        const ytState = localStorage.getItem('ijja_useExternalYt');
-        if(ytState === '1') {
-            useExternalYt = true;
-            document.getElementById('ytModeToggle').classList.add('active');
-        }
-    }
-    
-    // בסוף init()
-    window.onload = async function() {
-        await init();
-        restoreState();
-    }
-    
-
-    /** ניתוח מבנה ה-CSV **/
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
-        const results = [];
-        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; // התעלמות מפסיקים בתוך גרשיים
-        for (let i = 1; i < lines.length; i++) {
-            const cols = lines[i].split(regex).map(c => c.replace(/^"|"$/g,'').trim());
-            if (cols.length < 7) continue;
-            results.push({
-                id: i-1, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3],
-                link: cols[4], embed: cols[5], duration: Number(cols[6]) || 0
-            });
-        }
-        return results;
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+        return lines.slice(1).map((line, i) => {
+            const cols = line.split(regex).map(c => c.replace(/^"|"$/g,'').trim());
+            return { id: i, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4], embed: cols[5], duration: Number(cols[6]) || 0 };
+        });
     }
 
-    /** בניית ממשק המשתמש (DOM Rendering) **/
     function render() {
-        const app = document.getElementById('app'); 
-        app.innerHTML = '';
-        
-        // קיבוץ נתונים לפי קטגוריה וסדרה
+        const app = document.getElementById('app'); app.innerHTML = '';
         const groups = db.reduce((acc, x) => {
             if(!acc[x.cat]) acc[x.cat] = {};
             if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
@@ -535,303 +258,185 @@
         }, {});
 
         for(let cat in groups) {
-            const cDiv = document.createElement('div'); 
-            cDiv.className='cat-group';
+            const cDiv = document.createElement('div'); cDiv.className='cat-group';
             cDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
-            
             for(let ser in groups[cat]) {
                 const exercises = groups[cat][ser];
-                const sBtn = document.createElement('div'); 
-                sBtn.className='ser-item';
-                sBtn.innerHTML = `
-                    <div style="flex:1" onclick="toggleSerList(this)">
-                        <i class="fas fa-chevron-down" style="margin-left:8px"></i>
-                        <span>${ser}</span>
-                    </div>
-                    <i class="fas fa-star star ${exercises.every(ex=>favs.includes(ex.id))?'active':''}" 
-                       onclick="toggleSeriesFav(this,'${cat}','${ser}')"></i>`;
-                
-                const list = document.createElement('ul'); 
-                list.className='ex-list';
-                
+                const sBtn = document.createElement('div'); sBtn.className='ser-item';
+                sBtn.innerHTML = `<div style="flex:1" onclick="toggleSerList(this)"><i class="fas fa-chevron-down" style="margin-left:8px"></i><span>${ser}</span></div>
+                                  <i class="fas fa-star star ${exercises.every(ex=>favs.includes(ex.id))?'active':''}" onclick="toggleSeriesFav(this,'${cat}','${ser}')"></i>`;
+                const list = document.createElement('ul'); list.className='ex-list';
                 exercises.forEach(ex=>{
-                    const li = document.createElement('li'); 
-                    li.className='ex-row'; 
-                    li.dataset.id=ex.id;
-                    const hasL = (ex.link+ex.embed).length>10;
-                    li.innerHTML = `
-                        <span class="${hasL?'ex-link':'ex-no-link'}" 
-                              onclick="${hasL?`openVById(${ex.id},false)` : ''}">
-                              ${ex.num}. ${ex.name}</span>
-                        <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" 
-                           onclick="toggleStar(${ex.id},this)"></i>`;
+                    const li = document.createElement('li'); li.className='ex-row'; li.dataset.id=ex.id;
+                    li.innerHTML = `<span class="ex-link" onclick="openVById(${ex.id},false)">${ex.num}. ${ex.name}</span>
+                                    <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id},this)"></i>`;
                     list.appendChild(li);
                 });
-                cDiv.appendChild(sBtn); 
-                cDiv.appendChild(list);
+                cDiv.appendChild(sBtn); cDiv.appendChild(list);
             }
             app.appendChild(cDiv);
         }
         if(isFavOnly) applyFilters();
-
-        if(scrollContainer && localStorage.getItem('ijja_scroll')) {
-            scrollContainer.scrollTop = parseInt(localStorage.getItem('ijja_scroll')) || 0;
-}
-
     }
 
-    /** פתיחת סרטון לפי מזהה **/
-    function openVById(id, isRand) { 
-        isRandomMode=isRand; 
-        const ex=db.find(x=>x.id===id); 
-        if(!ex) return; 
+    /** נגן וידאו **/
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('player', {
+            playerVars: { 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
+            events: { 'onReady': () => { playerReady = true; }, 'onStateChange': onPlayerStateChange }
+        });
+    }
 
-        // NEW: בדיקה אם אנחנו במצב יוטיוב חיצוני. אם כן (ולא במצב מבחן), פתח קישור.
-        if (useExternalYt && !isRand) {
-            window.open(ex.link || ex.embed, '_blank');
-        } else {
-            openV(ex); 
+    function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING && watchdogEnabled) startWatchdog();
+        else stopWatchdog();
+    }
+
+    function openVById(id, isRand) {
+        const ex = db.find(x=>x.id===id);
+        if(!ex) return;
+        if(useExternalYt && !isRand) { window.open(ex.link || ex.embed, '_blank'); return; }
+        isRandomMode = isRand; openV(ex);
+    }
+
+    function openV(ex) {
+        currentEx = ex;
+        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
+        document.getElementById('vName').innerText = ex.name;
+        document.getElementById('vModal').style.display = 'flex';
+        updateModalNav();
+
+        const url = ex.embed || ex.link;
+        pendingVideoId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('embed/')[1].split('?')[0];
+        pendingStart = url.match(/[?&](t|start)=([0-9]+)/) ? parseInt(url.match(/[?&](t|start)=([0-9]+)/)[2]) : 0;
+
+        if(isRandomMode) document.getElementById('videoCover').classList.remove('hidden');
+        else {
+            document.getElementById('videoCover').classList.add('hidden');
+            if(playerReady) ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
         }
     }
 
-function openV(ex) {
-    currentEx = ex;
-    document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
-    document.getElementById('vName').innerText = ex.name;
-    document.getElementById('vModal').style.display = 'flex';
-    updateModalLayout();
-
-    const url = ex.embed || ex.link;
-
-    function extractVideoId(url){
-        if(!url) return '';
-        let id = '';
-        if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
-        else if(url.includes('embed/')) id = url.split('embed/')[1].split('?')[0];
-        else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
-        return decodeURIComponent(id.trim());
+    function startWatchdog() {
+        stopWatchdog();
+        if (!watchdogEnabled || !currentEx || currentEx.duration <= 0) return;
+        watchdogInterval = setInterval(() => {
+            if (ytPlayer.getCurrentTime() - pendingStart >= currentEx.duration) {
+                ytPlayer.pauseVideo(); ytPlayer.seekTo(pendingStart);
+            }
+        }, 500);
     }
+    function stopWatchdog() { clearInterval(watchdogInterval); }
 
-    pendingVideoId = extractVideoId(url);
-    pendingStart = getStartTime(url);
-
-    const cover = document.getElementById('videoCover');
-
-    if (isRandomMode) {
-        cover.classList.remove('hidden');
-        if (ytPlayer && playerReady) ytPlayer.stopVideo();
-    } else {
-        cover.classList.add('hidden');
-        // ✅ תמיד טען מחדש את הסרטון
-        if (ytPlayer && playerReady && pendingVideoId) {
-            // 🛡️ Reset בטוח למניעת race condition
-            ytPlayer.stopVideo();
-        
-            // דחייה קצרה – מאפשרת ל־YT לצאת ממצב ביניים
-            setTimeout(() => {
-                ytPlayer.loadVideoById({
-                    videoId: pendingVideoId,
-                    startSeconds: pendingStart
-                });
-            }, 80);
-        }
-
-    }
-}
-
-    /** חילוץ זמן התחלה מ-URL **/
-    function getStartTime(url){ 
-        const m=url.match(/[?&](t|start)=([0-9]+)/); 
-        return m?parseInt(m[2]):0; 
-    }
-
-    /** הצגת הוידאו במצב מבחן עצמי **/
     function revealVideo() {
-        const cover = document.getElementById('videoCover');
-        cover.classList.add('hidden');
-        if (!ytPlayer || !playerReady || !pendingVideoId) return;
-        const state = ytPlayer.getPlayerState();
-        if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.PAUSED) {
-            ytPlayer.playVideo();
-        } else {
-            ytPlayer.loadVideoById({
-                videoId: pendingVideoId,
-                startSeconds: pendingStart
-            });
-        }
+        document.getElementById('videoCover').classList.add('hidden');
+        ytPlayer.loadVideoById({ videoId: pendingVideoId, startSeconds: pendingStart });
     }
 
-    /** עדכון נראות כפתורים במודאל **/
-    function updateModalLayout() {
-        const autoBtn=document.getElementById('vAutoplayBtn');
-        const nextRandBtn=document.getElementById('vNextRandomBtn');
-        const pBtn=document.getElementById('prevBtn');
-        const nBtn=document.getElementById('nextBtn');
-        const cnt=document.getElementById('vCounter');
-        [autoBtn,nextRandBtn,pBtn,nBtn].forEach(b=>b.classList.add('hidden'));
-
-        if(isRandomMode) { 
-            nextRandBtn.classList.remove('hidden'); 
-            cnt.innerText="מצב מבחן עצמי"; 
-        } else {
-            let list = getCurrentListFull();
-            let idx = list.findIndex(x => x.id === currentEx.id);
-            if(isFavOnly) autoBtn.classList.remove('hidden');
-            pBtn.classList.remove('hidden'); 
-            nBtn.classList.remove('hidden');
-            pBtn.disabled = idx<=0; 
-            nBtn.disabled=idx>=list.length-1;
-            cnt.innerText=`${isFavOnly?'מועדף':'תרגיל'} ${idx+1} מתוך ${list.length}`;
-        }
-        autoBtn.classList.toggle('active',isAutoplay);
+    function updateModalNav() {
+        const list = isFavOnly ? db.filter(x=>favs.includes(x.id)) : db.filter(x=>x.cat===currentEx.cat && x.ser===currentEx.ser);
+        const idx = list.findIndex(x=>x.id===currentEx.id);
+        document.getElementById('prevBtn').disabled = idx <= 0;
+        document.getElementById('nextBtn').disabled = idx >= list.length - 1;
+        document.getElementById('vCounter').innerText = isRandomMode ? "מצב מבחן" : `${idx+1} מתוך ${list.length}`;
     }
 
-    /** קבלת הרשימה הרלוונטית לניווט **/
-    function getCurrentListFull() {
-        if (!currentEx) return [];
-        if (isFavOnly) {
-            return db.filter(x => favs.includes(x.id));
-        } else {
-            return db.filter(x => x.cat === currentEx.cat && x.ser === currentEx.ser);
-        }
-    }
-        
-    /** ניווט בין תרגילים (קדימה/אחורה) **/
-function nav(dir) {
-    if(isRandomMode) return;
-    const list = getCurrentListFull();
-    const idx = list.findIndex(x => x.id === currentEx.id);
-    if(idx === -1) return; // לא נמצא ברשימה, עצור
-
-    if(list[idx + dir]) {
-        openV(list[idx + dir]);
-    } else {
-        closeV();
-    }
-}
-
-
-    /** סגירת מודאל **/
-    function closeV() { 
-        document.getElementById('vModal').style.display='none'; 
-        if(ytPlayer) ytPlayer.stopVideo(); 
-        stopWatchdog(); 
-        isRandomMode=false; 
+    function nav(dir) {
+        const list = isFavOnly ? db.filter(x=>favs.includes(x.id)) : db.filter(x=>x.cat===currentEx.cat && x.ser===currentEx.ser);
+        const idx = list.findIndex(x=>x.id===currentEx.id);
+        if(list[idx+dir]) openV(list[idx+dir]);
     }
 
-    /** פתיחת/סגירת רשימת סדרות **/
-    function toggleSerList(el){ 
-        const list=el.parentElement.nextElementSibling; 
-        const open=list.classList.toggle('open'); 
-        el.querySelector('i').className=open?'fas fa-chevron-up':'fas fa-chevron-down'; 
-    
-        // שמירה למקומי
+    function closeV() { document.getElementById('vModal').style.display='none'; if(ytPlayer) ytPlayer.stopVideo(); stopWatchdog(); }
+
+    /** פעולות נוספות **/
+    function toggleAll() {
+        const lists = document.querySelectorAll('.ex-list');
+        const anyOpen = Array.from(lists).some(l => l.classList.contains('open'));
+        lists.forEach(l => {
+            l.classList.toggle('open', !anyOpen);
+            l.previousElementSibling.querySelector('i').className = !anyOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        });
+        document.getElementById('moreMenu').classList.remove('show');
         saveOpenSeries();
     }
 
-// פונקציה חדשה לשמירה
-function saveOpenSeries() {
-    const openSeries = [];
-    document.querySelectorAll('.ser-item').forEach(s=>{
-        const list = s.nextElementSibling;
-        if(list.classList.contains('open')) {
-            const cat = s.parentElement.querySelector('.cat-header').innerText;
-            const ser = s.querySelector('span').innerText;
-            openSeries.push(cat + '||' + ser);
-        }
-    });
-    localStorage.setItem('ijja_openSeries', JSON.stringify(openSeries));
-}
-
-
-    /** ניהול מועדפים (כוכבים) **/
-    function toggleStar(id,el){ 
-        if(favs.includes(id)) favs=favs.filter(f=>f!==id); 
-        else favs.push(id); 
-        el.classList.toggle('active'); 
-        localStorage.setItem('ijja_favs',JSON.stringify(favs)); 
-        if(isFavOnly) applyFilters(); 
+    function playRandom() {
+        const list = isFavOnly ? db.filter(x=>favs.includes(x.id)) : db;
+        if(list.length) openVById(list[Math.floor(Math.random()*list.length)].id, true);
     }
 
-    function toggleSeriesFav(el,cat,ser){ 
-        const exs=db.filter(x=>x.cat===cat && x.ser===ser);
-        const all=exs.every(ex=>favs.includes(ex.id));
-        if(all){ 
-            const ids=exs.map(x=>x.id); 
-            favs=favs.filter(id=>!ids.includes(id)); 
-        } else { 
-            exs.forEach(ex=>{ if(!favs.includes(ex.id)) favs.push(ex.id); }); 
-        }
-        localStorage.setItem('ijja_favs',JSON.stringify(favs)); 
+    function toggleFavFilter() {
+        isFavOnly = !isFavOnly;
+        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
+        localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
+        applyFilters();
+    }
+
+    function applyFilters() {
+        document.querySelectorAll('.ex-row').forEach(row => {
+            const id = parseInt(row.dataset.id);
+            row.classList.toggle('hidden', isFavOnly && !favs.includes(id));
+        });
+        document.querySelectorAll('.cat-group').forEach(group => {
+            const hasVisible = Array.from(group.querySelectorAll('.ex-row')).some(r => !r.classList.contains('hidden'));
+            group.style.display = hasVisible ? 'block' : 'none';
+        });
+    }
+
+    function toggleSerList(el) {
+        const list = el.parentElement.nextElementSibling;
+        const open = list.classList.toggle('open');
+        el.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        saveOpenSeries();
+    }
+
+    function toggleStar(id, el) {
+        if(favs.includes(id)) favs = favs.filter(f=>f!==id); else favs.push(id);
+        el.classList.toggle('active');
+        localStorage.setItem('ijja_favs', JSON.stringify(favs));
+        if(isFavOnly) applyFilters();
+    }
+
+    function toggleSeriesFav(el, cat, ser) {
+        const exs = db.filter(x=>x.cat===cat && x.ser===ser);
+        const all = exs.every(ex=>favs.includes(ex.id));
+        exs.forEach(ex => {
+            if(all) favs = favs.filter(f=>f!==ex.id);
+            else if(!favs.includes(ex.id)) favs.push(ex.id);
+        });
+        localStorage.setItem('ijja_favs', JSON.stringify(favs));
         render();
     }
-        
-    function clearFavs(){ 
-        if(confirm("למחוק את כל המועדפים?")){ 
-            favs=[]; 
-            localStorage.setItem('ijja_favs',"[]");
-            isFavOnly=false; 
-            document.getElementById('favFilterBtn').classList.remove('active');
-            render();
-        }
+
+    function clearFavs() {
+        if(confirm("למחוק מועדפים?")) { favs=[]; localStorage.setItem('ijja_favs',"[]"); render(); }
+        document.getElementById('moreMenu').classList.remove('show');
     }
 
-    /** פילטר מועדפים **/
-    function toggleFavFilter(){ 
-        isFavOnly=!isFavOnly; 
-        document.getElementById('favFilterBtn').classList.toggle('active',isFavOnly); 
-        applyFilters(); 
-    
-        // שמירה למקומי
-        saveFavFilter();
-    }
-    
-    // פונקציה חדשה לשמירה
-    function saveFavFilter() {
-        localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
+    function toggleWatchdog() { watchdogEnabled = !watchdogEnabled; document.getElementById('watchdogToggle').classList.toggle('active'); }
+    function toggleYtMode() { useExternalYt = !useExternalYt; document.getElementById('ytModeToggle').classList.toggle('active'); }
+
+    function saveOpenSeries() {
+        const open = Array.from(document.querySelectorAll('.ser-item')).filter(s => s.nextElementSibling.classList.contains('open')).map(s => s.querySelector('span').innerText);
+        localStorage.setItem('ijja_openSeries', JSON.stringify(open));
     }
 
-    function applyFilters(){
-        document.querySelectorAll('.cat-group').forEach(c=>{
-            let catHasVisible=false;
-            c.querySelectorAll('.ser-item').forEach(s=>{
-                let serHasVisible=false; 
-                const list=s.nextElementSibling;
-                list.querySelectorAll('.ex-row').forEach(row=>{
-                    const id=parseInt(row.dataset.id);
-                    const hide=isFavOnly && !favs.includes(id);
-                    row.classList.toggle('hidden',hide);
-                    if(!hide) serHasVisible=true;
-                });
-                s.classList.toggle('hidden',isFavOnly && !serHasVisible);
-                list.classList.toggle('hidden',isFavOnly && !serHasVisible);
-                if(serHasVisible) catHasVisible=true;
-            });
-            c.classList.toggle('hidden',isFavOnly && !catHasVisible);
-        });
-    }
-
-    /** פתיחת/סגירת כל הסדרות בלחיצה אחת **/
-    function toggleAll(){
-        const anyClosed=Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l=>!l.classList.contains('open'));
-        document.querySelectorAll('.ex-list').forEach(l=>{
-            if(!l.classList.contains('hidden')){
-                l.classList.toggle('open',anyClosed);
-                const icon=l.previousElementSibling.querySelector('i.fas');
-                if(icon) icon.className=anyClosed?'fas fa-chevron-up':'fas fa-chevron-down';
+    function restoreState() {
+        const open = JSON.parse(localStorage.getItem('ijja_openSeries') || '[]');
+        document.querySelectorAll('.ser-item').forEach(s => {
+            if(open.includes(s.querySelector('span').innerText)) {
+                s.nextElementSibling.classList.add('open');
+                s.querySelector('i').className = 'fas fa-chevron-up';
             }
         });
-    
-        // שמירה למקומי
-        saveOpenSeries();
+        if(localStorage.getItem('ijja_isFavOnly') === '1') toggleFavFilter();
+        scrollContainer.scrollTop = localStorage.getItem('ijja_scroll') || 0;
     }
 
-    /** הפעלת תרגיל אקראי **/
-    function playRandom(){
-        const pool=db.filter(x=>(x.link+x.embed).length>10);
-        if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
-    }
+    scrollContainer.onscroll = () => localStorage.setItem('ijja_scroll', scrollContainer.scrollTop);
 
+    init();
 </script>
 </body>
 </html>
