@@ -216,7 +216,22 @@
         .nav-btn:focus-visible {
             outline: 3px solid var(--secondary);
             outline-offset: 2px;
-        }     
+        }   
+        /* ספינר טעינה - הוספה */
+        
+        .video-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 5;
+            text-align: center;
+        }
+        .video-loader i { color: white; font-size: 3rem; }
+        .loading .video-loader { display: block; }
+        .loading #player { opacity: 0.3; }
+        
     </style>
 </head>
 <body>
@@ -265,12 +280,17 @@
         
         <div class="video-container">
             <div id="player"></div>
+            <div class="video-loader">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <div style="color:white; margin-top:10px; font-weight:700;">טוען...</div>
+            </div>
+        
             <div id="videoCover" class="hidden" onclick="revealVideo()">
                 <div class="play-trigger"><i class="fas fa-play"></i></div>
                 <div class="cover-text">לחץ לצפייה בביצוע התרגיל</div>
                 <div style="margin-top:10px; font-size:0.9em; opacity:0.9;">מבחן עצמי</div>
             </div>
-        </div>
+</div>
     </div>
 </div>
 
@@ -361,6 +381,7 @@
             events: { 
                 'onReady': () => { 
                     playerReady = true;
+                    document.getElementById('videoContainer').classList.remove('loading'); // הסתרה (הוספה)
                     if (pendingVideoId) {
                         ytPlayer.cueVideoById({
                             videoId: pendingVideoId,
@@ -382,6 +403,15 @@
 
     /** ניהול מצבי נגן **/
     function onPlayerStateChange(event) {
+        const vc = document.getElementById('videoContainer');
+        if (event.data === YT.PlayerState.PLAYING) {
+            vc.classList.remove('loading'); // הסתרה כשהסרטון רץ (הוספה)
+            if (watchdogEnabled) startWatchdog();
+        }
+        
+        if (event.data === YT.PlayerState.BUFFERING) {
+            vc.classList.add('loading'); // הצגה אם יש עיכוב בטעינה (הוספה)
+        }
         if (event.data === YT.PlayerState.PLAYING) {
             if (watchdogEnabled) startWatchdog();
         }
@@ -441,7 +471,7 @@
                     ytPlayer.seekTo(start);
                 }
             }
-        }, 400);
+        }, 200);
     }
 
     function stopWatchdog() { clearInterval(watchdogInterval); }
@@ -603,7 +633,8 @@
 function openV(ex) {
     updateVideoModeUI();
     currentEx = ex;
-
+    document.getElementById('videoContainer').classList.add('loading');
+    
     // 🔗 מצב פתיחה ביוטיוב חיצוני
     if (videoMode === 'youtube' && ex.link) {
         window.open(ex.link, '_blank');
@@ -847,6 +878,7 @@ function saveOpenSeries() {
 </script>
 </body>
 </html>
+
 
 
 
