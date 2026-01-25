@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.7</title>
+    <title>Black belt syllabus - v12.0.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -26,13 +26,11 @@
 
         /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
         html, body { 
-            height: 100%;
-            margin: 0;
-            font-family: 'Heebo', sans-serif;
-            display: flex;
-            flex-direction: column;
-            background: #f7f9fb;
-            overflow: hidden;
+            height: 100%; 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: 'Heebo', sans-serif; 
+            background: #f7f9fb; 
         }
 
         /* כותרת עליונה קבועה (Header) */
@@ -75,13 +73,12 @@
 
         /* מיכל הגלילה הראשי של רשימת התכנים */
         #scrollContainer { 
-            height: 100%;           
-            padding-top: var(--header-h);
-            overflow-y: auto;
-            box-sizing: border-box;
+            height: 100vh; 
+            padding-top: var(--header-h); 
+            overflow-y: auto; 
+            box-sizing: border-box; 
             -webkit-overflow-scrolling: touch;
             position: relative;
-            flex: 1 1 auto;
         }
 
         /* "הפס הלבן" - מונע זליגת תוכן מתחת ל-Header בזמן גלילה */
@@ -100,7 +97,7 @@
             max-width: 800px; 
             margin: 0 auto; 
             padding: 15px; 
-            padding-bottom: env(safe-area-inset-bottom, 15px); /* לנצל safe area במובייל */ 
+            padding-bottom: 80px; 
             transition: transform 0.2s; 
         }
         
@@ -184,54 +181,17 @@
         .nav-btn:disabled { background: #eee !important; color: #bbb; }
 
         .hidden { display: none !important; }
-       
         @media (max-width: 600px) {
-            header h1 {
-                font-size: 1rem;
-                line-height: 1.1;
-                max-width: 180px;
-                display: block;
-            }
-            
-            header { 
-                padding: 0 10px;
+        header h1 {
+            font-size: 1rem;       /* הקטנת הגופן מעט כדי למנוע שבירה מיותרת */
+            line-height: 1.1;     /* שליטה בריווח - הקטן/הגדל לפי הצורך */
+            max-width: 180px;     /* הגבלת רוחב כדי שהטקסט לא ייצמד לשוליים */
+            display: block;
             }
         
-            /* =========== כפתורים במובייל =========== */
-            .action-bar .btn {
-                width: 34px;       /* הקטנה מ-38px ל-34px */
-                height: 34px;
-                font-size: 0.9em;  /* קטן יותר להתאמה */
-            }
-        
-            .action-bar {
-                gap: 10px;         /* הגדלת רווח בין הכפתורים */
-                flex-wrap: wrap;   /* מאפשר שבירת שורה אם הכפתורים לא נכנסים */
-                justify-content: flex-end; /* יישור לצד ימין */
+        header { padding: 0 10px;      /* צמצום שולי ה-header במובייל */
             }
         }
-
-        .btn:focus-visible,
-        .modal-btn:focus-visible,
-        .nav-btn:focus-visible {
-            outline: 3px solid var(--secondary);
-            outline-offset: 2px;
-        }   
-        /* ספינר טעינה - הוספה */
-        
-        .video-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none;
-            z-index: 5;
-            text-align: center;
-        }
-        .video-loader i { color: white; font-size: 3rem; }
-        .loading .video-loader { display: block; }
-        .loading #player { opacity: 0.3; }
-        
     </style>
 </head>
 <body>
@@ -243,17 +203,15 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.7</small>
+            <small id="appVersion" style="color:#888">v12.0.2</small>
         </div>
     </div>
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
-        <button id="videoModeBtn" title="נגן פנימי / יוטיוב" class="btn" onclick="toggleVideoMode()"><i class="fab fa-youtube"></i> </button>
         <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
         <button title="פתח/סגור הכל" class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
         <button title="מחיקת מועדפים" class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
-        
     </div>
 </header>
 
@@ -278,19 +236,14 @@
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
         
-        <div id="videoContainer" class="video-container">
+        <div class="video-container">
             <div id="player"></div>
-            <div class="video-loader">
-                <i class="fas fa-circle-notch fa-spin"></i>
-                <div style="color:white; margin-top:10px; font-weight:700;">טוען...</div>
-            </div>
-        
             <div id="videoCover" class="hidden" onclick="revealVideo()">
                 <div class="play-trigger"><i class="fas fa-play"></i></div>
                 <div class="cover-text">לחץ לצפייה בביצוע התרגיל</div>
                 <div style="margin-top:10px; font-size:0.9em; opacity:0.9;">מבחן עצמי</div>
             </div>
-</div>
+        </div>
     </div>
 </div>
 
@@ -312,7 +265,7 @@
     let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
     let pendingVideoId = '', pendingStart = 0;
-    let videoMode = localStorage.getItem('ijja_videoMode') || 'embed'; // ערכים אפשריים: 'embed' | 'youtube'
+
     /** Pull-to-Refresh: מנגנון עדכון במשיכה כלפי מטה **/
     let startY = 0;
     const scrollContainer = document.getElementById('scrollContainer');
@@ -358,6 +311,19 @@
             });
         });
     }
+
+    // טעינת גרסה מקובץ חיצוני
+    async function loadVersion() {
+        try {
+            const r = await fetch('version.json', { cache: 'no-store' });
+            const v = await r.json();
+            document.getElementById('appVersion').innerText = 'v' + v.version;
+            return v.version;
+        } catch (e) {
+            console.warn('version.json not loaded');
+            return null;
+        }
+    }
         
     /** לוגיקת ניווט: קבלת התרגיל הבא עבור Autoplay **/
     function getNextExercise() {
@@ -381,7 +347,6 @@
             events: { 
                 'onReady': () => { 
                     playerReady = true;
-                    document.getElementById('videoContainer').classList.remove('loading'); // הסתרה (הוספה)
                     if (pendingVideoId) {
                         ytPlayer.cueVideoById({
                             videoId: pendingVideoId,
@@ -403,15 +368,6 @@
 
     /** ניהול מצבי נגן **/
     function onPlayerStateChange(event) {
-        const vc = document.getElementById('videoContainer');
-        if (event.data === YT.PlayerState.PLAYING) {
-            vc.classList.remove('loading'); // הסתרה כשהסרטון רץ (הוספה)
-            if (watchdogEnabled) startWatchdog();
-        }
-        
-        if (event.data === YT.PlayerState.BUFFERING) {
-            vc.classList.add('loading'); // הצגה אם יש עיכוב בטעינה (הוספה)
-        }
         if (event.data === YT.PlayerState.PLAYING) {
             if (watchdogEnabled) startWatchdog();
         }
@@ -428,27 +384,6 @@
         }
 
         if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
-    }
-    
-    function toggleVideoMode() {
-        videoMode = (videoMode === 'embed') ? 'youtube' : 'embed';
-        localStorage.setItem('ijja_videoMode', videoMode);
-        updateVideoModeUI();
-    }
-    
-    function updateVideoModeUI() {
-        const btn = document.getElementById('videoModeBtn');
-        if (!btn) return;
-    
-        if (videoMode === 'youtube') {
-            btn.classList.add('active');
-            btn.innerHTML = '<i class="fas fa-external-link-alt"></i>';
-            btn.title = 'פתיחה ביוטיוב חיצוני';
-        } else {
-            btn.classList.remove('active');
-            btn.innerHTML = '<i class="fab fa-youtube"></i>';
-            btn.title = 'נגן פנימי';
-        }
     }
 
     /** Watchdog: מנגנון הגבלת זמן ניגון וחזרה להתחלה **/
@@ -471,7 +406,7 @@
                     ytPlayer.seekTo(start);
                 }
             }
-        }, 200);
+        }, 400);
     }
 
     function stopWatchdog() { clearInterval(watchdogInterval); }
@@ -511,9 +446,8 @@
             document.getElementById('app').innerHTML =
             '<div style="color:#d32f2f; font-weight:bold; padding:20px;">שגיאה בטעינת הנתונים. בדוק חיבור אינטרנט.</div>';
         }
-        updateVideoModeUI();
     }
-    
+
      function restoreState() {
         // 1. Scroll
         const scrollTop = parseInt(localStorage.getItem('ijja_scroll'));
@@ -631,21 +565,13 @@
     }
 
 function openV(ex) {
-    updateVideoModeUI();
     currentEx = ex;
-    document.getElementById('videoContainer').classList.add('loading');
-    
-    // 🔗 מצב פתיחה ביוטיוב חיצוני
-    if (videoMode === 'youtube' && ex.link) {
-        window.open(ex.link, '_blank');
-        return; // ⛔ לא פותח מודאל ולא נגן
-    }
-    
-    const url = ex.embed || ex.link;
     document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
     document.getElementById('vName').innerText = ex.name;
     document.getElementById('vModal').style.display = 'flex';
     updateModalLayout();
+
+    const url = ex.embed || ex.link;
 
     function extractVideoId(url){
         if(!url) return '';
@@ -787,6 +713,7 @@ function saveOpenSeries() {
     localStorage.setItem('ijja_openSeries', JSON.stringify(openSeries));
 }
 
+
     /** ניהול מועדפים (כוכבים) **/
     function toggleStar(id,el){ 
         if(favs.includes(id)) favs=favs.filter(f=>f!==id); 
@@ -796,43 +723,92 @@ function saveOpenSeries() {
         if(isFavOnly) applyFilters(); 
     }
 
-    // פונקציה לסימון סדרה שלמה כמועדפת
-    function toggleSeriesFav(el, cat, ser) {
-        const exs = db.filter(x => x.cat === cat && x.ser === ser);
-        const all = exs.every(ex => favs.includes(ex.id));
-
-        if (all) {
-            // אם כולם כבר במועדפים - הסר את כולם
-            const ids = exs.map(x => x.id);
-            favs = favs.filter(id => !ids.includes(id));
-        } else {
-            // אם לא כולם במועדפים - הוסף את החסרים
-            exs.forEach(ex => {
-                if (!favs.includes(ex.id)) favs.push(ex.id);
-            });
+    function toggleSeriesFav(el,cat,ser){ 
+        const exs=db.filter(x=>x.cat===cat && x.ser===ser);
+        const all=exs.every(ex=>favs.includes(ex.id));
+        if(all){ 
+            const ids=exs.map(x=>x.id); 
+            favs=favs.filter(id=>!ids.includes(id)); 
+        } else { 
+            exs.forEach(ex=>{ if(!favs.includes(ex.id)) favs.push(ex.id); }); 
         }
-
-        // עדכון האייקון, שמירה בזיכרון ורינדור מחדש של הרשימה
-        el.classList.toggle('active', !all);
-        localStorage.setItem('ijja_favs', JSON.stringify(favs));
-        render(); 
+        localStorage.setItem('ijja_favs',JSON.stringify(favs)); 
+        render();
+    }
+        
+    function clearFavs(){ 
+        if(confirm("למחוק את כל המועדפים?")){ 
+            favs=[]; 
+            localStorage.setItem('ijja_favs',"[]");
+            isFavOnly=false; 
+            document.getElementById('favFilterBtn').classList.remove('active');
+            render();
+        }
     }
 
-    // פונקציית העזר לסינון מועדפים (כדי שהכפתור ב-Header יעבוד)
-    function toggleFavFilter() {
-        isFavOnly = !isFavOnly;
-        document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly);
+    /** פילטר מועדפים **/
+    function toggleFavFilter(){ 
+        isFavOnly=!isFavOnly; 
+        document.getElementById('favFilterBtn').classList.toggle('active',isFavOnly); 
+        applyFilters(); 
+    
+        // שמירה למקומי
+        saveFavFilter();
+    }
+    
+    // פונקציה חדשה לשמירה
+    function saveFavFilter() {
         localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
-        applyFilters();
     }
 
-    function applyFilters() {
-        render(); // ה-Render כבר יודע להתחשב ב-isFavOnly
+    function applyFilters(){
+        document.querySelectorAll('.cat-group').forEach(c=>{
+            let catHasVisible=false;
+            c.querySelectorAll('.ser-item').forEach(s=>{
+                let serHasVisible=false; 
+                const list=s.nextElementSibling;
+                list.querySelectorAll('.ex-row').forEach(row=>{
+                    const id=parseInt(row.dataset.id);
+                    const hide=isFavOnly && !favs.includes(id);
+                    row.classList.toggle('hidden',hide);
+                    if(!hide) serHasVisible=true;
+                });
+                s.classList.toggle('hidden',isFavOnly && !serHasVisible);
+                list.classList.toggle('hidden',isFavOnly && !serHasVisible);
+                if(serHasVisible) catHasVisible=true;
+            });
+            c.classList.toggle('hidden',isFavOnly && !catHasVisible);
+        });
     }
 
-    // הפעלת האפליקציה
-    init();
+    /** פתיחת/סגירת כל הסדרות בלחיצה אחת **/
+    function toggleAll(){
+        const anyClosed=Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l=>!l.classList.contains('open'));
+        document.querySelectorAll('.ex-list').forEach(l=>{
+            if(!l.classList.contains('hidden')){
+                l.classList.toggle('open',anyClosed);
+                const icon=l.previousElementSibling.querySelector('i.fas');
+                if(icon) icon.className=anyClosed?'fas fa-chevron-up':'fas fa-chevron-down';
+            }
+        });
+    
+        // שמירה למקומי
+        saveOpenSeries();
+    }
+
+    /** הפעלת תרגיל אקראי **/
+    function playRandom(){
+        const pool=db.filter(x=>(x.link+x.embed).length>10);
+        if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
+    }
 
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
