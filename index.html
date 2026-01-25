@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.3</title>
+    <title>Black belt syllabus - v12.0.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -116,22 +116,8 @@
         }
 
         /* רשימת תרגילים בתוך סדרה */
-        .ex-list {
-            list-style: none;
-            padding: 0; 
-            margin: 0;
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            background: white; 
-            border: 1px solid var(--border);
-            transition: max-height 0.3s ease, opacity 0.3s ease;
-            border-radius: 0 0 6px 6px;
-        }
-        .ex-list.open {
-            max-height: 1000px; /* מספיק גבוה לכל רשימה */
-            opacity: 1;
-        }
+        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
+        .ex-list.open { display: block; border-radius: 0 0 6px 6px; }
         .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         
         .ex-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; flex: 1; }
@@ -206,16 +192,8 @@
         header { padding: 0 10px;      /* צמצום שולי ה-header במובייל */
             }
         }
-    /* נגישות – הצגת outline לכפתורים בעת פוקוס (מקשים) */
-        .btn:focus-visible,
-        .nav-btn:focus-visible,
-        .modal-btn:focus-visible {
-            outline: 2px solid var(--secondary); /* צבע קו פוקוס */
-            outline-offset: 2px;                 /* ריווח קטן מהאלמנט */
-        }
     </style>
 </head>
-
 <body>
 
 <div id="ptr"><i class="fas fa-sync fa-spin"></i>&nbsp; מעדכן נתונים...</div>
@@ -225,16 +203,15 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.3</small>
+            <small id="appVersion" style="color:#888">v12.0.2</small>
         </div>
     </div>
     <div class="action-bar">
-        <button id="watchdogToggle" class="btn active" aria-label="מצב נגינה מקוצרת" title="מצב Watchdog"><i class="fas fa-history"></i></button>
-        <button id="randomBtn" class="btn" aria-label="תרגיל אקראי" title="תרגיל אקראי (מבחן)"><i class="fas fa-random"></i></button>
-        <button id="favFilterBtn" class="btn" aria-label="סינון מועדפים" title="סינון מועדפים"><i class="fas fa-star"></i></button>
-        <button id="toggleAllBtn" class="btn" aria-label="פתח/סגור הכל" title="פתח/סגור הכל"><i class="fas fa-arrows-alt-v"></i></button>
-        <button id="clearFavsBtn" class="btn btn-danger" aria-label="מחיקת מועדפים" title="מחיקת מועדפים"><i class="fas fa-trash-alt"></i></button>
-
+        <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
+        <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
+        <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
+        <button title="פתח/סגור הכל" class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
+        <button title="מחיקת מועדפים" class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
     </div>
 </header>
 
@@ -243,8 +220,8 @@
         </main>
 </div>
 
-<div id="vModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-box" tabindex="-1">
+<div id="vModal" class="modal" onclick="closeV()">
+    <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
         <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
@@ -543,9 +520,6 @@
                 const exercises = groups[cat][ser];
                 const sBtn = document.createElement('div'); 
                 sBtn.className='ser-item';
-                sBtn.setAttribute('tabindex', '0');
-                sBtn.setAttribute('role', 'button');
-                sBtn.setAttribute('aria-expanded', 'false');
                 sBtn.innerHTML = `
                     <div style="flex:1" onclick="toggleSerList(this)">
                         <i class="fas fa-chevron-down" style="margin-left:8px"></i>
@@ -717,17 +691,13 @@ function nav(dir) {
 
     /** פתיחת/סגירת רשימת סדרות **/
     function toggleSerList(el){ 
-        const list = el.parentElement.nextElementSibling; 
-        const open = list.classList.toggle('open'); 
-        el.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'; 
-    
-        // עדכון נגישות
-        el.parentElement.querySelector('.ser-item').setAttribute('aria-expanded', open);
+        const list=el.parentElement.nextElementSibling; 
+        const open=list.classList.toggle('open'); 
+        el.querySelector('i').className=open?'fas fa-chevron-up':'fas fa-chevron-down'; 
     
         // שמירה למקומי
         saveOpenSeries();
     }
-
 
 // פונקציה חדשה לשמירה
 function saveOpenSeries() {
@@ -835,7 +805,6 @@ function saveOpenSeries() {
 </script>
 </body>
 </html>
-
 
 
 
