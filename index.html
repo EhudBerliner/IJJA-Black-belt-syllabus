@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.2</title>
+    <title>Black belt syllabus - v12.0.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -73,7 +73,7 @@
 
         /* מיכל הגלילה הראשי של רשימת התכנים */
         #scrollContainer { 
-            height: 100vh; 
+            height: calc(100vh - var(--header-h));
             padding-top: var(--header-h); 
             overflow-y: auto; 
             box-sizing: border-box; 
@@ -192,6 +192,12 @@
         header { padding: 0 10px;      /* צמצום שולי ה-header במובייל */
             }
         }
+        .btn:focus-visible,
+        .modal-btn:focus-visible,
+        .nav-btn:focus-visible {
+            outline: 3px solid var(--secondary);
+            outline-offset: 2px;
+        }     
     </style>
 </head>
 <body>
@@ -203,7 +209,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.2</small>
+            <small id="appVersion" style="color:#888">v12.0.3</small>
         </div>
     </div>
     <div class="action-bar">
@@ -212,6 +218,8 @@
         <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
         <button title="פתח/סגור הכל" class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
         <button title="מחיקת מועדפים" class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
+        <button id="videoModeBtn" title="פתח ביוטיוב / נגן פנימי" class="modal-btn" onclick="toggleVideoMode()"><i class="fab fa-youtube"></i></button>
+
     </div>
 </header>
 
@@ -265,7 +273,7 @@
     let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
     let pendingVideoId = '', pendingStart = 0;
-
+    let videoMode = localStorage.getItem('ijja_videoMode') || 'embed'; // ערכים אפשריים: 'embed' | 'youtube'
     /** Pull-to-Refresh: מנגנון עדכון במשיכה כלפי מטה **/
     let startY = 0;
     const scrollContainer = document.getElementById('scrollContainer');
@@ -447,6 +455,22 @@
             '<div style="color:#d32f2f; font-weight:bold; padding:20px;">שגיאה בטעינת הנתונים. בדוק חיבור אינטרנט.</div>';
         }
     }
+    
+    function toggleVideoMode() {
+        videoMode = (videoMode === 'embed') ? 'youtube' : 'embed';
+        localStorage.setItem('ijja_videoMode', videoMode);
+        updateVideoModeUI();
+    }
+    
+    function updateVideoModeUI() {
+        const btn = document.getElementById('videoModeBtn');
+        if (!btn) return;
+    
+        btn.classList.toggle('active', videoMode === 'youtube');
+        btn.innerHTML = videoMode === 'youtube'
+            ? '<i class="fas fa-external-link-alt"></i>'
+            : '<i class="fab fa-youtube"></i>';
+    }
 
      function restoreState() {
         // 1. Scroll
@@ -565,13 +589,19 @@
     }
 
 function openV(ex) {
+    updateVideoModeUI();
     currentEx = ex;
+    const url = ex.embed || ex.link;
     document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
     document.getElementById('vName').innerText = ex.name;
     document.getElementById('vModal').style.display = 'flex';
     updateModalLayout();
 
-    const url = ex.embed || ex.link;
+        // 🔗 מצב פתיחה ביוטיוב חיצוני
+    if (videoMode === 'youtube' && ex.link) {
+        window.open(ex.link, '_blank');
+        return; // ⛔ לא פותח מודאל ולא נגן
+    }
 
     function extractVideoId(url){
         if(!url) return '';
@@ -805,6 +835,7 @@ function saveOpenSeries() {
 </script>
 </body>
 </html>
+
 
 
 
