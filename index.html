@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.3</title>
+    <title>Black belt syllabus - v12.0.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -209,7 +209,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.3</small>
+            <small id="appVersion" style="color:#888">v12.0.4</small>
         </div>
     </div>
     <div class="action-bar">
@@ -591,17 +591,18 @@
 function openV(ex) {
     updateVideoModeUI();
     currentEx = ex;
+
+    // 🔗 מצב פתיחה ביוטיוב חיצוני
+    if (videoMode === 'youtube' && ex.link) {
+        window.open(ex.link, '_blank');
+        return; // ⛔ לא פותח מודאל ולא נגן
+    }
+    
     const url = ex.embed || ex.link;
     document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
     document.getElementById('vName').innerText = ex.name;
     document.getElementById('vModal').style.display = 'flex';
     updateModalLayout();
-
-        // 🔗 מצב פתיחה ביוטיוב חיצוני
-    if (videoMode === 'youtube' && ex.link) {
-        window.open(ex.link, '_blank');
-        return; // ⛔ לא פותח מודאל ולא נגן
-    }
 
     function extractVideoId(url){
         if(!url) return '';
@@ -835,6 +836,7 @@ function saveOpenSeries() {
 </script>
 </body>
 </html>
+
 
 
 
