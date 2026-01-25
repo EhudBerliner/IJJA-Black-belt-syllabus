@@ -218,8 +218,7 @@
         <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
         <button title="פתח/סגור הכל" class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
         <button title="מחיקת מועדפים" class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
-        <button id="videoModeBtn" title="פתח ביוטיוב / נגן פנימי" class="modal-btn" onclick="toggleVideoMode()"><i class="fab fa-youtube"></i></button>
-
+        <button id="videoModeBtn" title="נגן פנימי / יוטיוב" class="btn" onclick="toggleVideoMode()"><i class="fab fa-youtube"></i> </button>
     </div>
 </header>
 
@@ -319,19 +318,6 @@
             });
         });
     }
-
-    // טעינת גרסה מקובץ חיצוני
-    async function loadVersion() {
-        try {
-            const r = await fetch('version.json', { cache: 'no-store' });
-            const v = await r.json();
-            document.getElementById('appVersion').innerText = 'v' + v.version;
-            return v.version;
-        } catch (e) {
-            console.warn('version.json not loaded');
-            return null;
-        }
-    }
         
     /** לוגיקת ניווט: קבלת התרגיל הבא עבור Autoplay **/
     function getNextExercise() {
@@ -392,6 +378,27 @@
         }
 
         if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
+    }
+    
+    function toggleVideoMode() {
+        videoMode = (videoMode === 'embed') ? 'youtube' : 'embed';
+        localStorage.setItem('ijja_videoMode', videoMode);
+        updateVideoModeUI();
+    }
+    
+    function updateVideoModeUI() {
+        const btn = document.getElementById('videoModeBtn');
+        if (!btn) return;
+    
+        if (videoMode === 'youtube') {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-external-link-alt"></i>';
+            btn.title = 'פתיחה ביוטיוב חיצוני';
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fab fa-youtube"></i>';
+            btn.title = 'נגן פנימי';
+        }
     }
 
     /** Watchdog: מנגנון הגבלת זמן ניגון וחזרה להתחלה **/
@@ -454,24 +461,9 @@
             document.getElementById('app').innerHTML =
             '<div style="color:#d32f2f; font-weight:bold; padding:20px;">שגיאה בטעינת הנתונים. בדוק חיבור אינטרנט.</div>';
         }
-    }
-    
-    function toggleVideoMode() {
-        videoMode = (videoMode === 'embed') ? 'youtube' : 'embed';
-        localStorage.setItem('ijja_videoMode', videoMode);
         updateVideoModeUI();
     }
     
-    function updateVideoModeUI() {
-        const btn = document.getElementById('videoModeBtn');
-        if (!btn) return;
-    
-        btn.classList.toggle('active', videoMode === 'youtube');
-        btn.innerHTML = videoMode === 'youtube'
-            ? '<i class="fas fa-external-link-alt"></i>'
-            : '<i class="fab fa-youtube"></i>';
-    }
-
      function restoreState() {
         // 1. Scroll
         const scrollTop = parseInt(localStorage.getItem('ijja_scroll'));
@@ -836,6 +828,7 @@ function saveOpenSeries() {
 </script>
 </body>
 </html>
+
 
 
 
