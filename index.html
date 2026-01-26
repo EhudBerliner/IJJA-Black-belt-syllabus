@@ -22,6 +22,7 @@
             --fav-color: #ffc107; /* צבע זהב לכפתור מועדפים */
             --danger: #d32f2f;    /* אדום להתראות/מחיקה */
             --success: #2e7d32;   /* ירוק לאישור פעולות */
+            --yt-red: #ff0000;    /* צבע יוטיוב */
         }
 
         /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
@@ -61,6 +62,7 @@
             display: flex; align-items: center; justify-content: center; font-size: 1em;
         }
         .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn.yt-active { color: var(--yt-red); border-color: var(--yt-red); }
         .btn-danger { color: var(--danger); }
 
         /* אלמנט ויזואלי לרענון במשיכה (Pull to Refresh) */
@@ -207,6 +209,7 @@
         </div>
     </div>
     <div class="action-bar">
+        <button id="ytModeBtn" class="btn" onclick="toggleYtMode()" title="נגן חיצוני"><i class="fab fa-youtube"></i></button>
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
         <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
@@ -262,9 +265,15 @@
         localStorage.setItem('ijja_favs', "[]");
     }
 
-    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
+    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true, isExternalYt = false;
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
     let pendingVideoId = '', pendingStart = 0;
+
+    /** לוגיקה למצב נגן חיצוני **/
+    function toggleYtMode() {
+        isExternalYt = !isExternalYt;
+        document.getElementById('ytModeBtn').classList.toggle('yt-active', isExternalYt);
+    }
 
     /** Pull-to-Refresh: מנגנון עדכון במשיכה כלפי מטה **/
     let startY = 0;
@@ -292,7 +301,6 @@
         appMain.style.transform = 'translateY(0)';
     });
 
-        // 🔹 שמירת Scroll בזמן גלילה
     scrollContainer.addEventListener('scroll', () => {
         localStorage.setItem('ijja_scroll', scrollContainer.scrollTop);
     });
@@ -312,7 +320,6 @@
         });
     }
 
-    // טעינת גרסה מקובץ חיצוני
     async function loadVersion() {
         try {
             const r = await fetch('version.json', { cache: 'no-store' });
@@ -325,7 +332,6 @@
         }
     }
         
-    /** לוגיקת ניווט: קבלת התרגיל הבא עבור Autoplay **/
     function getNextExercise() {
         if (!currentEx) return null;
         let list = [];
@@ -339,7 +345,6 @@
         return list[idx + 1];
     }
         
-    /** YouTube Player: אתחול הנגן **/
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
@@ -352,13 +357,11 @@
                             videoId: pendingVideoId,
                             startSeconds: pendingStart
                         });
-                        
                         setTimeout(() => {
                             if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
                                 ytPlayer.playVideo();
                             }
                         }, 0);
-
                     }
                 },
                 'onStateChange': onPlayerStateChange
@@ -366,15 +369,12 @@
         });
     }
 
-    /** ניהול מצבי נגן **/
     function onPlayerStateChange(event) {
         if (event.data === YT.PlayerState.PLAYING) {
             if (watchdogEnabled) startWatchdog();
         }
-
         if (event.data === YT.PlayerState.ENDED) {
             stopWatchdog();
-            // מעבר אוטומטי בסיום סרטון
             if (!watchdogEnabled && isAutoplay && isFavOnly) {
                 const list = getCurrentListFull();
                 const idx = list.findIndex(x => x.id === currentEx.id);
@@ -382,16 +382,13 @@
                 else if (list.length) openV(list[0]);
             }
         }
-
         if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
     }
 
-    /** Watchdog: מנגנון הגבלת זמן ניגון וחזרה להתחלה **/
     function startWatchdog() {
         stopWatchdog();
         if (!watchdogEnabled || !currentEx || currentEx.duration <= 0 || !pendingVideoId) return;
         const start = getStartTime(currentEx.embed || currentEx.link);
-
         watchdogInterval = setInterval(() => {
             if (!ytPlayer) return;
             if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
@@ -416,9 +413,8 @@
         document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
     }
 
-    /** Autoplay: מצב ניגון רצוף **/
     function toggleAutoplay() {
-        if (!isFavOnly) return; // מותר רק במועדפים
+        if (!isFavOnly) return; 
         isAutoplay = !isAutoplay;
         if (isAutoplay) {
             prevWatchdogState = watchdogEnabled;
@@ -434,7 +430,6 @@
         updateModalLayout();
     }
 
-    /** טעינת נתונים ראשונית מה-CSV **/
     async function init() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv', { cache: 'no-cache' });
@@ -448,12 +443,10 @@
         }
     }
 
-     function restoreState() {
-        // 1. Scroll
+    function restoreState() {
         const scrollTop = parseInt(localStorage.getItem('ijja_scroll'));
         if(scrollTop) scrollContainer.scrollTop = scrollTop;
     
-        // 2. סדרות פתוחות
         const openSeries = JSON.parse(localStorage.getItem('ijja_openSeries') || '[]');
         document.querySelectorAll('.ser-item').forEach(s=>{
             const list = s.nextElementSibling;
@@ -466,7 +459,6 @@
             }
         });
     
-        // 3. פילטר מועדפים
         const favState = localStorage.getItem('ijja_isFavOnly');
         if(favState==='1') {
             isFavOnly = true;
@@ -475,18 +467,15 @@
         }
     }
     
-    // בסוף init()
     window.onload = async function() {
         await init();
         restoreState();
     }
-   
 
-    /** ניתוח מבנה ה-CSV **/
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
         const results = [];
-        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; // התעלמות מפסיקים בתוך גרשיים
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; 
         for (let i = 1; i < lines.length; i++) {
             const cols = lines[i].split(regex).map(c => c.replace(/^"|"$/g,'').trim());
             if (cols.length < 7) continue;
@@ -498,12 +487,10 @@
         return results;
     }
 
-    /** בניית ממשק המשתמש (DOM Rendering) **/
     function render() {
         const app = document.getElementById('app'); 
         app.innerHTML = '';
         
-        // קיבוץ נתונים לפי קטגוריה וסדרה
         const groups = db.reduce((acc, x) => {
             if(!acc[x.cat]) acc[x.cat] = {};
             if(!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
@@ -550,72 +537,65 @@
             app.appendChild(cDiv);
         }
         if(isFavOnly) applyFilters();
-
         if(scrollContainer && localStorage.getItem('ijja_scroll')) {
             scrollContainer.scrollTop = parseInt(localStorage.getItem('ijja_scroll')) || 0;
-}
-
+        }
     }
 
-    /** פתיחת סרטון לפי מזהה **/
     function openVById(id, isRand) { 
         isRandomMode=isRand; 
         const ex=db.find(x=>x.id===id); 
         if(ex) openV(ex); 
     }
 
-function openV(ex) {
-    currentEx = ex;
-    document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
-    document.getElementById('vName').innerText = ex.name;
-    document.getElementById('vModal').style.display = 'flex';
-    updateModalLayout();
+    function openV(ex) {
+        if (isExternalYt) {
+            window.open(ex.link || ex.embed, '_blank');
+            return;
+        }
+        currentEx = ex;
+        document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
+        document.getElementById('vName').innerText = ex.name;
+        document.getElementById('vModal').style.display = 'flex';
+        updateModalLayout();
 
-    const url = ex.embed || ex.link;
+        const url = ex.embed || ex.link;
 
-    function extractVideoId(url){
-        if(!url) return '';
-        let id = '';
-        if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
-        else if(url.includes('embed/')) id = url.split('embed/')[1].split('?')[0];
-        else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
-        return decodeURIComponent(id.trim());
-    }
-
-    pendingVideoId = extractVideoId(url);
-    pendingStart = getStartTime(url);
-
-    const cover = document.getElementById('videoCover');
-
-    if (isRandomMode) {
-        cover.classList.remove('hidden');
-        if (ytPlayer && playerReady) ytPlayer.stopVideo();
-    } else {
-        cover.classList.add('hidden');
-        // ✅ תמיד טען מחדש את הסרטון
-        if (ytPlayer && playerReady && pendingVideoId) {
-            // 🛡️ Reset בטוח למניעת race condition
-            ytPlayer.stopVideo();
-        
-            // דחייה קצרה – מאפשרת ל־YT לצאת ממצב ביניים
-            setTimeout(() => {
-                ytPlayer.loadVideoById({
-                    videoId: pendingVideoId,
-                    startSeconds: pendingStart
-                });
-            }, 80);
+        function extractVideoId(url){
+            if(!url) return '';
+            let id = '';
+            if(url.includes('v=')) id = url.split('v=')[1].split('&')[0];
+            else if(url.includes('embed/')) id = url.split('embed/')[1].split('?')[0];
+            else if(url.includes('youtu.be/')) id = url.split('youtu.be/')[1].split('?')[0];
+            return decodeURIComponent(id.trim());
         }
 
-    }
-}
+        pendingVideoId = extractVideoId(url);
+        pendingStart = getStartTime(url);
+        const cover = document.getElementById('videoCover');
 
-    /** חילוץ זמן התחלה מ-URL **/
+        if (isRandomMode) {
+            cover.classList.remove('hidden');
+            if (ytPlayer && playerReady) ytPlayer.stopVideo();
+        } else {
+            cover.classList.add('hidden');
+            if (ytPlayer && playerReady && pendingVideoId) {
+                ytPlayer.stopVideo();
+                setTimeout(() => {
+                    ytPlayer.loadVideoById({
+                        videoId: pendingVideoId,
+                        startSeconds: pendingStart
+                    });
+                }, 80);
+            }
+        }
+    }
+
     function getStartTime(url){ 
         const m=url.match(/[?&](t|start)=([0-9]+)/); 
         return m?parseInt(m[2]):0; 
     }
 
-    /** הצגת הוידאו במצב מבחן עצמי **/
     function revealVideo() {
         const cover = document.getElementById('videoCover');
         cover.classList.add('hidden');
@@ -631,7 +611,6 @@ function openV(ex) {
         }
     }
 
-    /** עדכון נראות כפתורים במודאל **/
     function updateModalLayout() {
         const autoBtn=document.getElementById('vAutoplayBtn');
         const nextRandBtn=document.getElementById('vNextRandomBtn');
@@ -656,7 +635,6 @@ function openV(ex) {
         autoBtn.classList.toggle('active',isAutoplay);
     }
 
-    /** קבלת הרשימה הרלוונטית לניווט **/
     function getCurrentListFull() {
         if (!currentEx) return [];
         if (isFavOnly) {
@@ -666,22 +644,18 @@ function openV(ex) {
         }
     }
         
-    /** ניווט בין תרגילים (קדימה/אחורה) **/
-function nav(dir) {
-    if(isRandomMode) return;
-    const list = getCurrentListFull();
-    const idx = list.findIndex(x => x.id === currentEx.id);
-    if(idx === -1) return; // לא נמצא ברשימה, עצור
-
-    if(list[idx + dir]) {
-        openV(list[idx + dir]);
-    } else {
-        closeV();
+    function nav(dir) {
+        if(isRandomMode) return;
+        const list = getCurrentListFull();
+        const idx = list.findIndex(x => x.id === currentEx.id);
+        if(idx === -1) return;
+        if(list[idx + dir]) {
+            openV(list[idx + dir]);
+        } else {
+            closeV();
+        }
     }
-}
 
-
-    /** סגירת מודאל **/
     function closeV() { 
         document.getElementById('vModal').style.display='none'; 
         if(ytPlayer) ytPlayer.stopVideo(); 
@@ -689,32 +663,26 @@ function nav(dir) {
         isRandomMode=false; 
     }
 
-    /** פתיחת/סגירת רשימת סדרות **/
     function toggleSerList(el){ 
         const list=el.parentElement.nextElementSibling; 
         const open=list.classList.toggle('open'); 
         el.querySelector('i').className=open?'fas fa-chevron-up':'fas fa-chevron-down'; 
-    
-        // שמירה למקומי
         saveOpenSeries();
     }
 
-// פונקציה חדשה לשמירה
-function saveOpenSeries() {
-    const openSeries = [];
-    document.querySelectorAll('.ser-item').forEach(s=>{
-        const list = s.nextElementSibling;
-        if(list.classList.contains('open')) {
-            const cat = s.parentElement.querySelector('.cat-header').innerText;
-            const ser = s.querySelector('span').innerText;
-            openSeries.push(cat + '||' + ser);
-        }
-    });
-    localStorage.setItem('ijja_openSeries', JSON.stringify(openSeries));
-}
+    function saveOpenSeries() {
+        const openSeries = [];
+        document.querySelectorAll('.ser-item').forEach(s=>{
+            const list = s.nextElementSibling;
+            if(list.classList.contains('open')) {
+                const cat = s.parentElement.querySelector('.cat-header').innerText;
+                const ser = s.querySelector('span').innerText;
+                openSeries.push(cat + '||' + ser);
+            }
+        });
+        localStorage.setItem('ijja_openSeries', JSON.stringify(openSeries));
+    }
 
-
-    /** ניהול מועדפים (כוכבים) **/
     function toggleStar(id,el){ 
         if(favs.includes(id)) favs=favs.filter(f=>f!==id); 
         else favs.push(id); 
@@ -746,17 +714,13 @@ function saveOpenSeries() {
         }
     }
 
-    /** פילטר מועדפים **/
     function toggleFavFilter(){ 
         isFavOnly=!isFavOnly; 
         document.getElementById('favFilterBtn').classList.toggle('active',isFavOnly); 
         applyFilters(); 
-    
-        // שמירה למקומי
         saveFavFilter();
     }
     
-    // פונקציה חדשה לשמירה
     function saveFavFilter() {
         localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
     }
@@ -781,7 +745,6 @@ function saveOpenSeries() {
         });
     }
 
-    /** פתיחת/סגירת כל הסדרות בלחיצה אחת **/
     function toggleAll(){
         const anyClosed=Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l=>!l.classList.contains('open'));
         document.querySelectorAll('.ex-list').forEach(l=>{
@@ -791,24 +754,13 @@ function saveOpenSeries() {
                 if(icon) icon.className=anyClosed?'fas fa-chevron-up':'fas fa-chevron-down';
             }
         });
-    
-        // שמירה למקומי
         saveOpenSeries();
     }
 
-    /** הפעלת תרגיל אקראי **/
     function playRandom(){
         const pool=db.filter(x=>(x.link+x.embed).length>10);
         if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
     }
-
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
