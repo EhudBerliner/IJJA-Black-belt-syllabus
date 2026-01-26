@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.2</title>
+    <title>Black belt syllabus - v12.0.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -203,7 +203,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.2</small>
+            <small id="appVersion" style="color:#888">v12.0.4</small>
         </div>
     </div>
     <div class="action-bar">
@@ -564,6 +564,44 @@
         if(ex) openV(ex); 
     }
 
+function updateModalLayout() {
+    const autoBtn = document.getElementById('vAutoplayBtn');
+    const nextRandBtn = document.getElementById('vNextRandomBtn');
+    const pBtn = document.getElementById('prevBtn');
+    const nBtn = document.getElementById('nextBtn');
+    const cnt = document.getElementById('vCounter');
+
+    // שלב 1: הסתרה גורפת של כל כפתורי הבקרה
+    [autoBtn, nextRandBtn, pBtn, nBtn].forEach(b => {
+        if(b) b.classList.add('hidden');
+    });
+
+    if (isRandomMode) { 
+        // מצב מבחן עצמי: מציג רק כפתור "אקראי הבא"
+        if(nextRandBtn) nextRandBtn.classList.remove('hidden'); 
+        if(cnt) cnt.innerText = "מצב מבחן עצמי"; 
+    } else {
+        // מצב רגיל/מועדפים: מציג ניווט ונגן רצוף
+        let list = getCurrentListFull();
+        let idx = list.findIndex(x => x.id === currentEx.id);
+        
+        if (isFavOnly && autoBtn) autoBtn.classList.remove('hidden');
+        if (pBtn) {
+            pBtn.classList.remove('hidden');
+            pBtn.disabled = idx <= 0;
+        }
+        if (nBtn) {
+            nBtn.classList.remove('hidden');
+            nBtn.disabled = idx >= list.length - 1;
+        }
+        if (cnt) cnt.innerText = `${isFavOnly ? 'מועדף' : 'תרגיל'} ${idx + 1} מתוך ${list.length}`;
+    }
+    
+    // עדכון מצב ויזואלי לכפתור ה-Autoplay
+    if(autoBtn) autoBtn.classList.toggle('active', isAutoplay);
+}
+
+    
 function openV(ex) {
     currentEx = ex;
     document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
@@ -675,11 +713,15 @@ function nav(dir) {
 
     if(list[idx + dir]) {
         openV(list[idx + dir]);
+        
+        // השורה שחובה להוסיף כדי לעדכן את הכפתורים והמונה במעבר
+        if (typeof updateModalLayout === "function") {
+            updateModalLayout();
+        }
     } else {
         closeV();
     }
 }
-
 
     /** סגירת מודאל **/
     function closeV() { 
@@ -805,6 +847,7 @@ function saveOpenSeries() {
 </script>
 </body>
 </html>
+
 
 
 
