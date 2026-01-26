@@ -3,126 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>סילבוס שחורה - IJJA</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Black belt syllabus - v12.0.4</title>
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2d3436;
-            --secondary: #6c5ce7;
-            --accent: #a29bfe;
-            --bg: #f0f2f5;
-            --text: #2d3436;
-            --white: #ffffff;
-            --header-h: 80px;
-            --danger: #ff7675;
+            --primary: #0056a6;
+            --secondary: #009be5;
+            --border: #d2dce5;
+            --header-h: 90px;
+            --fav-color: #ffc107;
+            --danger: #d32f2f;
+            --yt-red: #ff0000;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Heebo', sans-serif; margin: 0; background: #f7f9fb; direction: rtl; overflow-x: hidden; }
 
-        body {
-            font-family: 'Heebo', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding-top: calc(var(--header-h) + 20px);
-        }
-
-        /* --- Header & Layout --- */
         header {
-            background: var(--white);
-            height: var(--header-h);
-            position: fixed;
-            top: 0; width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
+            height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-sizing: border-box;
         }
 
         .header-right { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 50px; width: auto; }
-        header h1 { font-size: 1.4rem; color: var(--primary); font-weight: 900; line-height: 1; }
+        header h1 { margin: 0; font-weight: 900; color: var(--primary); font-size: 1.4em; }
 
         .action-bar { display: flex; gap: 8px; align-items: center; }
-
-        /* --- Buttons Style --- */
         .btn {
-            background: #eee; border: none;
-            width: 40px; height: 40px;
-            border-radius: 10px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1em; transition: all 0.2s; color: var(--primary);
+            width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border);
+            background: white; color: var(--primary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1em; transition: 0.2s;
         }
-        .btn:active { transform: scale(0.9); }
-        .btn.active { background: var(--secondary); color: white; }
-        .btn-danger { color: var(--danger); }
+        .btn.active { background: var(--primary); color: white; }
+        .btn#ytModeToggle.active { background: var(--yt-red); border-color: var(--yt-red); color: white; }
 
-        /* --- Dropdown Menu (The Solution) --- */
-        .extra-menu {
-            display: none;
-            position: absolute;
-            top: 70px; left: 15px;
-            background: var(--white);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            border-radius: 12px;
-            flex-direction: column;
-            z-index: 1100;
-            overflow: hidden;
-            border: 1px solid #eee;
+        /* Dropdown Styles */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none; position: absolute; top: 48px; left: 0; 
+            background: white; border: 1px solid var(--border); border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15); min-width: 170px; z-index: 1100;
         }
-        .extra-menu.show { display: flex; }
+        .dropdown-menu.show { display: flex; flex-direction: column; }
         .menu-item {
-            padding: 12px 20px;
-            border: none; background: none;
-            text-align: right; font-family: 'Heebo';
-            cursor: pointer; border-bottom: 1px solid #f5f5f5;
-            display: flex; align-items: center; gap: 10px;
-            font-size: 0.95rem; width: 180px;
+            padding: 12px 15px; border: none; background: none; text-align: right;
+            font-family: 'Heebo'; cursor: pointer; display: flex; align-items: center;
+            gap: 10px; color: var(--primary); border-bottom: 1px solid #eee;
         }
         .menu-item:last-child { border-bottom: none; }
-        .menu-item:hover { background: #f9f9f9; }
+        .menu-item i { width: 20px; text-align: center; }
+        .item-danger { color: var(--danger); }
 
-        /* --- Syllabus Content --- */
-        .container { max-width: 800px; margin: 0 auto; padding: 0 15px 50px; }
-        .category { background: var(--white); border-radius: 15px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .category-header { background: var(--primary); color: white; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .category-header h2 { font-size: 1.1rem; }
-        .category-content { display: none; padding: 5px 0; }
-        .category.open .category-content { display: block; }
-
-        .technique-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; border-bottom: 1px solid #eee;
-        }
-        .tech-info { flex-grow: 1; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .tech-actions { display: flex; gap: 15px; }
-        .fav-btn { color: #ccc; cursor: pointer; font-size: 1.2rem; }
-        .fav-btn.active { color: #f1c40f; }
+        main { padding: calc(var(--header-h) + 20px) 20px 80px; max-width: 800px; margin: 0 auto; }
         
-        /* Watchdog indicator */
-        .tech-info.watched { border-right: 4px solid var(--secondary); padding-right: 8px; }
-
-        /* --- Video Modal --- */
-        #videoModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center;
+        .cat-group { margin-bottom: 25px; }
+        .cat-header { 
+            background: var(--primary); color: white; padding: 12px 20px; 
+            border-radius: 12px; font-weight: 900; font-size: 1.2em; position: sticky; top: 100px; z-index: 10;
         }
-        .modal-content { width: 95%; max-width: 700px; position: relative; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 10px; }
-        .close-modal { position: absolute; top: -40px; left: 0; color: white; font-size: 2rem; cursor: pointer; }
 
-        /* --- Mobile Adjustments --- */
+        .ser-item { 
+            background: white; padding: 15px; margin-top: 10px; border-radius: 10px;
+            border-right: 5px solid var(--secondary); font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+        }
+
+        .ex-list { list-style: none; padding: 0; margin: 0; display: none; border: 1px solid var(--border); border-top: none; }
+        .ex-list.open { display: block; border-radius: 0 0 10px 10px; }
+        .ex-row { padding: 12px 20px; background: #fff; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-link { color: var(--primary); text-decoration: none; font-weight: 600; flex: 1; cursor: pointer; }
+        .star { cursor: pointer; color: #ccc; font-size: 1.3em; }
+        .star.active { color: var(--fav-color); }
+
+        .modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; 
+        }
+        .modal-box { background: white; width: 92%; max-width: 550px; border-radius: 20px; padding: 20px; position: relative; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 12px; overflow: hidden; }
+        #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
+
         @media (max-width: 600px) {
-            :root { --header-h: 70px; }
+            header h1 { font-size: 1.1em; }
+            .logo-img { height: 40px; }
             header { padding: 0 10px; }
-            .logo-img { height: 38px; }
-            header h1 { font-size: 1.1rem; max-width: 100px; }
-            .action-bar { gap: 5px; }
-            .btn { width: 36px; height: 36px; font-size: 1rem; }
         }
     </style>
 </head>
@@ -130,197 +97,177 @@
 
 <header>
     <div class="header-right">
-        <img src="Logo.png" alt="IJJA" class="logo-img">
+        <img src="Logo.png" class="logo-img">
         <div>
-            <h1>סילבוס שחורה</h1>
-            <small id="appVersion" style="color:#888; font-size: 0.7em;">v12.0.3</small>
+            <h1>סילבוס חגורה שחורה</h1>
+            <small id="verTag" style="color:#888">v12.0.4</small>
         </div>
     </div>
-    
     <div class="action-bar">
-        <button id="ytModeToggle" title="מצב Youtube" class="btn" onclick="toggleYtMode()"><i class="fab fa-youtube"></i></button>
-        <button id="watchdogToggle" title="Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
-        <button title="אקראי" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
-        <button id="favFilterBtn" title="מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
+        <button id="ytModeToggle" class="btn" onclick="toggleYtMode()" title="מצב יוטיוב"><i class="fab fa-youtube"></i></button>
+        <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
+        <button id="favFilterBtn" class="btn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
         
-        <button id="moreBtn" title="עוד" class="btn" onclick="toggleExtraMenu(event)"><i class="fas fa-ellipsis-v"></i></button>
-    </div>
-
-    <div id="extraMenu" class="extra-menu">
-        <button class="menu-item" onclick="toggleAll()">
-            <i class="fas fa-arrows-alt-v"></i> פתח/סגור הכל
-        </button>
-        <button class="menu-item btn-danger" onclick="clearFavs()">
-            <i class="fas fa-trash-alt"></i> ניקוי מועדפים
-        </button>
+        <div class="dropdown">
+            <button class="btn" onclick="toggleDropdown(event)"><i class="fas fa-ellipsis-v"></i></button>
+            <div id="moreMenu" class="dropdown-menu">
+                <button class="menu-item" onclick="toggleAllLists(true)"><i class="fas fa-expand-arrows-alt"></i> פתח הכל</button>
+                <button class="menu-item" onclick="toggleAllLists(false)"><i class="fas fa-compress-arrows-alt"></i> סגור הכל</button>
+                <button class="menu-item item-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i> מחיקת מועדפים</button>
+            </div>
+        </div>
     </div>
 </header>
 
-<div class="container" id="syllabusContent">
-    </div>
+<main id="app"></main>
 
-<div id="videoModal" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
-        <div class="video-container" id="videoWrapper">
-            </div>
+<div id="vModal" class="modal" onclick="closeV()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <i class="fas fa-times close-btn" onclick="closeV()"></i>
+        <h3 id="vTitle" style="margin:0 0 15px 0; color:var(--primary); font-size:1.1em;"></h3>
+        <div class="video-container">
+            <div id="player"></div>
+        </div>
     </div>
 </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    // --- Data Configuration ---
-    const categories = [
-        {
-            title: "עמידה וטייקדאונס",
-            techniques: [
-                { name: "Single Leg", id: "sl1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                { name: "Double Leg", id: "dl1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
-            ]
-        },
-        {
-            title: "גארד פתוח",
-            techniques: [
-                { name: "De La Riva Sweep", id: "dlr1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                { name: "Spider Guard Triangle", id: "sg1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
-            ]
-        }
-    ];
+    let db = [], favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
+    let isFavOnly = false, useExternalYt = false, ytPlayer = null, currentEx = null;
+    let watchdogInterval = null;
 
-    let favorites = JSON.parse(localStorage.getItem('bjj_favs')) || [];
-    let watched = JSON.parse(localStorage.getItem('bjj_watched')) || [];
-    let isWatchdogActive = true;
-    let isFavFilterActive = false;
-    let ytMode = false;
+    async function init() {
+        const r = await fetch('Black_belt_syllabus_IJJA.csv');
+        const t = await r.text();
+        db = parseCSV(t);
+        render();
+    }
 
-    // --- Core Functions ---
-
-    function renderSyllabus() {
-        const container = document.getElementById('syllabusContent');
-        container.innerHTML = '';
-
-        categories.forEach((cat, catIdx) => {
-            let filteredTechs = cat.techniques;
-            if (isFavFilterActive) {
-                filteredTechs = cat.techniques.filter(t => favorites.includes(t.id));
-            }
-
-            if (filteredTechs.length === 0 && isFavFilterActive) return;
-
-            const catDiv = document.createElement('div');
-            catDiv.className = 'category';
-            catDiv.innerHTML = `
-                <div class="category-header" onclick="this.parentElement.classList.toggle('open')">
-                    <h2>${cat.title}</h2>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="category-content">
-                    ${filteredTechs.map(tech => `
-                        <div class="technique-item">
-                            <div class="tech-info ${watched.includes(tech.id) ? 'watched' : ''}" onclick="playVideo('${tech.url}', '${tech.id}')">
-                                <i class="fas fa-play-circle" style="color: var(--secondary)"></i>
-                                <span>${tech.name}</span>
-                            </div>
-                            <div class="tech-actions">
-                                <i class="${favorites.includes(tech.id) ? 'fas' : 'far'} fa-star fav-btn ${favorites.includes(tech.id) ? 'active' : ''}" 
-                                   onclick="toggleFavorite('${tech.id}')"></i>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            container.appendChild(catDiv);
+    function parseCSV(text) {
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        return lines.slice(1).map((line, i) => {
+            const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g,'').trim());
+            return { id: i, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4], embed: cols[5], dur: parseInt(cols[6]) || 0 };
         });
     }
 
-    function playVideo(url, id) {
-        if (isWatchdogActive && !watched.includes(id)) {
-            watched.push(id);
-            localStorage.setItem('bjj_watched', JSON.stringify(watched));
-            renderSyllabus();
-        }
+    function render() {
+        const container = document.getElementById('app');
+        container.innerHTML = '';
+        const groups = db.reduce((acc, x) => {
+            if (isFavOnly && !favs.includes(x.id)) return acc;
+            if (!acc[x.cat]) acc[x.cat] = {};
+            if (!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
+            acc[x.cat][x.ser].push(x);
+            return acc;
+        }, {});
 
-        if (ytMode) {
-            window.open(url.replace('embed/', 'watch?v='), '_blank');
-        } else {
-            document.getElementById('videoWrapper').innerHTML = `<iframe src="${url}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            document.getElementById('videoModal').style.display = 'flex';
+        for (let cat in groups) {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'cat-group';
+            groupDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
+            for (let ser in groups[cat]) {
+                const serDiv = document.createElement('div');
+                serDiv.className = 'ser-item';
+                serDiv.onclick = () => {
+                    const list = serDiv.nextElementSibling;
+                    const isOpen = list.classList.toggle('open');
+                    serDiv.querySelector('i').className = isOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                };
+                serDiv.innerHTML = `<span>${ser}</span> <i class="fas fa-chevron-down"></i>`;
+                
+                const list = document.createElement('ul');
+                list.className = 'ex-list';
+                groups[cat][ser].forEach(ex => {
+                    const li = document.createElement('li');
+                    li.className = 'ex-row';
+                    li.innerHTML = `<span class="ex-link" onclick="openV(${ex.id})">${ex.num}. ${ex.name}</span>
+                                    <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
+                    list.appendChild(li);
+                });
+                groupDiv.appendChild(serDiv);
+                groupDiv.appendChild(list);
+            }
+            container.appendChild(groupDiv);
         }
     }
 
-    function closeModal() {
-        document.getElementById('videoModal').style.display = 'none';
-        document.getElementById('videoWrapper').innerHTML = '';
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('player', {
+            events: { 'onStateChange': (e) => { if(e.data === 1) startWatchdog(); else stopWatchdog(); } }
+        });
     }
 
-    function toggleFavorite(id) {
-        if (favorites.includes(id)) {
-            favorites = favorites.filter(fid => fid !== id);
-        } else {
-            favorites.push(id);
-        }
-        localStorage.setItem('bjj_favs', JSON.stringify(favorites));
-        renderSyllabus();
+    function openV(id) {
+        const ex = db.find(x => x.id === id);
+        if (!ex) return;
+        if (useExternalYt) { window.open(ex.link, '_blank'); return; }
+        
+        currentEx = ex;
+        document.getElementById('vTitle').innerText = ex.name;
+        document.getElementById('vModal').style.display = 'flex';
+        
+        const vidId = ex.embed.split('embed/')[1].split('?')[0];
+        const start = ex.embed.includes('start=') ? ex.embed.split('start=')[1].split('&')[0] : 0;
+        ytPlayer.loadVideoById({ videoId: vidId, startSeconds: start });
+    }
+
+    function startWatchdog() {
+        stopWatchdog();
+        if (!currentEx || !currentEx.dur) return;
+        watchdogInterval = setInterval(() => {
+            const start = currentEx.embed.includes('start=') ? parseInt(currentEx.embed.split('start=')[1]) : 0;
+            if (ytPlayer.getCurrentTime() - start >= currentEx.dur) {
+                ytPlayer.pauseVideo();
+                ytPlayer.seekTo(start);
+            }
+        }, 500);
+    }
+
+    function stopWatchdog() { clearInterval(watchdogInterval); }
+
+    function closeV() { document.getElementById('vModal').style.display='none'; ytPlayer.stopVideo(); stopWatchdog(); }
+
+    function toggleDropdown(e) { e.stopPropagation(); document.getElementById('moreMenu').classList.toggle('show'); }
+
+    function toggleAllLists(show) {
+        document.querySelectorAll('.ex-list').forEach(l => l.classList.toggle('open', show));
+        document.querySelectorAll('.ser-item i').forEach(i => i.className = show ? 'fas fa-chevron-up' : 'fas fa-chevron-down');
+        document.getElementById('moreMenu').classList.remove('show');
+    }
+
+    function toggleStar(id, el) {
+        if(favs.includes(id)) favs = favs.filter(f => f !== id); else favs.push(id);
+        el.classList.toggle('active');
+        localStorage.setItem('ijja_favs', JSON.stringify(favs));
+        if(isFavOnly) render();
     }
 
     function toggleFavFilter() {
-        isFavFilterActive = !isFavFilterActive;
+        isFavOnly = !isFavOnly;
         document.getElementById('favFilterBtn').classList.toggle('active');
-        renderSyllabus();
-    }
-
-    function toggleWatchdog() {
-        isWatchdogActive = !isWatchdogActive;
-        document.getElementById('watchdogToggle').classList.toggle('active');
+        render();
     }
 
     function toggleYtMode() {
-        ytMode = !ytMode;
+        useExternalYt = !useExternalYt;
         document.getElementById('ytModeToggle').classList.toggle('active');
     }
 
-    function playRandom() {
-        const allTechs = categories.flatMap(c => c.techniques);
-        const rand = allTechs[Math.floor(Math.random() * allTechs.length)];
-        playVideo(rand.url, rand.id);
-    }
-
-    function toggleAll() {
-        const cats = document.querySelectorAll('.category');
-        const anyOpen = Array.from(cats).some(c => c.classList.contains('open'));
-        cats.forEach(c => c.classList.toggle('open', !anyOpen));
-        closeExtraMenu();
-    }
-
     function clearFavs() {
-        if (confirm('למחוק את כל המועדפים?')) {
-            favorites = [];
-            localStorage.setItem('bjj_favs', JSON.stringify(favorites));
-            renderSyllabus();
-        }
-        closeExtraMenu();
+        if(confirm("למחוק הכל?")) { favs = []; localStorage.setItem('ijja_favs', '[]'); render(); }
+        document.getElementById('moreMenu').classList.remove('show');
     }
 
-    // --- UI Helpers ---
-
-    function toggleExtraMenu(e) {
-        e.stopPropagation();
-        document.getElementById('extraMenu').classList.toggle('show');
+    function playRandom() {
+        const links = document.querySelectorAll('.ex-link');
+        if(links.length) links[Math.floor(Math.random()*links.length)].click();
     }
 
-    function closeExtraMenu() {
-        document.getElementById('extraMenu').classList.remove('show');
-    }
+    window.onclick = () => document.getElementById('moreMenu').classList.remove('show');
 
-    // סגירת תפריט בלחיצה מחוץ לו
-    window.onclick = function(event) {
-        if (!event.target.closest('.action-bar') && !event.target.closest('#extraMenu')) {
-            closeExtraMenu();
-        }
-    }
-
-    // Initial Load
-    renderSyllabus();
+    init();
 </script>
-
 </body>
 </html>
