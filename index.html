@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.3</title>
+    <title>Black belt syllabus - v12.0.4</title>
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -15,70 +15,70 @@
             --header-h: 90px;
             --fav-color: #ffc107;
             --danger: #d32f2f;
-            --yt-red: #ff0000;
         }
 
-        body { font-family: 'Heebo', sans-serif; margin: 0; background: #f7f9fb; direction: rtl; overflow-x: hidden; }
+        body { font-family: 'Heebo', sans-serif; margin: 0; background: #f7f9fb; direction: rtl; }
 
-        /* Header & Action Bar */
+        /* Header & Mobile Optimization */
         header {
             height: var(--header-h); background: white; border-bottom: 3px solid var(--primary);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-sizing: border-box;
         }
 
-        .header-right { display: flex; align-items: center; gap: 12px; }
-        .logo-img { height: 45px; width: auto; }
-        header h1 { margin: 0; font-weight: 900; color: var(--primary); font-size: 1.2em; line-height: 1; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 50px; width: auto; }
+        header h1 { margin: 0; font-weight: 900; color: var(--primary); font-size: 1.4em; }
 
-        .action-bar { display: flex; gap: 8px; align-items: center; }
+        .action-bar { display: flex; gap: 8px; position: relative; }
+        
+        /* Dropdown Logic */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none; position: absolute; left: 0; top: 45px;
+            background-color: white; min-width: 160px; border: 1px solid var(--border);
+            border-radius: 10px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); z-index: 1100;
+        }
+        .dropdown-content button {
+            width: 100%; padding: 12px 16px; border: none; background: none;
+            text-align: right; font-family: 'Heebo'; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; color: var(--primary);
+            border-bottom: 1px solid #eee;
+        }
+        .dropdown-content button:last-child { border-bottom: none; }
+        .dropdown-content .danger { color: var(--danger); }
+        .show { display: block; }
+
         .btn {
-            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
+            width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border);
             background: white; color: var(--primary); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1.1em; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1em;
         }
         .btn.active { background: var(--primary); color: white; }
-        
-        /* Dropdown Menu */
-        .dropdown { position: relative; }
-        .dropdown-menu {
-            display: none; position: absolute; top: 45px; left: 0; 
-            background: white; border: 1px solid var(--border); border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15); min-width: 180px; z-index: 1100;
-        }
-        .dropdown-menu.show { display: flex; flex-direction: column; }
-        .menu-item {
-            padding: 12px 15px; border: none; background: none; text-align: right;
-            font-family: 'Heebo'; cursor: pointer; display: flex; align-items: center;
-            gap: 10px; color: var(--primary); border-bottom: 1px solid #eee; font-size: 0.95em;
-        }
-        .menu-item:last-child { border-bottom: none; }
-        .menu-item i { width: 20px; text-align: center; }
-        .item-danger { color: var(--danger); }
-        .item-active { background: #f0f7ff; color: var(--yt-red); }
 
-        /* Content Styles (מבוסס 12.0.2) */
-        main { padding: calc(var(--header-h) + 15px) 15px 80px; max-width: 800px; margin: 0 auto; }
-        .cat-group { margin-bottom: 20px; }
-        .cat-header { background: var(--primary); color: white; padding: 10px 15px; border-radius: 8px; font-weight: 800; position: sticky; top: calc(var(--header-h) + 5px); z-index: 10; }
-        .ser-item { background: white; padding: 12px; margin-top: 8px; border-radius: 8px; border-right: 4px solid var(--secondary); display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; }
+        /* Core Content Styles from 12.0.2 */
+        main { padding: calc(var(--header-h) + 20px) 20px 80px; max-width: 800px; margin: 0 auto; }
+        .cat-group { margin-bottom: 30px; }
+        .cat-header { background: var(--primary); color: white; padding: 12px 20px; border-radius: 12px; font-weight: 900; font-size: 1.2em; }
+        .ser-item { background: white; padding: 15px; margin-top: 10px; border-radius: 10px; border-right: 5px solid var(--secondary); font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .ex-list { list-style: none; padding: 0; margin: 0; display: none; }
         .ex-list.open { display: block; }
-        .ex-row { padding: 10px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .ex-row { padding: 12px 20px; background: #fff; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .ex-link { color: var(--primary); text-decoration: none; font-weight: 600; flex: 1; }
-        .star { cursor: pointer; color: #ccc; font-size: 1.2em; }
+        .star { cursor: pointer; color: #ccc; font-size: 1.3em; }
         .star.active { color: var(--fav-color); }
 
-        /* Modal (מבוסס 12.0.2) */
+        /* Modal from 12.0.2 */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-box { background: white; width: 95%; max-width: 500px; border-radius: 15px; padding: 15px; position: relative; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 10px; overflow: hidden; }
+        .modal-box { background: white; width: 95%; max-width: 600px; border-radius: 20px; padding: 20px; position: relative; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 15px; background: #000; }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .close-btn { position: absolute; top: -40px; left: 0; color: white; font-size: 30px; cursor: pointer; }
+        .close-btn { position: absolute; top: -50px; left: 0; color: white; font-size: 2.5em; cursor: pointer; }
 
-        @media (max-width: 400px) {
-            header h1 { font-size: 1em; }
-            .logo-img { height: 35px; }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.1em; }
+            .logo-img { height: 40px; }
+            header { padding: 0 10px; }
         }
     </style>
 </head>
@@ -86,10 +86,10 @@
 
 <header>
     <div class="header-right">
-        <img src="Logo.png" class="logo-img" alt="Logo">
+        <img src="Logo.png" class="logo-img">
         <div>
             <h1>סילבוס שחורה</h1>
-            <small style="color:#888">v12.0.3</small>
+            <small style="color:#888">v12.0.4</small>
         </div>
     </div>
     <div class="action-bar">
@@ -97,14 +97,11 @@
         <button id="favFilterBtn" class="btn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
         
         <div class="dropdown">
-            <button class="btn" onclick="toggleDropdown(event)" title="אפשרויות נוספות"><i class="fas fa-ellipsis-v"></i></button>
-            <div id="moreMenu" class="dropdown-menu">
-                <button id="ytMenuBtn" class="menu-item" onclick="toggleYtMode()">
-                    <i class="fab fa-youtube"></i> נגן חיצוני (YouTube)
-                </button>
-                <button class="menu-item" onclick="toggleAll(true)"><i class="fas fa-expand-arrows-alt"></i> פתח את כל הסדרות</button>
-                <button class="menu-item" onclick="toggleAll(false)"><i class="fas fa-compress-arrows-alt"></i> סגור הכל</button>
-                <button class="menu-item item-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i> איפוס מועדפים</button>
+            <button class="btn" onclick="toggleMenu()"><i class="fas fa-ellipsis-v"></i></button>
+            <div id="myDropdown" class="dropdown-content">
+                <button onclick="expandAll()"><i class="fas fa-expand-arrows-alt"></i> פתח הכל</button>
+                <button onclick="collapseAll()"><i class="fas fa-compress-arrows-alt"></i> סגור הכל</button>
+                <button onclick="clearFavs()" class="danger"><i class="fas fa-trash-alt"></i> איפוס מועדפים</button>
             </div>
         </div>
     </div>
@@ -114,8 +111,8 @@
 
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <div id="vTitle" style="margin-bottom:10px; font-weight:800; color:var(--primary);"></div>
+        <span class="close-btn" onclick="closeV()">&times;</span>
+        <h3 id="vTitle" style="margin-top:0; color:var(--primary);"></h3>
         <div class="video-container">
             <div id="player"></div>
         </div>
@@ -124,24 +121,22 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
+    // --- לוגיקה מקורית של 12.0.2 ללא שינוי ---
     let db = [], favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
-    let isFavOnly = false, useExternalYt = false, ytPlayer = null, currentEx = null, watchdogInterval = null;
+    let isFavOnly = false;
+    let ytPlayer, currentEx, watchdogInterval;
 
-    // --- CSV & Rendering (נשאר זהה ל-12.0.2) ---
     async function init() {
-        try {
-            const r = await fetch('Black_belt_syllabus_IJJA.csv');
-            const t = await r.text();
-            db = parseCSV(t);
-            render();
-        } catch(e) { console.error("Load error", e); }
+        const res = await fetch('Black_belt_syllabus_IJJA.csv');
+        const text = await res.text();
+        db = parseCSV(text);
+        render();
     }
 
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim());
-        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
         return lines.slice(1).map((line, i) => {
-            const cols = line.split(regex).map(c => c.replace(/^"|"$/g,'').trim());
+            const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g,'').trim());
             return { id: i, cat: cols[0], ser: cols[1], num: cols[2], name: cols[3], link: cols[4], embed: cols[5], dur: parseInt(cols[6]) || 0 };
         });
     }
@@ -158,48 +153,34 @@
         }, {});
 
         for (let cat in groups) {
-            const g = document.createElement('div'); g.className = 'cat-group';
-            g.innerHTML = `<div class="cat-header">${cat}</div>`;
+            const gDiv = document.createElement('div');
+            gDiv.className = 'cat-group';
+            gDiv.innerHTML = `<div class="cat-header">${cat}</div>`;
             for (let ser in groups[cat]) {
-                const s = document.createElement('div'); s.className = 'ser-item';
-                s.onclick = () => {
-                    const l = s.nextElementSibling;
-                    const open = l.classList.toggle('open');
-                    s.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                const sDiv = document.createElement('div');
+                sDiv.className = 'ser-item';
+                sDiv.onclick = () => {
+                    const list = sDiv.nextElementSibling;
+                    const open = list.classList.toggle('open');
+                    sDiv.querySelector('i').className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
                 };
-                s.innerHTML = `<span>${ser}</span> <i class="fas fa-chevron-down"></i>`;
-                const list = document.createElement('ul'); list.className = 'ex-list';
+                sDiv.innerHTML = `<span>${ser}</span> <i class="fas fa-chevron-down"></i>`;
+                const list = document.createElement('ul');
+                list.className = 'ex-list';
                 groups[cat][ser].forEach(ex => {
-                    const li = document.createElement('li'); li.className = 'ex-row';
+                    const li = document.createElement('li');
+                    li.className = 'ex-row';
                     li.innerHTML = `<span class="ex-link" onclick="openV(${ex.id})">${ex.num}. ${ex.name}</span>
                                     <i class="fas fa-star star ${favs.includes(ex.id)?'active':''}" onclick="toggleStar(${ex.id}, this)"></i>`;
                     list.appendChild(li);
                 });
-                g.appendChild(s); g.appendChild(list);
+                gDiv.appendChild(sDiv); gDiv.appendChild(list);
             }
-            container.appendChild(g);
+            container.appendChild(gDiv);
         }
     }
 
-    // --- UI Logic (השינוי המבוקש) ---
-    function toggleDropdown(e) {
-        e.stopPropagation();
-        document.getElementById('moreMenu').classList.toggle('show');
-    }
-
-    window.onclick = () => document.getElementById('moreMenu').classList.remove('show');
-
-    function toggleAll(show) {
-        document.querySelectorAll('.ex-list').forEach(l => l.classList.toggle('open', show));
-        document.querySelectorAll('.ser-item i').forEach(i => i.className = show ? 'fas fa-chevron-up' : 'fas fa-chevron-down');
-    }
-
-    function toggleYtMode() {
-        useExternalYt = !useExternalYt;
-        document.getElementById('ytMenuBtn').classList.toggle('item-active', useExternalYt);
-    }
-
-    // --- Core Logic (מבוסס 12.0.2) ---
+    // --- וידאו ו-Watchdog (מקור 12.0.2) ---
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
             events: { 'onStateChange': (e) => { if(e.data === 1) startWatchdog(); else stopWatchdog(); } }
@@ -207,13 +188,11 @@
     }
 
     function openV(id) {
-        const ex = db.find(x => x.id === id);
-        if (useExternalYt) { window.open(ex.link, '_blank'); return; }
-        currentEx = ex;
-        document.getElementById('vTitle').innerText = ex.name;
+        currentEx = db.find(x => x.id === id);
+        document.getElementById('vTitle').innerText = currentEx.name;
         document.getElementById('vModal').style.display = 'flex';
-        const vidId = ex.embed.split('embed/')[1].split('?')[0];
-        const start = ex.embed.includes('start=') ? ex.embed.split('start=')[1].split('&')[0] : 0;
+        const vidId = currentEx.embed.split('embed/')[1].split('?')[0];
+        const start = currentEx.embed.includes('start=') ? currentEx.embed.split('start=')[1].split('&')[0] : 0;
         ytPlayer.loadVideoById({ videoId: vidId, startSeconds: start });
     }
 
@@ -230,7 +209,17 @@
     }
     function stopWatchdog() { clearInterval(watchdogInterval); }
     function closeV() { document.getElementById('vModal').style.display='none'; ytPlayer.stopVideo(); stopWatchdog(); }
-    
+
+    // --- כפתורים ותפריט ---
+    function toggleMenu() { document.getElementById("myDropdown").classList.toggle("show"); }
+    window.onclick = (e) => { if (!e.target.matches('.fa-ellipsis-v') && !e.target.matches('.btn')) { 
+        var d = document.getElementById("myDropdown"); if (d.classList.contains('show')) d.classList.remove('show'); 
+    }};
+
+    function expandAll() { document.querySelectorAll('.ex-list').forEach(l => l.classList.add('open')); renderChevron(true); }
+    function collapseAll() { document.querySelectorAll('.ex-list').forEach(l => l.classList.remove('open')); renderChevron(false); }
+    function renderChevron(open) { document.querySelectorAll('.ser-item i').forEach(i => i.className = open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'); }
+
     function toggleStar(id, el) {
         if(favs.includes(id)) favs = favs.filter(f => f !== id); else favs.push(id);
         el.classList.toggle('active');
@@ -244,14 +233,8 @@
         render();
     }
 
-    function clearFavs() {
-        if(confirm("למחוק מועדפים?")) { favs = []; localStorage.setItem('ijja_favs', '[]'); render(); }
-    }
-
-    function playRandom() {
-        const links = document.querySelectorAll('.ex-link');
-        if(links.length) links[Math.floor(Math.random()*links.length)].click();
-    }
+    function clearFavs() { if(confirm("למחוק מועדפים?")) { favs = []; localStorage.setItem('ijja_favs', '[]'); render(); } }
+    function playRandom() { const links = document.querySelectorAll('.ex-link'); if(links.length) links[Math.floor(Math.random()*links.length)].click(); }
 
     init();
 </script>
