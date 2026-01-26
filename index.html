@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.3</title>
+    <title>Black belt syllabus - v12.0.4</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -234,26 +234,30 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.3</small>
+            <small id="appVersion" style="color:#888">v12.0.4</small>
         </div>
     </div>
     <div class="action-bar">
-        <div class="action-bar">
             <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
             <button id="favFilterBtn" class="btn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
             
-            <div class="dropdown" style="position: relative; display: inline-block;">
-                <button class="btn" onclick="toggleMenu(event)" title="אפשרויות נוספות">
+            <div class="dropdown">
+                <button class="btn" onclick="toggleMenu(event)" title="עוד אפשרויות">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
                 <div id="myDropdown" class="dropdown-content">
-                    <button onclick="expandAll()"><i class="fas fa-expand-arrows-alt"></i> פתח הכל</button>
-                    <button onclick="collapseAll()"><i class="fas fa-compress-arrows-alt"></i> סגור הכל</button>
-                    <button onclick="clearFavs()" style="color:var(--danger)"><i class="fas fa-trash-alt"></i> איפוס מועדפים</button>
+                    <button id="toggleAllBtn" onclick="toggleAllLists()">
+                        <i class="fas fa-arrows-alt-v"></i> פתח/סגור הכל
+                    </button>
+                    <button id="ytModeToggle" onclick="toggleYtMode()">
+                        <i class="fab fa-youtube"></i> נגן חיצוני (YouTube)
+                    </button>
+                    <button onclick="clearFavs()" style="color:var(--danger)">
+                        <i class="fas fa-trash-alt"></i> איפוס מועדפים
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
 </header>
 
 <div id="scrollContainer">
@@ -861,9 +865,42 @@ function saveOpenSeries() {
             }
         }
     }
+    // החזרת לוגיקת ה-External YouTube
+    let useExternalYt = false; // ברירת מחדל כפי שהיה ב-12.0.2
+    function toggleYtMode() {
+        useExternalYt = !useExternalYt;
+        const btn = document.getElementById('ytModeToggle');
+        btn.style.backgroundColor = useExternalYt ? "#fff0f0" : "transparent";
+        btn.style.color = useExternalYt ? "var(--yt-red, #ff0000)" : "var(--primary)";
+        // ב-openV המקורי שלך, התנאי if(useExternalYt) יחזור לעבוד עכשיו
+    }
+    
+    // החזרת כפתור "פתח/סגור הכל" אחוד (Toggle)
+    function toggleAllLists() {
+        const lists = document.querySelectorAll('.ex-list');
+        const anyOpen = Array.from(lists).some(l => l.classList.contains('open') || l.style.display === 'block');
+        
+        lists.forEach(list => {
+            const shouldOpen = !anyOpen;
+            if (list.classList.contains('ex-list')) { // תאימות למבנה 12.0.2
+                list.classList.toggle('open', shouldOpen);
+                list.style.display = shouldOpen ? 'block' : 'none';
+            }
+            // עדכון האייקון בסדרה
+            const icon = list.previousElementSibling.querySelector('i');
+            if (icon) icon.className = shouldOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        });
+    }
+    
+    // פתיחה/סגירה של התפריט (ללא שינוי לוגיקה)
+    function toggleMenu(e) {
+        e.stopPropagation();
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
 </script>
 </body>
 </html>
+
 
 
 
