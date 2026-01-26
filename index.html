@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.4</title>
+    <title>Black belt syllabus - v12.0.2</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -192,37 +192,6 @@
         header { padding: 0 10px;      /* צמצום שולי ה-header במובייל */
             }
         }
-        /* עיצוב התפריט הנפתח */
-            .dropdown-content {
-                display: none; 
-                position: absolute; 
-                left: 0; 
-                top: 45px;
-                background-color: white; 
-                min-width: 170px; 
-                border: 1px solid var(--border);
-                border-radius: 10px; 
-                box-shadow: 0 8px 16px rgba(0,0,0,0.1); 
-                z-index: 2000;
-            }
-            
-            .dropdown-content button {
-                width: 100%; 
-                padding: 12px 16px; 
-                border: none; 
-                background: none;
-                text-align: right; 
-                font-family: 'Heebo'; 
-                cursor: pointer;
-                display: flex; 
-                align-items: center; 
-                gap: 10px; 
-                color: var(--primary);
-                border-bottom: 1px solid #eee;
-            }
-            
-            .dropdown-content button:last-child { border-bottom: none; }
-            .show { display: block; } /* מחלקה שמוספת ב-JS לפתיחת התפריט */
     </style>
 </head>
 <body>
@@ -234,30 +203,16 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.4</small>
+            <small id="appVersion" style="color:#888">v12.0.2</small>
         </div>
     </div>
     <div class="action-bar">
-            <button class="btn" onclick="playRandom()" title="אקראי"><i class="fas fa-random"></i></button>
-            <button id="favFilterBtn" class="btn" onclick="toggleFavFilter()" title="מועדפים"><i class="fas fa-star"></i></button>
-            
-            <div class="dropdown">
-                <button class="btn" onclick="toggleMenu(event)" title="עוד אפשרויות">
-                    <i class="fas fa-ellipsis-v"></i>
-                </button>
-                <div id="myDropdown" class="dropdown-content">
-                    <button id="toggleAllBtn" onclick="toggleAllLists()">
-                        <i class="fas fa-arrows-alt-v"></i> פתח/סגור הכל
-                    </button>
-                    <button id="ytModeToggle" onclick="toggleYtMode()">
-                        <i class="fab fa-youtube"></i> נגן חיצוני (YouTube)
-                    </button>
-                    <button onclick="clearFavs()" style="color:var(--danger)">
-                        <i class="fas fa-trash-alt"></i> איפוס מועדפים
-                    </button>
-                </div>
-            </div>
-        </div>
+        <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
+        <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
+        <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
+        <button title="פתח/סגור הכל" class="btn" onclick="toggleAll()"><i class="fas fa-arrows-alt-v"></i></button>
+        <button title="מחיקת מועדפים" class="btn btn-danger" onclick="clearFavs()"><i class="fas fa-trash-alt"></i></button>
+    </div>
 </header>
 
 <div id="scrollContainer">
@@ -292,9 +247,7 @@
     </div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api">
-    
-</script>
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
     /** משתנים גלובליים **/
@@ -848,60 +801,10 @@ function saveOpenSeries() {
         const pool=db.filter(x=>(x.link+x.embed).length>10);
         if(pool.length) openVById(pool[Math.floor(Math.random()*pool.length)].id,true);
     }
-    // פתיחה וסגירה של התפריט
-    function toggleMenu(e) {
-        e.stopPropagation();
-        document.getElementById("myDropdown").classList.toggle("show");
-    }
-    
-    // סגירה אוטומטית של התפריט אם לוחצים מחוץ לו
-    window.onclick = function(event) {
-        if (!event.target.closest('.dropdown')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (var i = 0; i < dropdowns.length; i++) {
-                if (dropdowns[i].classList.contains('show')) {
-                    dropdowns[i].classList.remove('show');
-                }
-            }
-        }
-    }
-    // החזרת לוגיקת ה-External YouTube
-    let useExternalYt = false; // ברירת מחדל כפי שהיה ב-12.0.2
-    function toggleYtMode() {
-        useExternalYt = !useExternalYt;
-        const btn = document.getElementById('ytModeToggle');
-        btn.style.backgroundColor = useExternalYt ? "#fff0f0" : "transparent";
-        btn.style.color = useExternalYt ? "var(--yt-red, #ff0000)" : "var(--primary)";
-        // ב-openV המקורי שלך, התנאי if(useExternalYt) יחזור לעבוד עכשיו
-    }
-    
-    // החזרת כפתור "פתח/סגור הכל" אחוד (Toggle)
-    function toggleAllLists() {
-        const lists = document.querySelectorAll('.ex-list');
-        const anyOpen = Array.from(lists).some(l => l.classList.contains('open') || l.style.display === 'block');
-        
-        lists.forEach(list => {
-            const shouldOpen = !anyOpen;
-            if (list.classList.contains('ex-list')) { // תאימות למבנה 12.0.2
-                list.classList.toggle('open', shouldOpen);
-                list.style.display = shouldOpen ? 'block' : 'none';
-            }
-            // עדכון האייקון בסדרה
-            const icon = list.previousElementSibling.querySelector('i');
-            if (icon) icon.className = shouldOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-        });
-    }
-    
-    // פתיחה/סגירה של התפריט (ללא שינוי לוגיקה)
-    function toggleMenu(e) {
-        e.stopPropagation();
-        document.getElementById("myDropdown").classList.toggle("show");
-    }
+
 </script>
 </body>
 </html>
-
-
 
 
 
