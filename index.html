@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.4</title>
+    <title>Black belt syllabus - v12.0.3</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -22,6 +22,7 @@
             --fav-color: #ffc107; /* צבע זהב לכפתור מועדפים */
             --danger: #d32f2f;    /* אדום להתראות/מחיקה */
             --success: #2e7d32;   /* ירוק לאישור פעולות */
+            --yt-red: #ff0000;    /* צבע יוטיוב */
         }
 
         /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
@@ -61,6 +62,7 @@
             display: flex; align-items: center; justify-content: center; font-size: 1em;
         }
         .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn.yt-active { color: var(--yt-red); border-color: var(--yt-red); }
         .btn-danger { color: var(--danger); }
 
         /* אלמנט ויזואלי לרענון במשיכה (Pull to Refresh) */
@@ -203,10 +205,11 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.4</small>
+            <small id="appVersion" style="color:#888">v12.0.3</small>
         </div>
     </div>
     <div class="action-bar">
+        <button id="ytModeBtn" class="btn" onclick="toggleYtMode()" title="נגן חיצוני"><i class="fab fa-youtube"></i></button>
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
         <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="favFilterBtn" title="סינון מועדפים" class="btn" onclick="toggleFavFilter()"><i class="fas fa-star"></i></button>
@@ -262,13 +265,15 @@
         localStorage.setItem('ijja_favs', "[]");
     }
 
-    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true;
+    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true, isExternalYt = false;
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
     let pendingVideoId = '', pendingStart = 0;
 
-    /** משתני ניטור טעינת וידאו **/
-    let loadCheckInterval = null;
-    let loadAttempts = 0;
+    /** לוגיקה למצב נגן חיצוני **/
+    function toggleYtMode() {
+        isExternalYt = !isExternalYt;
+        document.getElementById('ytModeBtn').classList.toggle('yt-active', isExternalYt);
+    }
 
     /** Pull-to-Refresh: מנגנון עדכון במשיכה כלפי מטה **/
     let startY = 0;
@@ -296,7 +301,6 @@
         appMain.style.transform = 'translateY(0)';
     });
 
-    // שמירת מיקום גלילה
     scrollContainer.addEventListener('scroll', () => {
         localStorage.setItem('ijja_scroll', scrollContainer.scrollTop);
     });
@@ -316,7 +320,6 @@
         });
     }
 
-    /** טעינת גרסה מקובץ חיצוני **/
     async function loadVersion() {
         try {
             const r = await fetch('version.json', { cache: 'no-store' });
@@ -329,7 +332,6 @@
         }
     }
         
-    /** חיפוש התרגיל הבא ברשימה **/
     function getNextExercise() {
         if (!currentEx) return null;
         let list = [];
@@ -343,7 +345,6 @@
         return list[idx + 1];
     }
         
-    /** אתחול נגן YouTube **/
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('player', {
             height: '100%', width: '100%',
@@ -351,7 +352,6 @@
             events: { 
                 'onReady': () => { 
                     playerReady = true;
-                    // אם יש וידאו מחכה
                     if (pendingVideoId) {
                         ytPlayer.cueVideoById({
                             videoId: pendingVideoId,
@@ -369,15 +369,12 @@
         });
     }
 
-    /** ניהול מצבי נגן **/
     function onPlayerStateChange(event) {
         if (event.data === YT.PlayerState.PLAYING) {
-            stopLoadingWatchdog(); // הוידאו התחיל לנגן, עוצרים ניטור טעינה
             if (watchdogEnabled) startWatchdog();
         }
         if (event.data === YT.PlayerState.ENDED) {
             stopWatchdog();
-            // אם ניגון רצוף פועל - עוברים לתרגיל הבא
             if (!watchdogEnabled && isAutoplay && isFavOnly) {
                 const list = getCurrentListFull();
                 const idx = list.findIndex(x => x.id === currentEx.id);
@@ -388,43 +385,6 @@
         if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
     }
 
-    /** ניטור טעינת וידאו למניעת מסך שחור/תקיעה **/
-    function startLoadingWatchdog() {
-        stopLoadingWatchdog();
-        loadAttempts = 0;
-        
-        loadCheckInterval = setInterval(() => {
-            if (!ytPlayer || !playerReady) return;
-            
-            const currentTime = ytPlayer.getCurrentTime();
-            const playerState = ytPlayer.getPlayerState();
-            
-            // אם הוידאו תקוע על 0 או במצב BUFFERING יותר מדי זמן
-            if (currentTime <= 0 || playerState === YT.PlayerState.BUFFERING) {
-                loadAttempts++;
-                ytPlayer.playVideo(); // ניסיון החייאה
-                
-                if (loadAttempts > 5) { // אחרי 5 שניות, טעינה מחדש של ה-ID
-                    ytPlayer.loadVideoById({
-                        videoId: pendingVideoId,
-                        startSeconds: pendingStart
-                    });
-                    loadAttempts = 0;
-                }
-            } else {
-                stopLoadingWatchdog();
-            }
-        }, 1000);
-    }
-
-    function stopLoadingWatchdog() {
-        if (loadCheckInterval) {
-            clearInterval(loadCheckInterval);
-            loadCheckInterval = null;
-        }
-    }
-
-    /** Watchdog: מניעת "זליגה" לתרגילים אחרים באותו סרטון YouTube **/
     function startWatchdog() {
         stopWatchdog();
         if (!watchdogEnabled || !currentEx || currentEx.duration <= 0 || !pendingVideoId) return;
@@ -453,7 +413,6 @@
         document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
     }
 
-    /** ניגון רצוף (Autoplay) למועדפים **/
     function toggleAutoplay() {
         if (!isFavOnly) return; 
         isAutoplay = !isAutoplay;
@@ -471,7 +430,6 @@
         updateModalLayout();
     }
 
-    /** טעינת הנתונים ואתחול **/
     async function init() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv', { cache: 'no-cache' });
@@ -485,7 +443,6 @@
         }
     }
 
-    /** שחזור מצב אפליקציה מ-LocalStorage **/
     function restoreState() {
         const scrollTop = parseInt(localStorage.getItem('ijja_scroll'));
         if(scrollTop) scrollContainer.scrollTop = scrollTop;
@@ -515,7 +472,6 @@
         restoreState();
     }
 
-    /** עיבוד CSV **/
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
         const results = [];
@@ -531,7 +487,6 @@
         return results;
     }
 
-    /** יצירת ה-HTML של הרשימה **/
     function render() {
         const app = document.getElementById('app'); 
         app.innerHTML = '';
@@ -587,7 +542,6 @@
         }
     }
 
-    /** פתיחת תרגיל **/
     function openVById(id, isRand) { 
         isRandomMode=isRand; 
         const ex=db.find(x=>x.id===id); 
@@ -595,6 +549,10 @@
     }
 
     function openV(ex) {
+        if (isExternalYt) {
+            window.open(ex.link || ex.embed, '_blank');
+            return;
+        }
         currentEx = ex;
         document.getElementById('vPath').innerText = `${ex.cat} > ${ex.ser}`;
         document.getElementById('vName').innerText = ex.name;
@@ -628,7 +586,6 @@
                         videoId: pendingVideoId,
                         startSeconds: pendingStart
                     });
-                    startLoadingWatchdog(); // הפעלת ניטור טעינה
                 }, 80);
             }
         }
@@ -654,7 +611,6 @@
         }
     }
 
-    /** ניהול כפתורים בתוך המודאל **/
     function updateModalLayout() {
         const autoBtn=document.getElementById('vAutoplayBtn');
         const nextRandBtn=document.getElementById('vNextRandomBtn');
@@ -704,11 +660,9 @@
         document.getElementById('vModal').style.display='none'; 
         if(ytPlayer) ytPlayer.stopVideo(); 
         stopWatchdog(); 
-        stopLoadingWatchdog(); // עצירת ניטור טעינה
         isRandomMode=false; 
     }
 
-    /** פונקציות עזר לרשימה **/
     function toggleSerList(el){ 
         const list=el.parentElement.nextElementSibling; 
         const open=list.classList.toggle('open'); 
@@ -810,4 +764,3 @@
 </script>
 </body>
 </html>
-
