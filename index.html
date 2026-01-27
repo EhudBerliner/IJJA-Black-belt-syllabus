@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.0.4</title>
+    <title>Black belt syllabus - v12.0.5</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -194,6 +194,14 @@
         header { padding: 0 10px;      /* צמצום שולי ה-header במובייל */
             }
         }
+        /* התראת שחזור נגן */
+        #recoveryToast {
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px;
+            border-radius: 30px; font-size: 0.9em; z-index: 3000;
+            display: none; align-items: center; gap: 10px; border: 1px solid var(--secondary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -205,7 +213,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">v12.0.4</small>
+            <small id="appVersion" style="color:#888">v12.0.5</small>
         </div>
     </div>
     <div class="action-bar">
@@ -250,13 +258,26 @@
     </div>
 </div>
 
+<div id="recoveryToast"><i class="fas fa-redo fa-spin"></i> מזהה תקלה בנגן... מאתחל</div>
+
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
     /** משתנים גלובליים **/
     let prevWatchdogState = null;   // לשחזור מצב Watchdog
     let db = [], favs = [];
+    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true, isExternalYt = false;
     
+    let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
+    let pendingVideoId = '', pendingStart = 0;
+    
+    // משתנים חדשים לניטור תקינות הנגן
+    let lastObservedTime = -1;
+    let stuckCounter = 0;
+    let bufferingCounter = 0;
+    const MAX_STUCK_TICKS = 6;     // כ-2.5 שניות של קיפאון
+    const MAX_BUFFERING_TICKS = 20; // כ-8 שניות של טעינה אינסופית
+
     // טעינת מועדפים מהזיכרון המקומי
     try {
         favs = JSON.parse(localStorage.getItem('ijja_favs')) || [];
@@ -264,10 +285,6 @@
         favs = [];
         localStorage.setItem('ijja_favs', "[]");
     }
-
-    let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true, isExternalYt = false;
-    let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
-    let pendingVideoId = '', pendingStart = 0;
 
     /** לוגיקה למצב נגן חיצוני **/
     function toggleYtMode() {
@@ -371,42 +388,105 @@
 
     function onPlayerStateChange(event) {
         if (event.data === YT.PlayerState.PLAYING) {
-            if (watchdogEnabled) startWatchdog();
+            // איפוס מונים ברגע שהניגון התחיל באמת
+            stuckCounter = 0;
+            bufferingCounter = 0;
+            lastObservedTime = ytPlayer.getCurrentTime();
+            startWatchdog();
         }
         if (event.data === YT.PlayerState.ENDED) {
             stopWatchdog();
-            if (!watchdogEnabled && isAutoplay && isFavOnly) {
-                const list = getCurrentListFull();
-                const idx = list.findIndex(x => x.id === currentEx.id);
-                if (list[idx + 1]) openV(list[idx + 1]);
-                else if (list.length) openV(list[0]);
-            }
+            handleVideoEnd();
         }
-        if(event.data === YT.PlayerState.PAUSED) stopWatchdog();
+        if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.CUED) {
+            stopWatchdog();
+        }
     }
-
+    
     function startWatchdog() {
         stopWatchdog();
-        if (!watchdogEnabled || !currentEx || currentEx.duration <= 0 || !pendingVideoId) return;
+        if (!currentEx || !pendingVideoId) return;
+    
         const start = getStartTime(currentEx.embed || currentEx.link);
+    
         watchdogInterval = setInterval(() => {
-            if (!ytPlayer) return;
-            if (ytPlayer.getCurrentTime() - start >= currentEx.duration) {
-                stopWatchdog();
-                if (isAutoplay && isFavOnly) {
-                    const list = getCurrentListFull();
-                    const idx = list.findIndex(x => x.id === currentEx.id);
-                    if (list[idx + 1]) openV(list[idx + 1]);
-                    else if (list.length) openV(list[0]);
+            if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+    
+            const currentTime = ytPlayer.getCurrentTime();
+            const playerState = ytPlayer.getPlayerState();
+    
+            // 1. לוגיקה מקורית: עצירה בסוף זמן התרגיל (אם watchdogEnabled פעיל)
+            if (watchdogEnabled && currentEx.duration > 0) {
+                if (currentTime - start >= currentEx.duration) {
+                    handleVideoEnd();
+                    return;
+                }
+            }
+    
+            // 2. ניטור "פריים תקוע" (זמן לא זז למרות שהסטטוס PLAYING)
+            if (playerState === YT.PlayerState.PLAYING) {
+                if (currentTime === lastObservedTime) {
+                    stuckCounter++;
                 } else {
-                    ytPlayer.pauseVideo();
-                    ytPlayer.seekTo(start);
+                    stuckCounter = 0;
+                }
+                lastObservedTime = currentTime;
+    
+                if (stuckCounter >= MAX_STUCK_TICKS) {
+                    console.warn("Watchdog: Frozen frame detected");
+                    recoverPlayer();
+                }
+            } 
+            
+            // 3. ניטור טעינה (Buffering) ארוכה מדי
+            else if (playerState === YT.PlayerState.BUFFERING) {
+                bufferingCounter++;
+                if (bufferingCounter >= MAX_BUFFERING_TICKS) {
+                    console.warn("Watchdog: Infinite buffering detected");
+                    recoverPlayer();
                 }
             }
         }, 400);
     }
-
-    function stopWatchdog() { clearInterval(watchdogInterval); }
+    
+    function stopWatchdog() { 
+        clearInterval(watchdogInterval); 
+    }
+    
+    // פונקציית עזר לטיפול בסיום סרטון (שומרת על פונקציונליות Autoplay המקורית)
+    function handleVideoEnd() {
+        const start = getStartTime(currentEx.embed || currentEx.link);
+        if (isAutoplay && isFavOnly) {
+            const list = getCurrentListFull();
+            const idx = list.findIndex(x => x.id === currentEx.id);
+            if (list[idx + 1]) openV(list[idx + 1]);
+            else if (list.length) openV(list[0]);
+        } else {
+            ytPlayer.pauseVideo();
+            ytPlayer.seekTo(start);
+        }
+    }
+    
+    // פונקציה חדשה: ביצוע האתחול והצגת חיווי
+    function recoverPlayer() {
+        stopWatchdog();
+        stuckCounter = 0;
+        bufferingCounter = 0;
+        const toast = document.getElementById('recoveryToast');
+        toast.style.display = 'flex';
+        
+        const currentTime = ytPlayer.getCurrentTime();
+        
+        // טעינה מחדש של הסרטון מאותה נקודה
+        ytPlayer.loadVideoById({
+            videoId: pendingVideoId,
+            startSeconds: currentTime > 0 ? currentTime : pendingStart
+        });
+    
+        // העלמת החיווי אחרי 2 שניות
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+    
 
     function toggleWatchdog() {
         watchdogEnabled = !watchdogEnabled;
@@ -764,5 +844,3 @@
 </script>
 </body>
 </html>
-
-
