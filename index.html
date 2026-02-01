@@ -249,11 +249,11 @@
                 font-size: 0.75em;
             }
             
-            /* הקטנת כפתורים במסך ראשי */
+            /* הגדלת כפתורים במסך ראשי - גרסה משופרת */
             .btn {
-                width: 30px;
-                height: 30px;
-                font-size: 0.9em;
+                width: 36px;
+                height: 36px;
+                font-size: 1em;
             }
             
             .action-bar {
@@ -305,9 +305,9 @@
             }
             
             .btn {
-                width: 28px;
-                height: 28px;
-                font-size: 0.85em;
+                width: 32px;
+                height: 32px;
+                font-size: 0.9em;
             }
             
             #appVersion {
@@ -1477,6 +1477,7 @@
     }
 
     function toggleStar(id, el) { 
+        vibrate(10); // haptic feedback
         if (favs.includes(id)) {
             favs = favs.filter(f => f !== id);
         } else {
@@ -1674,26 +1675,6 @@
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // התאמת ממשק למובייל
-    if (isMobileDevice()) {
-        // הוספת מטא-טאג למניעת zoom
-        const viewport = document.querySelector('meta[name=viewport]');
-        if (viewport) {
-            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-        }
-        
-        // הסתרת סרגל כתובת בגלילה
-        let lastScrollTop = 0;
-        scrollContainer.addEventListener('scroll', () => {
-            const scrollTop = scrollContainer.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // גלילה כלפי מטה
-                window.scrollTo(0, 1);
-            }
-            lastScrollTop = scrollTop;
-        }, { passive: true });
-    }
-
     // תמיכה ב-iOS standalone mode
     if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
         document.body.classList.add('pwa-mode');
@@ -1727,13 +1708,6 @@
             navigator.vibrate(pattern);
         }
     }
-
-    // הוספת haptic feedback לפעולות מרכזיות
-    const originalToggleStar = window.toggleStar;
-    window.toggleStar = function(id, el) {
-        vibrate(10);
-        originalToggleStar(id, el);
-    };
 
     // כפתור חזרה למעלה
     const scrollToTopBtn = document.getElementById('scrollToTop');
@@ -1797,32 +1771,11 @@
         document.getElementById('installPrompt').classList.remove('visible');
     });
 
-    // שיפור ביצועים - lazy loading לתמונות
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
-    }
-
-    // שמירת רשת נתונים - טעינה מתונה
+    // שמירת רשת נתונים - זיהוי בלבד
     if ('connection' in navigator) {
         const connection = navigator.connection;
         if (connection.saveData || connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
             console.log('Data saver mode detected');
-            showToast('מצב חיסכון בנתונים מופעל', 'info');
         }
     }
 
