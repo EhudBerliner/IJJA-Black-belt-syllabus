@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.1.7</title>
+    <title>Black belt syllabus - v12.1.8</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -313,6 +313,7 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
+        <button id="vReloadBtn" title="טען מחדש" class="modal-btn" style="right: 50px;" onclick="forceReloadVideo()"><i class="fas fa-redo"></i></button>
         <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
         
@@ -356,8 +357,10 @@
     let lastObservedTime = -1;
     let stuckCounter = 0;
     let bufferingCounter = 0;
+    let blackScreenCounter = 0;
     const MAX_STUCK_TICKS = 6;
     const MAX_BUFFERING_TICKS = 20;
+    const MAX_BLACK_SCREEN_TICKS = 8; // ~3 שניות
 
     // טעינת מועדפים מהזיכרון המקומי עם validation
     function loadFavorites() {
@@ -524,21 +527,54 @@
 
     function onPlayerReady() { 
         playerReady = true;
+        console.log('YouTube player ready');
+        
         if (pendingVideoId) {
             try {
-                ytPlayer.cueVideoById({
-                    videoId: pendingVideoId,
-                    startSeconds: pendingStart
-                });
-                if (!isRandomMode) {
-                    setTimeout(() => {
-                        if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                            ytPlayer.playVideo();
-                        }
-                    }, 100);
-                }
+                loadVideoSafely(pendingVideoId, pendingStart);
             } catch (e) {
-                console.error('Error loading video:', e);
+                console.error('Error in onPlayerReady:', e);
+                showToast('שגיאה בטעינת הווידיאו', 'error');
+            }
+        }
+    }
+
+    // פונקציה חדשה לטעינת וידאו בטוחה עם retry
+    function loadVideoSafely(videoId, startSeconds, retryCount = 0) {
+        const MAX_RETRIES = 2;
+        
+        try {
+            ytPlayer.cueVideoById({
+                videoId: videoId,
+                startSeconds: startSeconds
+            });
+            
+            // בדיקה שהוידאו אכן נטען
+            setTimeout(() => {
+                try {
+                    const duration = ytPlayer.getDuration();
+                    if (duration === 0 && retryCount < MAX_RETRIES) {
+                        console.warn(`Video load failed, retrying... (${retryCount + 1}/${MAX_RETRIES})`);
+                        loadVideoSafely(videoId, startSeconds, retryCount + 1);
+                        return;
+                    }
+                    
+                    // אם לא במצב מבחן עצמי, נגן את הסרטון
+                    if (!isRandomMode && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                        ytPlayer.playVideo();
+                    }
+                } catch (e) {
+                    console.error('Error checking video duration:', e);
+                }
+            }, 500);
+            
+        } catch (e) {
+            console.error('Error loading video:', e);
+            if (retryCount < MAX_RETRIES) {
+                setTimeout(() => {
+                    loadVideoSafely(videoId, startSeconds, retryCount + 1);
+                }, 1000);
+            } else {
                 showToast('שגיאה בטעינת הווידיאו', 'error');
             }
         }
@@ -609,7 +645,7 @@
         
                     if (stuckCounter >= MAX_STUCK_TICKS) {
                         console.warn("Watchdog: Frozen frame detected");
-                        recoverPlayer();
+                        recoverPlayer('stuck');
                     }
                 } 
                 
@@ -618,8 +654,21 @@
                     bufferingCounter++;
                     if (bufferingCounter >= MAX_BUFFERING_TICKS) {
                         console.warn("Watchdog: Infinite buffering detected");
-                        recoverPlayer();
+                        recoverPlayer('buffering');
                     }
+                } 
+                
+                // 4. ניטור מסך שחור - וידאו שלא מתחיל להתנגן
+                else if (playerState === YT.PlayerState.CUED || playerState === -1) {
+                    blackScreenCounter++;
+                    if (blackScreenCounter >= MAX_BLACK_SCREEN_TICKS) {
+                        console.warn("Watchdog: Black screen detected");
+                        recoverPlayer('blackscreen');
+                    }
+                } else {
+                    // איפוס מונים אם הכל תקין
+                    bufferingCounter = 0;
+                    blackScreenCounter = 0;
                 }
             } catch (e) {
                 console.error('Watchdog error:', e);
@@ -654,26 +703,75 @@
         }
     }
     
-    function recoverPlayer() {
+    function recoverPlayer(reason = 'unknown') {
         stopWatchdog();
         stuckCounter = 0;
         bufferingCounter = 0;
+        blackScreenCounter = 0;
         
         const toast = document.getElementById('recoveryToast');
         toast.style.display = 'flex';
         
+        console.log(`Recovering player due to: ${reason}`);
+        
         try {
             const currentTime = ytPlayer.getCurrentTime();
-            ytPlayer.loadVideoById({
-                videoId: pendingVideoId,
-                startSeconds: currentTime > 0 ? currentTime : pendingStart
-            });
+            const seekTime = currentTime > 0 ? currentTime : pendingStart;
+            
+            // אסטרטגיות שונות לסוגי בעיות שונים
+            if (reason === 'blackscreen') {
+                // מסך שחור - ננסה להפעיל מחדש
+                ytPlayer.playVideo();
+                
+                // אם עדיין לא עובד אחרי שנייה, נטען מחדש
+                setTimeout(() => {
+                    try {
+                        if (ytPlayer.getPlayerState() !== YT.PlayerState.PLAYING) {
+                            ytPlayer.loadVideoById({
+                                videoId: pendingVideoId,
+                                startSeconds: seekTime
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Black screen recovery failed:', e);
+                    }
+                }, 1000);
+                
+            } else if (reason === 'buffering') {
+                // buffering אינסופי - נסה לעצור ולהתחיל מחדש
+                ytPlayer.stopVideo();
+                setTimeout(() => {
+                    ytPlayer.loadVideoById({
+                        videoId: pendingVideoId,
+                        startSeconds: seekTime
+                    });
+                }, 500);
+                
+            } else {
+                // פריים תקוע או סיבה לא ידועה - טעינה מחדש רגילה
+                ytPlayer.loadVideoById({
+                    videoId: pendingVideoId,
+                    startSeconds: seekTime
+                });
+            }
+            
         } catch (e) {
             console.error('Error recovering player:', e);
             showToast('שגיאה באתחול הנגן', 'error');
+            
+            // ניסיון אחרון - אתחול מלא של הנגן
+            setTimeout(() => {
+                try {
+                    ytPlayer.destroy();
+                    playerReady = false;
+                    onYouTubeIframeAPIReady();
+                } catch (err) {
+                    console.error('Full recovery failed:', err);
+                }
+            }, 2000);
         }
     
-        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
     function toggleWatchdog() {
@@ -928,11 +1026,22 @@
         pendingStart = getStartTime(url);
         const cover = document.getElementById('videoCover');
 
+        // איפוס מונים
+        stuckCounter = 0;
+        bufferingCounter = 0;
+        blackScreenCounter = 0;
+        lastObservedTime = -1;
+
         if (isRandomMode) {
             cover.classList.remove('hidden');
             if (ytPlayer && playerReady) {
                 try {
                     ytPlayer.stopVideo();
+                    // טעינה מראש של הוידאו גם במצב מבחן עצמי
+                    ytPlayer.cueVideoById({
+                        videoId: pendingVideoId,
+                        startSeconds: pendingStart
+                    });
                 } catch (e) {
                     console.error('Error stopping video:', e);
                 }
@@ -943,11 +1052,8 @@
                 try {
                     ytPlayer.stopVideo();
                     setTimeout(() => {
-                        ytPlayer.loadVideoById({
-                            videoId: pendingVideoId,
-                            startSeconds: pendingStart
-                        });
-                    }, 80);
+                        loadVideoSafely(pendingVideoId, pendingStart);
+                    }, 100);
                 } catch (e) {
                     console.error('Error loading video:', e);
                     showToast('שגיאה בטעינת הווידיאו', 'error');
@@ -964,32 +1070,61 @@
     function revealVideo() {
         const cover = document.getElementById('videoCover');
         cover.classList.add('hidden');
-        if (!ytPlayer || !playerReady || !pendingVideoId) return;
+        if (!ytPlayer || !playerReady || !pendingVideoId) {
+            showToast('הנגן לא מוכן', 'error');
+            return;
+        }
         
         try {
             const state = ytPlayer.getPlayerState();
-            if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.PAUSED) {
+            
+            // אם הוידאו כבר טעון, פשוט נגן
+            if (state === YT.PlayerState.CUED || state === YT.PlayerState.PAUSED) {
                 ytPlayer.playVideo();
-            } else {
-                ytPlayer.loadVideoById({
-                    videoId: pendingVideoId,
-                    startSeconds: pendingStart
-                });
+            } 
+            // אם הנגן לא טעון או במצב לא ברור, טען ונגן
+            else {
+                loadVideoSafely(pendingVideoId, pendingStart);
             }
+            
+            // בדיקה שהווידיאו מתחיל להתנגן
+            setTimeout(() => {
+                try {
+                    const newState = ytPlayer.getPlayerState();
+                    if (newState !== YT.PlayerState.PLAYING && newState !== YT.PlayerState.BUFFERING) {
+                        console.warn('Video not playing after reveal, retrying...');
+                        ytPlayer.playVideo();
+                    }
+                } catch (e) {
+                    console.error('Error in reveal check:', e);
+                }
+            }, 1000);
+            
         } catch (e) {
             console.error('Error revealing video:', e);
             showToast('שגיאה בהפעלת הווידיאו', 'error');
+            
+            // ניסיון שני
+            setTimeout(() => {
+                try {
+                    loadVideoSafely(pendingVideoId, pendingStart);
+                } catch (err) {
+                    console.error('Retry failed:', err);
+                }
+            }, 1000);
         }
     }
 
     function updateModalLayout() {
         const autoBtn = document.getElementById('vAutoplayBtn');
         const nextRandBtn = document.getElementById('vNextRandomBtn');
+        const reloadBtn = document.getElementById('vReloadBtn');
         const pBtn = document.getElementById('prevBtn');
         const nBtn = document.getElementById('nextBtn');
         const cnt = document.getElementById('vCounter');
         
         [autoBtn, nextRandBtn, pBtn, nBtn].forEach(b => b.classList.add('hidden'));
+        reloadBtn.classList.remove('hidden'); // כפתור טעינה מחדש תמיד גלוי
 
         if (isRandomMode) { 
             nextRandBtn.classList.remove('hidden'); 
@@ -1005,6 +1140,36 @@
             cnt.innerText = `${isFavOnly ? 'מועדף' : 'תרגיל'} ${idx + 1} מתוך ${list.length}`;
         }
         autoBtn.classList.toggle('active', isAutoplay);
+    }
+
+    // כפייה על טעינה מחדש של הוידיאו
+    function forceReloadVideo() {
+        if (!ytPlayer || !playerReady || !pendingVideoId) {
+            showToast('הנגן לא מוכן', 'error');
+            return;
+        }
+        
+        showToast('טוען מחדש...', 'info');
+        
+        try {
+            const currentTime = ytPlayer.getCurrentTime();
+            const seekTime = currentTime > 1 ? currentTime : pendingStart;
+            
+            // עצירה מלאה ואיפוס
+            ytPlayer.stopVideo();
+            stuckCounter = 0;
+            bufferingCounter = 0;
+            blackScreenCounter = 0;
+            
+            // טעינה מחדש
+            setTimeout(() => {
+                loadVideoSafely(pendingVideoId, seekTime);
+            }, 300);
+            
+        } catch (e) {
+            console.error('Error in force reload:', e);
+            showToast('שגיאה בטעינה מחדש', 'error');
+        }
     }
 
     function getCurrentListFull() {
@@ -1174,4 +1339,3 @@
 </script>
 </body>
 </html>
-
