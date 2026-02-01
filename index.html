@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.1.8</title>
+    <title>Black belt syllabus</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -313,9 +313,9 @@
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
-        <button id="vReloadBtn" title="טען מחדש" class="modal-btn" style="right: 50px;" onclick="forceReloadVideo()"><i class="fas fa-redo"></i></button>
-        <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" onclick="playRandom()"><i class="fas fa-random"></i></button>
-        <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
+        <button id="vReloadBtn" title="טען מחדש" class="modal-btn" style="right: 0;" onclick="forceReloadVideo()"><i class="fas fa-redo"></i></button>
+        <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" style="right: 50px;" onclick="playRandom()"><i class="fas fa-random"></i></button>
+        <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" style="right: 50px;" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
         
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
