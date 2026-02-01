@@ -163,6 +163,67 @@
         }
         .search-bar i { color: var(--primary); }
 
+        /* סינון חגורות */
+        .belt-filter {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+        }
+        
+        .belt-filter-label {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        
+        .belt-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .belt-btn {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: 'Heebo', sans-serif;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .belt-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .belt-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .belt-btn img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        
+        .belt-count {
+            font-size: 0.85em;
+            opacity: 0.7;
+            margin-right: 4px;
+        }
+
         /* מודאל נגן הוידיאו */
         .modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -536,6 +597,15 @@
             <i class="fas fa-search"></i>
             <input type="text" id="searchInput" placeholder="חיפוש תרגיל..." oninput="handleSearch()">
         </div>
+        
+        <div class="belt-filter">
+            <div class="belt-filter-label">
+                <i class="fas fa-filter"></i> סינון לפי חגורה
+            </div>
+            <div class="belt-options" id="beltOptions">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
     </main>
 </div>
 
@@ -594,6 +664,7 @@
     let prevWatchdogState = null;
     let db = [], favs = [];
     let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true, isExternalYt = false;
+    let selectedBelt = 'all'; // סינון לפי חגורה: 'all', 'Orange', 'Yellow', 'Green', 'Blue', 'Brown', 'Black'
     
     let currentEx = null, ytPlayer = null, watchdogInterval = null, playerReady = false;
     let pendingVideoId = '', pendingStart = 0;
@@ -1091,6 +1162,13 @@
             applyFilters();
         }
 
+        // Belt filter
+        const savedBelt = localStorage.getItem('ijja_selectedBelt');
+        if (savedBelt) {
+            selectedBelt = savedBelt;
+            applyBeltFilter();
+        }
+
         // YouTube mode
         const ytMode = localStorage.getItem('ijja_ytMode');
         if (ytMode === '1') {
@@ -1132,7 +1210,14 @@
                     name: cols[3],
                     link: cols[4],
                     embed: cols[5],
-                    duration: Number(cols[6]) || 0
+                    duration: Number(cols[6]) || 0,
+                    // Belt colors - columns 7-12
+                    Orange: cols[7] === 'Yes',
+                    Yellow: cols[8] === 'Yes',
+                    Green: cols[9] === 'Yes',
+                    Blue: cols[10] === 'Yes',
+                    Brown: cols[11] === 'Yes',
+                    Black: cols[12] === 'Yes'
                 });
             } catch (e) {
                 console.error('Error parsing CSV line', i, e);
@@ -1144,10 +1229,16 @@
     function render() {
         const app = document.getElementById('app');
         
-        // שמירת שדה החיפוש
+        // שמירת אלמנטים קבועים
         const searchBar = app.querySelector('.search-bar');
+        const beltFilter = app.querySelector('.belt-filter');
+        
         app.innerHTML = '';
         if (searchBar) app.appendChild(searchBar);
+        if (beltFilter) {
+            app.appendChild(beltFilter);
+            renderBeltFilter();
+        }
         
         const groups = db.reduce((acc, x) => {
             if (!acc[x.cat]) acc[x.cat] = {};
@@ -1183,6 +1274,13 @@
                     li.dataset.name = ex.name.toLowerCase();
                     li.dataset.cat = ex.cat.toLowerCase();
                     li.dataset.ser = ex.ser.toLowerCase();
+                    // הוספת מידע על חגורות
+                    li.dataset.orange = ex.Orange || false;
+                    li.dataset.yellow = ex.Yellow || false;
+                    li.dataset.green = ex.Green || false;
+                    li.dataset.blue = ex.Blue || false;
+                    li.dataset.brown = ex.Brown || false;
+                    li.dataset.black = ex.Black || false;
                     
                     const hasL = (ex.link + ex.embed).length > 10;
                     li.innerHTML = `
@@ -1200,6 +1298,7 @@
         }
         
         if (isFavOnly) applyFilters();
+        if (selectedBelt !== 'all') applyBeltFilter();
         if (searchQuery) handleSearch();
     }
 
@@ -1234,6 +1333,91 @@
                     catHasVisible = true;
                     if (searchQuery) list.classList.add('open');
                 }
+            });
+            cDiv.classList.toggle('hidden', !catHasVisible);
+        });
+    }
+
+    // רינדור כפתורי החגורות
+    function renderBeltFilter() {
+        const beltOptions = document.getElementById('beltOptions');
+        if (!beltOptions) return;
+        
+        const belts = [
+            { id: 'all', name: 'הכל', img: null },
+            { id: 'Orange', name: 'כתום', img: 'Orange.png' },
+            { id: 'Yellow', name: 'צהוב', img: 'Yellow.png' },
+            { id: 'Green', name: 'ירוק', img: 'Green.png' },
+            { id: 'Blue', name: 'כחול', img: 'Blue.png' },
+            { id: 'Brown', name: 'חום', img: 'Brown.png' },
+            { id: 'Black', name: 'שחור', img: 'Black.png' }
+        ];
+        
+        beltOptions.innerHTML = belts.map(belt => {
+            const count = belt.id === 'all' ? db.length : db.filter(ex => ex[belt.id]).length;
+            const imgHtml = belt.img ? `<img src="${belt.img}" alt="${belt.name}">` : '<i class="fas fa-list"></i>';
+            
+            return `
+                <button class="belt-btn ${selectedBelt === belt.id ? 'active' : ''}" 
+                        onclick="selectBelt('${belt.id}')">
+                    ${imgHtml}
+                    <span>${belt.name}</span>
+                    <span class="belt-count">(${count})</span>
+                </button>
+            `;
+        }).join('');
+    }
+
+    // בחירת חגורה
+    function selectBelt(beltId) {
+        vibrate(10);
+        selectedBelt = beltId;
+        localStorage.setItem('ijja_selectedBelt', beltId);
+        
+        // עדכון כפתורים
+        document.querySelectorAll('.belt-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        if (event && event.target) {
+            event.target.closest('.belt-btn').classList.add('active');
+        }
+        
+        applyBeltFilter();
+    }
+
+    // החלת סינון חגורה
+    function applyBeltFilter() {
+        document.querySelectorAll('.ex-row').forEach(row => {
+            let show = true;
+            
+            // סינון לפי חגורה
+            if (selectedBelt !== 'all') {
+                const hasBelt = row.dataset[selectedBelt.toLowerCase()] === 'true';
+                if (!hasBelt) show = false;
+            }
+            
+            // סינון לפי מועדפים
+            if (isFavOnly) {
+                const id = parseInt(row.dataset.id);
+                if (!favs.includes(id)) show = false;
+            }
+            
+            row.classList.toggle('hidden', !show);
+        });
+
+        // הסתר/הצג סדרות וקטגוריות ריקות
+        document.querySelectorAll('.cat-group').forEach(cDiv => {
+            let catHasVisible = false;
+            cDiv.querySelectorAll('.ser-item').forEach(sBtn => {
+                const list = sBtn.nextElementSibling;
+                const hasVisible = Array.from(list.querySelectorAll('.ex-row')).some(row => 
+                    !row.classList.contains('hidden')
+                );
+                
+                sBtn.classList.toggle('hidden', !hasVisible);
+                list.classList.toggle('hidden', !hasVisible);
+                
+                if (hasVisible) catHasVisible = true;
             });
             cDiv.classList.toggle('hidden', !catHasVisible);
         });
