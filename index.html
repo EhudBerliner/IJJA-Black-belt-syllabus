@@ -52,7 +52,13 @@
 
         .header-right { display: flex; align-items: center; gap: 15px; }
         .logo-img { height: 45px; width: auto; }
-        header h1 { margin: 0; font-weight: 800; color: var(--primary); font-size: 1.1em; }
+        header h1 { 
+            margin: 0; 
+            font-weight: 800; 
+            color: var(--primary); 
+            font-size: 1.1em; 
+            line-height: 1.2;
+        }
 
         /* סרגל כפתורי פעולה */
         .action-bar { display: flex; gap: 6px; }
@@ -220,18 +226,38 @@
         /* שיפורים למובייל */
         @media (max-width: 600px) {
             header h1 {
-                font-size: 1rem;
+                font-size: 0.95rem;
                 line-height: 1.1;
-                max-width: 180px;
-                display: block;
+                max-width: 100px;
+                word-spacing: 9999px; /* כופה שבירת שורה בין מילים */
+                text-align: center;
             }
-            header { padding: 0 10px; }
+            
+            .header-right {
+                gap: 10px;
+            }
+            
+            .logo-img {
+                height: 40px;
+            }
+            
+            header { 
+                padding: 0 8px;
+            }
+            
+            #appVersion {
+                font-size: 0.75em;
+            }
             
             /* הקטנת כפתורים במסך ראשי */
             .btn {
                 width: 30px;
                 height: 30px;
                 font-size: 0.9em;
+            }
+            
+            .action-bar {
+                gap: 5px;
             }
             
             /* הגדלת אזורי מגע לכוכבים בלבד */
@@ -266,18 +292,26 @@
         /* התאמה למסכים קטנים מאוד */
         @media (max-width: 360px) {
             header h1 {
-                font-size: 0.9rem;
-                max-width: 140px;
+                font-size: 0.85rem;
+                max-width: 90px;
+            }
+            
+            .logo-img {
+                height: 35px;
             }
             
             .action-bar {
-                gap: 4px;
+                gap: 3px;
             }
             
             .btn {
                 width: 28px;
                 height: 28px;
                 font-size: 0.85em;
+            }
+            
+            #appVersion {
+                font-size: 0.7em;
             }
         }
         
