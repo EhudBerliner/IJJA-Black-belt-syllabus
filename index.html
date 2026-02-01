@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Black belt syllabus - v12.1.6</title>
+    <title>Black belt syllabus - v12.1.7</title>
 
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -288,7 +288,7 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">#.#.#</small>
+            <small id="appVersion" style="color:#888">טוען...</small>
         </div>
     </div>
     <div class="action-bar">
@@ -483,12 +483,17 @@
     async function loadVersion() {
         try {
             const r = await fetch('version.json', { cache: 'no-store' });
+            if (!r.ok) throw new Error('Version file not found');
             const v = await r.json();
-            document.getElementById('appVersion').innerText = 'v' + v.version;
+            if (v.version) {
+                document.getElementById('appVersion').innerText = 'v' + v.version;
+                document.title = 'Black belt syllabus - v' + v.version;
+            }
             return v.version;
         } catch (e) {
-            console.warn('version.json not loaded');
-            return null;
+            console.warn('version.json not loaded, using default');
+            document.getElementById('appVersion').innerText = 'v12.1.0';
+            return '12.1.0';
         }
     }
         
