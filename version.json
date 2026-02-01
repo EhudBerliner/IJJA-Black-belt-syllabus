@@ -1,5 +1,5 @@
 {
-  "version": "12.1.6",
+  "version": "12.1.7",
   "releaseDate": "2024-02-01",
   "changes": [
     "Added search functionality",
@@ -9,3 +9,4 @@
     "Enhanced UI feedback"
   ]
 }
+
