@@ -227,14 +227,16 @@
             }
             header { padding: 0 10px; }
             
-            /* הגדלת אזורי מגע */
+            /* הקטנת כפתורים במסך ראשי */
             .btn {
-                min-width: 40px;
-                min-height: 40px;
+                width: 30px;
+                height: 30px;
+                font-size: 0.9em;
             }
             
+            /* הגדלת אזורי מגע לכוכבים בלבד */
             .star {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
                 padding: 8px;
             }
             
@@ -242,23 +244,6 @@
             .ex-link, .ex-no-link {
                 font-size: 1.05em;
                 line-height: 1.4;
-            }
-            
-            /* מודל וידיאו - מסך מלא במובייל */
-            .modal-box {
-                width: 100%;
-                max-width: 100%;
-                height: 100vh;
-                border-radius: 0;
-                padding: 15px;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .video-container {
-                flex: 1;
-                padding-bottom: 0;
-                height: auto;
             }
             
             /* כפתורי ניווט גדולים יותר */
@@ -292,7 +277,7 @@
             .btn {
                 width: 28px;
                 height: 28px;
-                font-size: 0.9em;
+                font-size: 0.85em;
             }
         }
         
