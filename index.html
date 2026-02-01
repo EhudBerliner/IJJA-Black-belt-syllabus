@@ -217,6 +217,7 @@
 
         .hidden { display: none !important; }
         
+        /* שיפורים למובייל */
         @media (max-width: 600px) {
             header h1 {
                 font-size: 1rem;
@@ -225,6 +226,215 @@
                 display: block;
             }
             header { padding: 0 10px; }
+            
+            /* הגדלת אזורי מגע */
+            .btn {
+                min-width: 40px;
+                min-height: 40px;
+            }
+            
+            .star {
+                font-size: 1.4rem;
+                padding: 8px;
+            }
+            
+            /* שיפור קריאות */
+            .ex-link, .ex-no-link {
+                font-size: 1.05em;
+                line-height: 1.4;
+            }
+            
+            /* מודל וידיאו - מסך מלא במובייל */
+            .modal-box {
+                width: 100%;
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .video-container {
+                flex: 1;
+                padding-bottom: 0;
+                height: auto;
+            }
+            
+            /* כפתורי ניווט גדולים יותר */
+            .nav-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2em;
+            }
+            
+            /* סרגל חיפוש */
+            .search-bar {
+                position: sticky;
+                top: 0;
+                z-index: 99;
+                margin: 0;
+                border-radius: 0;
+            }
+        }
+        
+        /* התאמה למסכים קטנים מאוד */
+        @media (max-width: 360px) {
+            header h1 {
+                font-size: 0.9rem;
+                max-width: 140px;
+            }
+            
+            .action-bar {
+                gap: 4px;
+            }
+            
+            .btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9em;
+            }
+        }
+        
+        /* התאמה לאוריינטציה לרוחב במובייל */
+        @media (max-width: 900px) and (orientation: landscape) {
+            :root {
+                --header-h: 60px;
+            }
+            
+            header h1 {
+                font-size: 0.95rem;
+            }
+            
+            .logo-img {
+                height: 35px;
+            }
+            
+            .modal-box {
+                padding: 10px;
+            }
+            
+            .modal-nav {
+                margin-top: 5px;
+            }
+        }
+        
+        /* מניעת zoom על double-tap */
+        * {
+            touch-action: manipulation;
+        }
+        
+        /* אנימציות חלקות למובייל */
+        @media (prefers-reduced-motion: no-preference) {
+            .btn, .nav-btn, .star, .ser-item, .ex-row {
+                transition: all 0.2s ease;
+            }
+        }
+        
+        /* אינדיקטור החלקה */
+        .swipe-indicator {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 2500;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .swipe-indicator.left { left: 20px; }
+        .swipe-indicator.right { right: 20px; }
+        .swipe-indicator.active { opacity: 0.8; }
+        
+        /* PWA Mode adjustments */
+        .pwa-mode header {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .pwa-mode #scrollContainer {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        /* כפתור חזרה למעלה */
+        #scrollToTop {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        #scrollToTop:active {
+            transform: scale(0.9);
+        }
+        
+        #scrollToTop.visible {
+            display: flex;
+        }
+        
+        /* הודעת התקנת PWA */
+        #installPrompt {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 1500;
+            max-width: 90%;
+            border: 2px solid var(--primary);
+        }
+        
+        #installPrompt.visible {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        #installPrompt button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        #installPrompt .close-install {
+            color: #999;
+            cursor: pointer;
+            font-size: 1.2rem;
         }
 
         /* התראת שחזור נגן */
@@ -317,6 +527,9 @@
         <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" style="right: 50px;" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" style="right: 50px;" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
         
+        <div class="swipe-indicator left" id="swipeLeft"><i class="fas fa-chevron-left"></i></div>
+        <div class="swipe-indicator right" id="swipeRight"><i class="fas fa-chevron-right"></i></div>
+        
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
             <div style="flex: 1; overflow: hidden; padding: 0 5px;">
@@ -340,6 +553,20 @@
 
 <div id="recoveryToast"><i class="fas fa-redo fa-spin"></i> מזהה תקלה בנגן... מאתחל</div>
 <div class="toast" id="toast"></div>
+
+<button id="scrollToTop" onclick="scrollToTopSmooth()">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<div id="installPrompt">
+    <i class="fas fa-download" style="color: var(--primary); font-size: 1.5rem;"></i>
+    <div style="flex: 1;">
+        <div style="font-weight: bold; color: var(--primary);">התקן את האפליקציה</div>
+        <div style="font-size: 0.9em; color: #666;">גישה מהירה ללא דפדפן</div>
+    </div>
+    <button id="installBtn">התקן</button>
+    <i class="fas fa-times close-install" onclick="closeInstallPrompt()"></i>
+</div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -1336,6 +1563,251 @@
             }
         }
     });
+
+    // תמיכה במחוות החלקה (Swipe) למובייל
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let isSwiping = false;
+    const minSwipeDistance = 50;
+
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+        isSwiping = false;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (document.getElementById('vModal').style.display !== 'flex') return;
+        if (isSwiping) return;
+        
+        const currentX = e.changedTouches[0].screenX;
+        const currentY = e.changedTouches[0].screenY;
+        const deltaX = currentX - touchStartX;
+        const deltaY = currentY - touchStartY;
+        
+        // הצגת אינדיקטור החלקה
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+            const leftIndicator = document.getElementById('swipeLeft');
+            const rightIndicator = document.getElementById('swipeRight');
+            
+            if (deltaX > 0) {
+                rightIndicator.classList.add('active');
+                leftIndicator.classList.remove('active');
+            } else {
+                leftIndicator.classList.add('active');
+                rightIndicator.classList.remove('active');
+            }
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (document.getElementById('vModal').style.display !== 'flex') return;
+        
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        
+        // הסרת אינדיקטורים
+        document.getElementById('swipeLeft').classList.remove('active');
+        document.getElementById('swipeRight').classList.remove('active');
+        
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        
+        // בדיקה שזו החלקה אופקית ולא אנכית
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+            vibrate(10);
+            if (deltaX > 0) {
+                // החלקה ימינה - וידאו הבא (בעברית)
+                nav(1);
+            } else {
+                // החלקה שמאלה - וידאו קודם (בעברית)
+                nav(-1);
+            }
+        }
+        
+        // החלקה כלפי מטה - סגירת מודל
+        if (deltaY > minSwipeDistance * 2 && Math.abs(deltaX) < minSwipeDistance) {
+            vibrate(20);
+            closeV();
+        }
+    }
+
+    // מניעת גלילה כשהמודל פתוח
+    const vModal = document.getElementById('vModal');
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'style') {
+                const isOpen = vModal.style.display === 'flex';
+                document.body.style.overflow = isOpen ? 'hidden' : '';
+            }
+        });
+    });
+    observer.observe(vModal, { attributes: true });
+
+    // זיהוי מכשיר מובייל
+    function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    // התאמת ממשק למובייל
+    if (isMobileDevice()) {
+        // הוספת מטא-טאג למניעת zoom
+        const viewport = document.querySelector('meta[name=viewport]');
+        if (viewport) {
+            viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+        }
+        
+        // הסתרת סרגל כתובת בגלילה
+        let lastScrollTop = 0;
+        scrollContainer.addEventListener('scroll', () => {
+            const scrollTop = scrollContainer.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // גלילה כלפי מטה
+                window.scrollTo(0, 1);
+            }
+            lastScrollTop = scrollTop;
+        }, { passive: true });
+    }
+
+    // תמיכה ב-iOS standalone mode
+    if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+        document.body.classList.add('pwa-mode');
+        // התאמת גובה בר העליון ל-safe area
+        document.documentElement.style.setProperty('--header-h', 'calc(90px + env(safe-area-inset-top))');
+    }
+
+    // טיפול ב-orientation change
+    window.addEventListener('orientationchange', () => {
+        // המתן לסיום האנימציה של שינוי האוריינטציה
+        setTimeout(() => {
+            // רענון מיקום גלילה
+            const currentScroll = scrollContainer.scrollTop;
+            scrollContainer.scrollTop = 0;
+            scrollContainer.scrollTop = currentScroll;
+            
+            // התאמת נגן הוידאו אם פתוח
+            if (document.getElementById('vModal').style.display === 'flex' && ytPlayer) {
+                try {
+                    ytPlayer.setSize('100%', '100%');
+                } catch (e) {
+                    console.error('Error resizing player:', e);
+                }
+            }
+        }, 300);
+    });
+
+    // Haptic feedback למובייל (אם נתמך)
+    function vibrate(pattern = 10) {
+        if ('vibrate' in navigator) {
+            navigator.vibrate(pattern);
+        }
+    }
+
+    // הוספת haptic feedback לפעולות מרכזיות
+    const originalToggleStar = window.toggleStar;
+    window.toggleStar = function(id, el) {
+        vibrate(10);
+        originalToggleStar(id, el);
+    };
+
+    // כפתור חזרה למעלה
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    scrollContainer.addEventListener('scroll', () => {
+        if (scrollContainer.scrollTop > 300) {
+            scrollToTopBtn.classList.add('visible');
+        } else {
+            scrollToTopBtn.classList.remove('visible');
+        }
+    });
+
+    function scrollToTopSmooth() {
+        vibrate(10);
+        scrollContainer.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // PWA Installation Prompt
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // הצגת הודעת התקנה אם לא התקינו בעבר
+        const hasInstalled = localStorage.getItem('ijja_pwa_installed');
+        const promptDismissed = localStorage.getItem('ijja_install_dismissed');
+        
+        if (!hasInstalled && !promptDismissed) {
+            setTimeout(() => {
+                document.getElementById('installPrompt').classList.add('visible');
+            }, 5000); // הצג אחרי 5 שניות
+        }
+    });
+
+    document.getElementById('installBtn').addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            localStorage.setItem('ijja_pwa_installed', 'true');
+            showToast('האפליקציה מותקנת...', 'info');
+        }
+        
+        deferredPrompt = null;
+        document.getElementById('installPrompt').classList.remove('visible');
+    });
+
+    function closeInstallPrompt() {
+        document.getElementById('installPrompt').classList.remove('visible');
+        localStorage.setItem('ijja_install_dismissed', 'true');
+    }
+
+    window.addEventListener('appinstalled', () => {
+        localStorage.setItem('ijja_pwa_installed', 'true');
+        showToast('האפליקציה הותקנה בהצלחה!', 'info');
+        document.getElementById('installPrompt').classList.remove('visible');
+    });
+
+    // שיפור ביצועים - lazy loading לתמונות
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+
+    // שמירת רשת נתונים - טעינה מתונה
+    if ('connection' in navigator) {
+        const connection = navigator.connection;
+        if (connection.saveData || connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+            console.log('Data saver mode detected');
+            showToast('מצב חיסכון בנתונים מופעל', 'info');
+        }
+    }
+
+
 </script>
 </body>
 </html>
