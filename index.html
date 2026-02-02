@@ -517,7 +517,10 @@
         <img src="Logo.png" alt="IJJA" class="logo-img">
         <div>
             <h1>סילבוס חגורה שחורה</h1>
-            <small id="appVersion" style="color:#888">טוען...</small>
+            <small id="appVersion" 
+                   style="color:#888; cursor: pointer; user-select: none;" 
+                   onclick="showResetMenu()"
+                   title="לחץ לאיפוס התקנה">טוען...</small>
         </div>
     </div>
     <div class="action-bar">
@@ -711,22 +714,217 @@
     });
 
     /** Service Worker PWA: רישום וניהול גרסאות אפליקציה **/
+    /** Service Worker PWA: רישום וניהול גרסאות אפליקציה **/
+    let swRegistration = null;
+    
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
             .then(reg => {
+                swRegistration = reg;
                 console.log('Service Worker registered');
+                
+                // בדיקה לעדכונים כל 60 שניות
+                setInterval(() => {
+                    reg.update();
+                }, 60000);
+                
                 reg.addEventListener('updatefound', () => {
                     const newWorker = reg.installing;
                     newWorker.addEventListener('statechange', () => {
                         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            if (confirm("גרסה חדשה זמינה! האם לעדכן כעת?")) {
-                                location.reload();
-                            }
+                            showUpdatePrompt();
                         }
                     });
                 });
             })
             .catch(err => console.error('Service Worker registration failed:', err));
+        
+        // האזנה להודעות מ-SW
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('New service worker activated');
+        });
+    }
+
+    // הצגת הודעת עדכון
+    function showUpdatePrompt() {
+        const updatePrompt = document.createElement('div');
+        updatePrompt.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 3000;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-weight: bold;
+        `;
+        
+        updatePrompt.innerHTML = `
+            <span>גרסה חדשה זמינה!</span>
+            <button onclick="updateApp()" style="
+                background: white;
+                color: var(--primary);
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-weight: bold;
+                cursor: pointer;
+                font-family: 'Heebo', sans-serif;
+            ">עדכן עכשיו</button>
+        `;
+        
+        document.body.appendChild(updatePrompt);
+    }
+
+    // עדכון האפליקציה
+    window.updateApp = function() {
+        if (swRegistration && swRegistration.waiting) {
+            swRegistration.waiting.postMessage({ action: 'skipWaiting' });
+        }
+        window.location.reload();
+    }
+
+    // איפוס מלא של האפליקציה - מחיקת כל המטמון וה-SW
+    window.resetApp = async function() {
+        if (!confirm('האם אתה בטוח שברצונך לאפס את האפליקציה? כל המידע השמור ימחק.')) {
+            return;
+        }
+        
+        showToast('מאפס אפליקציה...', 'info');
+        
+        try {
+            // 1. מחק את כל המטמון
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                await Promise.all(
+                    cacheNames.map(cacheName => {
+                        console.log('Deleting cache:', cacheName);
+                        return caches.delete(cacheName);
+                    })
+                );
+            }
+            
+            // 2. בטל רישום של כל ה-Service Workers
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(
+                    registrations.map(registration => {
+                        console.log('Unregistering SW');
+                        return registration.unregister();
+                    })
+                );
+            }
+            
+            // 3. נקה LocalStorage
+            localStorage.clear();
+            
+            // 4. נקה SessionStorage
+            sessionStorage.clear();
+            
+            showToast('האפליקציה אופסה בהצלחה! טוען מחדש...', 'info');
+            
+            // 5. טען מחדש את הדף אחרי 1.5 שניות
+            setTimeout(() => {
+                window.location.reload(true); // force reload
+            }, 1500);
+            
+        } catch (error) {
+            console.error('Error resetting app:', error);
+            showToast('שגיאה באיפוס האפליקציה', 'error');
+        }
+    }
+
+    // הצגת תפריט איפוס
+    window.showResetMenu = function() {
+        const menu = document.createElement('div');
+        menu.id = 'resetMenu';
+        menu.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5000;
+        `;
+        
+        menu.innerHTML = `
+            <div style="
+                background: white;
+                border-radius: 15px;
+                padding: 25px;
+                max-width: 400px;
+                width: 90%;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            ">
+                <h3 style="margin: 0 0 15px 0; color: var(--primary); text-align: center;">
+                    <i class="fas fa-tools"></i> הגדרות מתקדמות
+                </h3>
+                
+                <div style="margin-bottom: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">גרסת אפליקציה:</div>
+                    <div style="font-family: monospace; color: var(--primary);">${document.getElementById('appVersion').textContent}</div>
+                </div>
+                
+                <div style="margin-bottom: 15px; font-size: 0.95em; line-height: 1.5; color: #666;">
+                    <strong>איפוס התקנה</strong> ימחק:<br>
+                    • כל המטמון (Cache)<br>
+                    • Service Worker<br>
+                    • מועדפים<br>
+                    • הגדרות<br>
+                    <br>
+                    <span style="color: var(--danger); font-weight: bold;">⚠️ פעולה זו בלתי הפיכה!</span>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="closeResetMenu()" style="
+                        flex: 1;
+                        padding: 12px;
+                        border: 2px solid var(--border);
+                        background: white;
+                        color: var(--primary);
+                        border-radius: 8px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        font-family: 'Heebo', sans-serif;
+                    ">ביטול</button>
+                    
+                    <button onclick="closeResetMenu(); resetApp();" style="
+                        flex: 1;
+                        padding: 12px;
+                        border: none;
+                        background: var(--danger);
+                        color: white;
+                        border-radius: 8px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        font-family: 'Heebo', sans-serif;
+                    ">
+                        <i class="fas fa-redo"></i> אפס עכשיו
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        menu.onclick = (e) => {
+            if (e.target === menu) closeResetMenu();
+        };
+        
+        document.body.appendChild(menu);
+    }
+
+    window.closeResetMenu = function() {
+        const menu = document.getElementById('resetMenu');
+        if (menu) menu.remove();
     }
 
     async function loadVersion() {
