@@ -1,14 +1,15 @@
 {
-  "version": "12.1.13",
-  "releaseDate": "2024-02-01",
+  "version": "12.1.14",
+  "releaseDate": "2024-02-02",
   "changes": [
-    "Added search functionality",
-    "Improved error handling",
-    "Added keyboard shortcuts",
-    "Better network monitoring",
-    "Enhanced UI feedback"
+    "Added belt color filter system",
+    "Improved Service Worker with version control",
+    "Added force reset/reinstall functionality",
+    "Better cache management",
+    "Fixed installation issues after app removal"
   ]
 }
+
 
 
 
