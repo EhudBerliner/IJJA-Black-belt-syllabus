@@ -1366,7 +1366,7 @@
                 sBtn.innerHTML = `
                     <div style="flex:1" onclick="toggleSerList(this)">
                         <i class="fas fa-chevron-down" style="margin-left:8px"></i>
-                        <span>${ser}</span>
+                        <span>${ser} (${exercises.length})</span>
                     </div>
                     <i class="fas fa-star star ${exercises.every(ex => favs.includes(ex.id)) ? 'active' : ''}" 
                        onclick="toggleSeriesFav(this,'${cat}','${ser}')"></i>`;
