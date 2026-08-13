@@ -1,11 +1,12 @@
 // גרסת Service Worker - עדכן מספר זה כדי לאלץ עדכון
-const CACHE_VERSION = 'v12.2.0';
+const CACHE_VERSION = 'v12.3.0';
 const CACHE_NAME = `ijja-syllabus-${CACHE_VERSION}`;
 
 // רשימת קבצים לשמירה במטמון
 const urlsToCache = [
     './',
     './index.html',
+    './IJJA_log_Video.mp4', // <--- הוספת קובץ הווידאו כאן
     './Logo.png',
     './Black_belt_syllabus_IJJA.csv',
     './manifest.json',
