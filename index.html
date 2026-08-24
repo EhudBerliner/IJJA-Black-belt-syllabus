@@ -502,63 +502,10 @@
             z-index: 1150;
             display: none;
         }
-/* עיצוב מסך פתיחה (Splash Screen) */
-        #splashScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #000;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-        }
-
-        #splashScreen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        #introVideo {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: black;
-        }
-
-        #skipSplashBtn {
-            position: absolute;
-            top: calc(15px + env(safe-area-inset-top));
-            left: 15px;
-            z-index: 10000;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-family: 'Heebo', sans-serif;
-            font-size: 0.9em;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-        }
-        
     </style>
 </head>
 <body>
-    
-<!-- מסך פתיחה - סרטון intro -->
-<div id="splashScreen">
-    <button id="skipSplashBtn" onclick="closeSplashScreen()">דילוג <i class="fas fa-forward"></i></button>
-    <video id="introVideo" autoplay muted playsinline preload="auto">
-        <source src="IJJA_log_Video.mp4" type="video/mp4">
-        הדפדפן שלך אינו תוגמך בניגון וידאו.
-    </video>
-</div>
-    
+
 <div class="offline-indicator" id="offlineIndicator">
     <i class="fas fa-wifi"></i> אין חיבור לאינטרנט
 </div>
@@ -992,8 +939,8 @@
             return v.version;
         } catch (e) {
             console.warn('version.json not loaded, using default');
-            document.getElementById('appVersion').innerText = 'v12.3.0';
-            return '12.3.0';
+            document.getElementById('appVersion').innerText = 'v12.1.0';
+            return '12.1.0';
         }
     }
         
@@ -1358,53 +1305,13 @@
     }
     
     window.onload = async function() {
-        initSplashScreen(); 
         loadFavorites();
         setupNetworkMonitoring();
         await init();
         restoreState();
         loadVersion();
     }
-// ניהול מסך הפתיחה (Splash Screen)
-    function initSplashScreen() {
-        const splash = document.getElementById('splashScreen');
-        const video = document.getElementById('introVideo');
 
-        if (!splash || !video) return;
-
-        // לבדיקה: אם המשתמש כבר צפה בסרטון בסשן הנוכחי, נסגור מיד
-        const hasSeenIntro = sessionStorage.getItem('ijja_intro_seen');
-        if (hasSeenIntro === '1') {
-            splash.classList.add('hidden');
-            return;
-        }
-
-        // בסיום נגינת הווידאו -> סגירת מסך הפתיחה
-        video.addEventListener('ended', closeSplashScreen);
-
-        // במקרה של שגיאת טעינה -> סגירה כדי לא לתקוע את המשתמש
-        video.addEventListener('error', closeSplashScreen);
-
-        // הפעלה יזומה
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(() => {
-                console.warn("Autoplay was prevented by browser");
-            });
-        }
-    }
-
-    function closeSplashScreen() {
-        const splash = document.getElementById('splashScreen');
-        const video = document.getElementById('introVideo');
-
-        if (video) video.pause();
-        if (splash) splash.classList.add('hidden');
-
-        // סימון שהמשתמש צפה בסרטון בסשן הזה
-        sessionStorage.setItem('ijja_intro_seen', '1');
-    }
-    
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
         const results = [];
