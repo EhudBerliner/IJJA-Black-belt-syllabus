@@ -1,5 +1,5 @@
 // גרסת Service Worker - עדכן מספר זה כדי לאלץ עדכון
-const CACHE_VERSION = 'v12.3.0';
+const CACHE_VERSION = 'v12.1.0';
 const CACHE_NAME = `ijja-syllabus-${CACHE_VERSION}`;
 
 // רשימת קבצים לשמירה במטמון
