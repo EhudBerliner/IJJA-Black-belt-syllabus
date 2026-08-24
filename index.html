@@ -502,12 +502,103 @@
             z-index: 1150;
             display: none;
         }
-       
+
+        /* עיצוב הודעת פתיחה - הודעת השבתה */
+        #deprecationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(4px);
+        }
+
+        #deprecationModal.hidden {
+            display: none !important;
+        }
+
+        .deprecation-card {
+            background: white;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            direction: rtl;
+            font-family: 'Heebo', sans-serif;
+            border-top: 5px solid var(--danger);
+        }
+
+        .deprecation-card i.main-icon {
+            font-size: 2.8rem;
+            color: var(--danger);
+            margin-bottom: 15px;
+        }
+
+        .deprecation-card h2 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .deprecation-card p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .deprecation-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-skip {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-skip:hover {
+            background: #004080;
+        }
+
+        
     </style>
 </head>
 <body>
     
-
+<!-- מודאל הודעת השבתה צפויה -->
+<div id="deprecationModal">
+    <div class="deprecation-card">
+        <i class="fas fa-exclamation-triangle main-icon"></i>
+        <h2>הודעה חשובה לגבי המשך פעילות האפליקציה</h2>
+        <p>
+            שימו לב: האפליקציה צפויה להפסיק את פעילותה בזמן הקרוב.<br>
+            בעדכונים הקרובים ננגיש עבורכם את קבצי המקור והנחיות להפעלת המערכת באופן עצמאי ב-GitHub.
+        </p>
+        <div class="deprecation-actions">
+            <button class="btn-skip" onclick="closeDeprecationModal()">הבנתי, המשך לאפליקציה</button>
+        </div>
+    </div>
+</div>
     
 <div class="offline-indicator" id="offlineIndicator">
     <i class="fas fa-wifi"></i> אין חיבור לאינטרנט
@@ -1308,11 +1399,33 @@
     }
     
     window.onload = async function() {
+        initDeprecationNotice();
         loadFavorites();
         setupNetworkMonitoring();
         await init();
         restoreState();
         loadVersion();
+    }
+
+// ניהול הודעת השבתה (שלב 1)
+    function initDeprecationNotice() {
+        const modal = document.getElementById('deprecationModal');
+        if (!modal) return;
+
+        // בדיקה אם המשתמש כבר דילג על ההודעה בסשן הנוכחי
+        const dismissed = sessionStorage.getItem('ijja_deprecation_dismissed');
+        if (dismissed === '1') {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function closeDeprecationModal() {
+        const modal = document.getElementById('deprecationModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        // שמירת אינדיקציה שהמשתמש סגר את ההודעה בסשן הזה
+        sessionStorage.setItem('ijja_deprecation_dismissed', '1');
     }
     
     function parseCSV(text) {
