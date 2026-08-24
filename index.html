@@ -623,7 +623,7 @@
         <h2>הודעה חשובה לגבי המשך פעילות האפליקציה</h2>
         <p>
             שימו לב: האפליקציה צפויה להפסיק את פעילותה בזמן הקרוב.<br>
-            באפשרותכם להוריד כבר עכשיו את כל קבצי המקור של הפרויקט לשמירה מקומית במחשב/בטלפון.
+           באפשרותכם להוריד כבר עכשיו את כל קבצי המקור של הפרויקט לשמירה מקומית במחשב/בטלפון + הנחיות להתקנה.
         </p>
         <div class="deprecation-actions">
             <button class="btn-download" id="downloadZipBtn" onclick="downloadProjectZip()">
@@ -1111,8 +1111,8 @@
             return v.version;
         } catch (e) {
             console.warn('version.json not loaded, using default');
-            document.getElementById('appVersion').innerText = 'v12.3.2';
-            return '12.3.2';
+            document.getElementById('appVersion').innerText = 'v12.3.3';
+            return '12.3.3';
         }
     }
         
@@ -1573,6 +1573,7 @@
                 'version.json',
                 'Black_belt_syllabus_IJJA.csv',
                 'Logo.png'
+                'README.txt'
             ];
 
             for (const fileName of filesToDownload) {
