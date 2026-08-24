@@ -11,7 +11,8 @@
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
     <style>
         /* משתני עיצוב גלובליים */
         :root {
@@ -580,22 +581,49 @@
             background: #004080;
         }
 
+        .btn-download {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-download:hover {
+            background: #215925;
+        }
+
+        .btn-download:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
         
     </style>
 </head>
 <body>
     
-<!-- מודאל הודעת השבתה צפויה -->
+<!-- מודאל הודעת השבתה צפויה - שלב 2 -->
 <div id="deprecationModal">
     <div class="deprecation-card">
         <i class="fas fa-exclamation-triangle main-icon"></i>
         <h2>הודעה חשובה לגבי המשך פעילות האפליקציה</h2>
         <p>
             שימו לב: האפליקציה צפויה להפסיק את פעילותה בזמן הקרוב.<br>
-            בעדכונים הקרובים ננגיש עבורכם את קבצי המקור והנחיות להפעלת המערכת באופן עצמאי ב-GitHub.
+            באפשרותכם להוריד כבר עכשיו את כל קבצי המקור של הפרויקט לשמירה מקומית במחשב/בטלפון.
         </p>
         <div class="deprecation-actions">
-            <button class="btn-skip" onclick="closeDeprecationModal()">הבנתי, המשך לאפליקציה</button>
+            <button class="btn-download" id="downloadZipBtn" onclick="downloadProjectZip()">
+                <i class="fas fa-download"></i> הורד את קבצי הפרויקט (ZIP)
+            </button>
+            <button class="btn-skip" onclick="closeDeprecationModal()">המשך לאפליקציה</button>
         </div>
     </div>
 </div>
@@ -1427,6 +1455,63 @@
         // שמירת אינדיקציה שהמשתמש סגר את ההודעה בסשן הזה
         sessionStorage.setItem('ijja_deprecation_dismissed', '1');
     }
+
+  // פונקציה להורדת כל קבצי הפרויקט כ-ZIP (שלב 2)
+    async function downloadProjectZip() {
+        const btn = document.getElementById('downloadZipBtn');
+        const originalText = btn.innerHTML;
+        
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> מייצר קובץ ZIP...';
+            
+            const zip = new JSZip();
+            
+            // רשימת קבצי הפרויקט להורדה
+            const filesToDownload = [
+                'index.html',
+                'sw.js',
+                'manifest.json',
+                'version.json',
+                'Black_belt_syllabus_IJJA.csv',
+                'Logo.png'
+            ];
+
+            // טעינת הקבצים ברקע והוספתם ל-ZIP
+            for (const fileName of filesToDownload) {
+                try {
+                    const response = await fetch(fileName);
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        zip.file(fileName, blob);
+                    }
+                } catch (err) {
+                    console.warn(`Failed to include file: ${fileName}`, err);
+                }
+            }
+
+            // יצירת קובץ ה-ZIP והורדתו לדפדפן
+            const content = await zip.generateAsync({ type: "blob" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(content);
+            link.download = "IJJA_Black_Belt_Syllabus_Source.zip";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            btn.innerHTML = '<i class="fas fa-check"></i> ההורדה הושלמה!';
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }, 3000);
+
+        } catch (error) {
+            console.error("Error generating ZIP:", error);
+            showToast("שגיאה ביצירת קובץ ההורדה", "error");
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }  
     
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
