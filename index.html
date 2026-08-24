@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+    <!-- הגדרת קובץ מניפסט ליכולות אפליקציית רשת מתקדמת (PWA) -->
     <link rel="manifest" href="manifest.json">
+    <!-- צבע סרגל הכלים של הדפדפן במכשירים תומכים -->
     <meta name="theme-color" content="#0056a6">
+    <!-- אייקון למסך הבית במכשירי iOS (Apple) -->
     <link rel="apple-touch-icon" href="Logo.png">
     <meta charset="UTF-8">
+    <!-- הגדרת תצוגה מותאמת למובייל ומניעת זום של המשתמש לשמירה על חוויית אפליקציה נייטיב -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Black belt syllabus</title>
 
+    <!-- פאביקון של האפליקציה -->
     <link rel="icon" type="image/png" href="Logo.png">
+    <!-- ספריות חיצוניות: אייקונים של FontAwesome, גופן Heebo מ-Google Fonts, וספריית JSZip ליצירת קבצי ZIP -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <style>
-        /* משתני עיצוב גלובליים */
+        /* משתני עיצוב גלובליים (CSS Variables) לשימוש חוזר בכל חלקי האפליקציה */
         :root {
             --primary: #0056a6;   /* כחול מותג ראשי */
             --secondary: #009be5; /* כחול בהיר לאלמנטים משניים */
@@ -23,10 +29,10 @@
             --fav-color: #ffc107; /* צבע זהב לכפתור מועדפים */
             --danger: #d32f2f;    /* אדום להתראות/מחיקה */
             --success: #2e7d32;   /* ירוק לאישור פעולות */
-            --yt-red: #ff0000;    /* צבע יוטיוב */
+            --yt-red: #ff0000;    /* צבע מותג יוטיוב */
         }
 
-        /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה כ-App) */
+        /* הגדרות בסיס למניעת גלילה של כל הדף (עבודה בתור App במסך מלא) */
         html, body { 
             height: 100%; 
             margin: 0; 
@@ -35,7 +41,7 @@
             background: #f7f9fb; 
         }
 
-        /* כותרת עליונה קבועה (Header) */
+        /* כותרת עליונה קבועה (Header) בחלק העליון של המסך */
         header {
             height: var(--header-h); 
             background: white; 
@@ -61,7 +67,7 @@
             line-height: 1.2;
         }
 
-        /* סרגל כפתורי פעולה */
+        /* סרגל כפתורי פעולה בראש המסך */
         .action-bar { display: flex; gap: 6px; }
         .btn {
             width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
@@ -74,7 +80,7 @@
         .btn.yt-active { color: var(--yt-red); border-color: var(--yt-red); }
         .btn-danger { color: var(--danger); }
 
-        /* אלמנט ויזואלי לרענון במשיכה (Pull to Refresh) */
+        /* אלמנט ויזואלי המוצג בזמן רענון במשיכה למטה (Pull to Refresh) */
         #ptr {
             position: absolute; top: var(--header-h); left: 0; width: 100%; height: 50px;
             display: flex; align-items: center; justify-content: center;
@@ -92,7 +98,7 @@
             position: relative;
         }
 
-        /* "הפס הלבן" - מונע זליגת תוכן מתחת ל-Header בזמן גלילה */
+        /* פס פקטיבי למניעת זליגת תוכן מתחת ל-Header בזמן גלילה */
         #scrollContainer::before {
             content: "";
             position: fixed;
@@ -112,14 +118,14 @@
             transition: transform 0.2s; 
         }
         
-        /* כותרת קטגוריה - נדבקת לראש הדף בגלילה */
+        /* כותרת קטגוריה - נדבקת בחלק העליון בזמן גלילה (Sticky) */
         .cat-group { margin-bottom: 25px; }
         .cat-header { 
             background: var(--primary); color: white; padding: 10px 15px; border-radius: 10px; 
             font-weight: 900; position: sticky; top: 10px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* שורת סדרה (לחיצה פותחת רשימת תרגילים) */
+        /* שורת סדרה (לחיצה עליה פותחת/סוגרת את רשימת התרגילים שלה) */
         .ser-item { 
             background: white; padding: 12px; font-weight: 700; border-right: 4px solid var(--secondary); 
             margin-top: 8px; display: flex; justify-content: space-between; align-items: center; 
@@ -127,7 +133,7 @@
         }
         .ser-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
-        /* רשימת תרגילים בתוך סדרה */
+        /* רשימת תרגילים המשויכים לסדרה */
         .ex-list { list-style: none; padding: 0; margin: 0; display: none; background: white; border: 1px solid var(--border); }
         .ex-list.open { display: block; border-radius: 0 0 6px 6px; }
         .ex-row { 
@@ -143,7 +149,7 @@
         .star:hover { transform: scale(1.2); }
         .star.active { color: var(--fav-color); }
 
-        /* חיפוש */
+        /* עיצוב סרגל החיפוש */
         .search-bar {
             margin: 15px 0;
             padding: 10px 15px;
@@ -164,21 +170,21 @@
         }
         .search-bar i { color: var(--primary); }
 
-        /* מודאל נגן הוידיאו */
+        /* מודאל (חלון קופץ) נגן הוידיאו */
         .modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; 
         }
         .modal-box { background: white; padding: 20px; border-radius: 15px; width: 92%; max-width: 500px; position: relative; }
         
-        /* מיכל הסרטון - יחס 16:9 */
+        /* מיכל הווידאו השומר על יחס גובה-רוחב תקני של 16:9 */
         .video-container { 
             position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; 
             background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
         }
         #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
-        /* מסך כיסוי למצב "מבחן עצמי" */
+        /* מסך כיסוי עבור מצב "מבחן עצמי" למניעת צפייה מוקדמת בווידאו */
         #videoCover {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, var(--secondary) 0%, var(--primary) 100%);
@@ -187,7 +193,7 @@
             padding: 20px; box-sizing: border-box;
         }
 
-        /* אנימציית פעימה לכפתור ה-Play בכיסוי */
+        /* אנימציית פעימה לכפתור ההפעלה במסך הכיסוי */
         .play-trigger {
             width: 80px; height: 80px; background: white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -204,7 +210,7 @@
 
         .cover-text { font-weight: 900; font-size: 1.3em; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
 
-        /* כפתורי שליטה במודאל */
+        /* כפתורי שליטה וסגירה בתוך החלון הקופץ */
         .close-btn { position: absolute; top: -45px; left: 0; color: white; font-size: 35px; cursor: pointer; }
         .modal-btn { 
             position: absolute; top: -45px; right: 0; width: 38px; height: 38px; border-radius: 8px; 
@@ -224,14 +230,14 @@
 
         .hidden { display: none !important; }
         
-        /* שיפורים למובייל */
+        /* התאמות עיצוב עבור מכשירי מובייל (Media Query) */
         @media (max-width: 600px) {
             header h1 {
                 font-size: 0.95rem;
                 line-height: 1.1;
                 max-width: 100px;
-                word-spacing: 9999px; /* כופה שבירת שורה בין מילים */
-                text-align: right; /* צמד לימין */
+                word-spacing: 9999px; /* כופה שבירת שורה בין מילים במרווחים קטנים */
+                text-align: right;    /* הצמדה לימין */
             }
             
             .header-right {
@@ -250,7 +256,7 @@
                 font-size: 0.75em;
             }
             
-            /* הקטנת כפתורים במסך ראשי */
+            /* הקטנת כפתורי הסרגל במסך ראשי במובייל */
             .btn {
                 width: 30px;
                 height: 30px;
@@ -261,26 +267,26 @@
                 gap: 5px;
             }
             
-            /* הגדלת אזורי מגע לכוכבים בלבד */
+            /* הגדלת אזורי מגע לכוכבי הסימון לנוחות מירבית בלחיצה במובייל */
             .star {
                 font-size: 1.3rem;
                 padding: 8px;
             }
             
-            /* שיפור קריאות */
+            /* שיפור קריאות הטקסטים בטלפון */
             .ex-link, .ex-no-link {
                 font-size: 1.05em;
                 line-height: 1.4;
             }
             
-            /* כפתורי ניווט גדולים יותר */
+            /* כפתורי ניווט מוגדלים */
             .nav-btn {
                 width: 45px;
                 height: 45px;
                 font-size: 1.2em;
             }
             
-            /* סרגל חיפוש */
+            /* הפיכת סרגל החיפוש לדביק בראש המסך בזמן גלילה במובייל */
             .search-bar {
                 position: sticky;
                 top: 0;
@@ -316,7 +322,7 @@
             }
         }
         
-        /* התאמה לאוריינטציה לרוחב במובייל */
+        /* התאמה למצב אופקי במובייל (Landscape) */
         @media (max-width: 900px) and (orientation: landscape) {
             :root {
                 --header-h: 60px;
@@ -339,19 +345,19 @@
             }
         }
         
-        /* מניעת zoom על double-tap */
+        /* מניעת ביצוע זום בטעות בלחיצה כפולה (Double-tap) במכשירי מגע */
         * {
             touch-action: manipulation;
         }
         
-        /* אנימציות חלקות למובייל */
+        /* החלת אנימציות מעבר חלקות למשתמשים שלא ביטלו זאת בהגדרות הנגישות */
         @media (prefers-reduced-motion: no-preference) {
             .btn, .nav-btn, .star, .ser-item, .ex-row {
                 transition: all 0.2s ease;
             }
         }
         
-        /* אינדיקטור החלקה */
+        /* אינדיקטור ויזואלי של חצי דפדופ בזמן מחוות החלקה (Swipe) */
         .swipe-indicator {
             position: fixed;
             top: 50%;
@@ -368,7 +374,7 @@
         .swipe-indicator.right { right: 20px; }
         .swipe-indicator.active { opacity: 0.8; }
         
-        /* PWA Mode adjustments */
+        /* התאמות מיוחדות עבור מצב אפליקציה מותקנת (PWA Standalone Mode) */
         .pwa-mode header {
             padding-top: env(safe-area-inset-top);
         }
@@ -377,7 +383,7 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
         
-        /* כפתור חזרה למעלה */
+        /* כפתור גלילה מהירה חזרה למעלה */
         #scrollToTop {
             position: fixed;
             bottom: 20px;
@@ -406,7 +412,7 @@
             display: flex;
         }
         
-        /* הודעת התקנת PWA */
+        /* באנר הצעת התקנה כ-PWA למסך הבית */
         #installPrompt {
             position: fixed;
             bottom: 80px;
@@ -457,7 +463,7 @@
             font-size: 1.2rem;
         }
 
-        /* התראת שחזור נגן */
+        /* התראת צף (Toast) לזיהוי שגיאה ואתחול נגן הוידאו */
         #recoveryToast {
             position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px;
@@ -466,7 +472,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.4); pointer-events: none;
         }
 
-        /* טוסט הודעות כללי */
+        /* רכיב הודעות צפות כללי להצגת חיווי למשתמש */
         .toast {
             position: fixed; top: 110px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px;
@@ -475,7 +481,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
 
-        /* אנימציה לטעינה */
+        /* אנימציית ספינר עבור מצבי טעינה */
         .loading {
             display: inline-block;
             width: 20px;
@@ -489,7 +495,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* אינדיקטור מצב חיבור */
+        /* אינדיקטור מצב אופליין (חוסר חיבור לרשת) */
         .offline-indicator {
             position: fixed;
             top: var(--header-h);
@@ -504,7 +510,7 @@
             display: none;
         }
 
-        /* עיצוב הודעת פתיחה - הודעת השבתה */
+        /* עיצוב חלון קופץ - הודעת השבתת האפליקציה ושמירת קבצים */
         #deprecationModal {
             position: fixed;
             top: 0;
@@ -610,7 +616,7 @@
 </head>
 <body>
     
-<!-- מודאל הודעת השבתה צפויה - שלב 2 -->
+<!-- חלון קופץ: הודעת השבתה צפויה והורדת קבצי הפרויקט ב-ZIP -->
 <div id="deprecationModal">
     <div class="deprecation-card">
         <i class="fas fa-exclamation-triangle main-icon"></i>
@@ -628,12 +634,15 @@
     </div>
 </div>
     
+<!-- סרגל התראה במקרה של אובדן חיבור לרשת -->
 <div class="offline-indicator" id="offlineIndicator">
     <i class="fas fa-wifi"></i> אין חיבור לאינטרנט
 </div>
 
+<!-- אלמנט ויזואלי של רענון במשיכה למטה -->
 <div id="ptr"><i class="fas fa-sync fa-spin"></i>&nbsp; מעדכן נתונים...</div>
 
+<!-- כותרת עליונה וסרגל כפתורי ניווט/סינון -->
 <header>
     <div class="header-right">
         <img src="Logo.png" alt="IJJA" class="logo-img">
@@ -645,6 +654,7 @@
                    title="לחץ לאיפוס התקנה">טוען...</small>
         </div>
     </div>
+    <!-- סרגל הכלים הראשי של האפליקציה -->
     <div class="action-bar">
         <button id="watchdogToggle" title="מצב Watchdog" class="btn active" onclick="toggleWatchdog()"><i class="fas fa-history"></i></button>
         <button title="תרגיל אקראי (מבחן)" class="btn" onclick="playRandom()"><i class="fas fa-random"></i></button>
@@ -655,6 +665,7 @@
     </div>
 </header>
 
+<!-- מיכל הגלילה המכיל את התוכן הדינמי וסרגל החיפוש -->
 <div id="scrollContainer">
     <main class="main-content" id="app">
         <div class="search-bar">
@@ -664,6 +675,7 @@
     </main>
 </div>
 
+<!-- מודאל נגן הוידיאו והצפייה בתרגילים -->
 <div id="vModal" class="modal" onclick="closeV()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <i class="fas fa-times close-btn" onclick="closeV()"></i>
@@ -671,9 +683,11 @@
         <button id="vNextRandomBtn" title="אקראי הבא" class="modal-btn hidden" style="right: 50px;" onclick="playRandom()"><i class="fas fa-random"></i></button>
         <button id="vAutoplayBtn" title="ניגון רצוף" class="modal-btn hidden" style="right: 50px;" onclick="toggleAutoplay()"><i class="fas fa-sync-alt"></i></button>
         
+        <!-- חצי אינדיקטור לסימון מחוות החלקה ימינה/שמאלה -->
         <div class="swipe-indicator left" id="swipeLeft"><i class="fas fa-chevron-left"></i></div>
         <div class="swipe-indicator right" id="swipeRight"><i class="fas fa-chevron-right"></i></div>
         
+        <!-- ניווט בין תרגילים (הקודם / הבא) -->
         <div class="modal-nav">
             <button id="prevBtn" class="nav-btn" onclick="nav(-1)"><i class="fas fa-chevron-right"></i></button>
             <div style="flex: 1; overflow: hidden; padding: 0 5px;">
@@ -684,6 +698,7 @@
             <button id="nextBtn" class="nav-btn" onclick="nav(1)"><i class="fas fa-chevron-left"></i></button>
         </div>
         
+        <!-- נגן הווידאו ומסך הכיסוי עבור "מבחן עצמי" -->
         <div class="video-container">
             <div id="player"></div>
             <div id="videoCover" class="hidden" onclick="revealVideo()">
@@ -695,13 +710,16 @@
     </div>
 </div>
 
+<!-- הודעות צפות (Toast) - חיווי שגיאה ואתחול נגן -->
 <div id="recoveryToast"><i class="fas fa-redo fa-spin"></i> מזהה תקלה בנגן... מאתחל</div>
 <div class="toast" id="toast"></div>
 
+<!-- כפתור גלילה מהירה חזרה לראש המסך -->
 <button id="scrollToTop" onclick="scrollToTopSmooth()">
     <i class="fas fa-arrow-up"></i>
 </button>
 
+<!-- באנר הצעה להתקנת האפליקציה בטלפון (PWA Install Prompt) -->
 <div id="installPrompt">
     <i class="fas fa-download" style="color: var(--primary); font-size: 1.5rem;"></i>
     <div style="flex: 1;">
@@ -712,10 +730,11 @@
     <i class="fas fa-times close-install" onclick="closeInstallPrompt()"></i>
 </div>
 
+<!-- טעינת ה-API הרשמי של YouTube עבור נגן הווידאו המוטמע -->
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-    /** משתנים גלובליים **/
+    /** משתנים גלובליים לניהול מצב האפליקציה (State) **/
     let prevWatchdogState = null;
     let db = [], favs = [];
     let isFavOnly = false, isRandomMode = false, isAutoplay = false, watchdogEnabled = true, isExternalYt = false;
@@ -724,16 +743,18 @@
     let pendingVideoId = '', pendingStart = 0;
     let searchQuery = '';
     
-    // משתנים לניטור תקינות הנגן
+    // מונים ומשתנים לניטור רציפות ותקינות הנגן (Prevent Freezing/Buffering Issues)
     let lastObservedTime = -1;
     let stuckCounter = 0;
     let bufferingCounter = 0;
     let blackScreenCounter = 0;
     const MAX_STUCK_TICKS = 6;
     const MAX_BUFFERING_TICKS = 20;
-    const MAX_BLACK_SCREEN_TICKS = 8; // ~3 שניות
+    const MAX_BLACK_SCREEN_TICKS = 8; // כ-3 שניות
 
-    // טעינת מועדפים מהזיכרון המקומי עם validation
+    /**
+     * טעינת רשימת התרגילים המועדפים מ-LocalStorage עם וידוא תקינות (Validation)
+     */
     function loadFavorites() {
         try {
             const stored = localStorage.getItem('ijja_favs');
@@ -752,7 +773,9 @@
         }
     }
 
-    // שמירת מועדפים בטוחה
+    /**
+     * שמירת רשימת המועדפים הנוכחית ל-LocalStorage
+     */
     function saveFavorites() {
         try {
             localStorage.setItem('ijja_favs', JSON.stringify(favs));
@@ -762,7 +785,11 @@
         }
     }
 
-    // הצגת הודעות טוסט
+    /**
+     * הצגת הודעת חיווי צפה (Toast) למשתמש
+     * @param {string} message - תוכן ההודעה
+     * @param {string} type - סוג ההודעה ('info' או 'error')
+     */
     function showToast(message, type = 'info') {
         const toast = document.getElementById('toast');
         toast.textContent = message;
@@ -771,7 +798,9 @@
         setTimeout(() => { toast.style.display = 'none'; }, 3000);
     }
 
-    // ניטור חיבור לאינטרנט
+    /**
+     * ניטור חיבור המכשיר לרשת האינטרנט והצגת התראה מתאימה בזמן אמת
+     */
     function setupNetworkMonitoring() {
         const offlineIndicator = document.getElementById('offlineIndicator');
         
@@ -789,14 +818,18 @@
         }
     }
 
-    /** לוגיקה למצב נגן חיצוני **/
+    /** 
+     * מעבר בין מצב נגן פנימי מוטמע לבין פתיחת הסרטון בנגן YouTube חיצוני 
+     */
     function toggleYtMode() {
         isExternalYt = !isExternalYt;
         document.getElementById('ytModeBtn').classList.toggle('yt-active', isExternalYt);
         localStorage.setItem('ijja_ytMode', isExternalYt ? '1' : '0');
     }
 
-    /** Pull-to-Refresh: מנגנון עדכון במשיכה כלפי מטה **/
+    /** 
+     * מנגנון Pull-to-Refresh: זיהוי מחוות גרירה כלפי מטה בראש המסך לרענון הדף 
+     */
     let startY = 0;
     const scrollContainer = document.getElementById('scrollContainer');
     const ptr = document.getElementById('ptr');
@@ -822,7 +855,9 @@
         appMain.style.transform = 'translateY(0)';
     });
 
-    // שמירת מיקום גלילה עם debounce
+    /** 
+     * שמירת מיקום הגלילה ב-LocalStorage בעת הגלילה (כולל השהייה - Debounce למניעת עומס) 
+     */
     let scrollTimeout;
     scrollContainer.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
@@ -835,8 +870,9 @@
         }, 200);
     });
 
-    /** Service Worker PWA: רישום וניהול גרסאות אפליקציה **/
-    /** Service Worker PWA: רישום וניהול גרסאות אפליקציה **/
+    /** 
+     * Service Worker PWA: רישום, ניטור וניהול עדכוני גרסאות של האפליקציה באופליין 
+     */
     let swRegistration = null;
     
     if ('serviceWorker' in navigator) {
@@ -845,7 +881,7 @@
                 swRegistration = reg;
                 console.log('Service Worker registered');
                 
-                // בדיקה לעדכונים כל 60 שניות
+                // בדיקה יזומות לקיום עדכון גרסה בכל 60 שניות
                 setInterval(() => {
                     reg.update();
                 }, 60000);
@@ -861,13 +897,15 @@
             })
             .catch(err => console.error('Service Worker registration failed:', err));
         
-        // האזנה להודעות מ-SW
+        // האזנה להפעלת Service Worker מעודכן
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             console.log('New service worker activated');
         });
     }
 
-    // הצגת הודעת עדכון
+    /**
+     * הצגת הודעת קופצת המציעה למשתמש לעדכן לגרסת האפליקציה החדשה
+     */
     function showUpdatePrompt() {
         const updatePrompt = document.createElement('div');
         updatePrompt.style.cssText = `
@@ -904,7 +942,9 @@
         document.body.appendChild(updatePrompt);
     }
 
-    // עדכון האפליקציה
+    /**
+     * הפעלת מנגנון העדכון של ה-Service Worker וטעינת הדף מחדש
+     */
     window.updateApp = function() {
         if (swRegistration && swRegistration.waiting) {
             swRegistration.waiting.postMessage({ action: 'skipWaiting' });
@@ -912,7 +952,9 @@
         window.location.reload();
     }
 
-    // איפוס מלא של האפליקציה - מחיקת כל המטמון וה-SW
+    /**
+     * איפוס מוחלט של האפליקציה: ניקוי ה-Cache, ביטול ה-SW ומחיקת ה-Storage
+     */
     window.resetApp = async function() {
         if (!confirm('האם אתה בטוח שברצונך לאפס את האפליקציה? כל המידע השמור ימחק.')) {
             return;
@@ -921,7 +963,7 @@
         showToast('מאפס אפליקציה...', 'info');
         
         try {
-            // 1. מחק את כל המטמון
+            // 1. מחיקת כל זיכרון המטמון (Caches)
             if ('caches' in window) {
                 const cacheNames = await caches.keys();
                 await Promise.all(
@@ -932,7 +974,7 @@
                 );
             }
             
-            // 2. בטל רישום של כל ה-Service Workers
+            // 2. ביטול רישום של כל ה-Service Workers
             if ('serviceWorker' in navigator) {
                 const registrations = await navigator.serviceWorker.getRegistrations();
                 await Promise.all(
@@ -943,17 +985,17 @@
                 );
             }
             
-            // 3. נקה LocalStorage
+            // 3. ניקוי LocalStorage
             localStorage.clear();
             
-            // 4. נקה SessionStorage
+            // 4. ניקוי SessionStorage
             sessionStorage.clear();
             
             showToast('האפליקציה אופסה בהצלחה! טוען מחדש...', 'info');
             
-            // 5. טען מחדש את הדף אחרי 1.5 שניות
+            // 5. טעינת הדף מחדש מהשרת
             setTimeout(() => {
-                window.location.reload(true); // force reload
+                window.location.reload(true); // ביצוע טעינה מאולצת
             }, 1500);
             
         } catch (error) {
@@ -962,7 +1004,9 @@
         }
     }
 
-    // הצגת תפריט איפוס
+    /**
+     * הצגת תפריט הגדרות מתקדמות ואיפוס המערכת
+     */
     window.showResetMenu = function() {
         const menu = document.createElement('div');
         menu.id = 'resetMenu';
@@ -1044,11 +1088,17 @@
         document.body.appendChild(menu);
     }
 
+    /**
+     * סגירת תפריט ההגדרות והאיפוס
+     */
     window.closeResetMenu = function() {
         const menu = document.getElementById('resetMenu');
         if (menu) menu.remove();
     }
 
+    /**
+     * טעינת גרסת האפליקציה מתוך קובץ version.json
+     */
     async function loadVersion() {
         try {
             const r = await fetch('version.json', { cache: 'no-store' });
@@ -1066,6 +1116,9 @@
         }
     }
         
+    /**
+     * קבלת אובייקט התרגיל הבא ברשימה לפי התרגיל הנוכחי
+     */
     function getNextExercise() {
         if (!currentEx) return null;
         let list = getCurrentListFull();
@@ -1074,6 +1127,9 @@
         return list[idx + 1];
     }
         
+    /**
+     * Callback אוטומטי הנקרא כאשר ה-API של YouTube מוכן לפעולה
+     */
     function onYouTubeIframeAPIReady() {
         try {
             ytPlayer = new YT.Player('player', {
@@ -1091,6 +1147,9 @@
         }
     }
 
+    /**
+     * טיפול באירוע מוכנות הנגן (YouTube Player Ready)
+     */
     function onPlayerReady() { 
         playerReady = true;
         console.log('YouTube player ready');
@@ -1105,7 +1164,12 @@
         }
     }
 
-    // פונקציה חדשה לטעינת וידאו בטוחה עם retry
+    /**
+     * טעינת סרטון וידאו באופן בטוח כולל מנגנון ניסיונות חוזרים (Retry Mechanism)
+     * @param {string} videoId - מזהה הסרטון ב-YouTube
+     * @param {number} startSeconds - נקודת התחלה בשניות
+     * @param {number} retryCount - מספר הניסיון הנוכחי
+     */
     function loadVideoSafely(videoId, startSeconds, retryCount = 0) {
         const MAX_RETRIES = 2;
         
@@ -1115,7 +1179,7 @@
                 startSeconds: startSeconds
             });
             
-            // בדיקה שהוידאו אכן נטען
+            // בדיקה האם הוידאו אכן נטען בהצלחה
             setTimeout(() => {
                 try {
                     const duration = ytPlayer.getDuration();
@@ -1125,7 +1189,7 @@
                         return;
                     }
                     
-                    // אם לא במצב מבחן עצמי, נגן את הסרטון
+                    // אם איננו במצב מבחן עצמי, הפעל את הסרטון אוטומטית
                     if (!isRandomMode && ytPlayer && typeof ytPlayer.playVideo === 'function') {
                         ytPlayer.playVideo();
                     }
@@ -1146,6 +1210,9 @@
         }
     }
 
+    /**
+     * טיפול בשגיאות שמוחזרות מהנגן של YouTube
+     */
     function onPlayerError(event) {
         console.error('YouTube Player Error:', event.data);
         let errorMsg = 'שגיאה בנגן הוידיאו';
@@ -1159,6 +1226,9 @@
         showToast(errorMsg, 'error');
     }
 
+    /**
+     * מעקב אחר שינויי מצב הנגן (מנגן, מופסק, הסתיים, טוען)
+     */
     function onPlayerStateChange(event) {
         if (event.data === YT.PlayerState.PLAYING) {
             stuckCounter = 0;
@@ -1179,6 +1249,9 @@
         }
     }
     
+    /**
+     * הפעלת מנגנון ה-Watchdog לניטור זמני הנגינה, תקינות התצוגה ועצירת הווידאו בזמן
+     */
     function startWatchdog() {
         stopWatchdog();
         if (!currentEx || !pendingVideoId) return;
@@ -1192,7 +1265,7 @@
                 const currentTime = ytPlayer.getCurrentTime();
                 const playerState = ytPlayer.getPlayerState();
         
-                // 1. לוגיקה מקורית: עצירה בסוף זמן התרגיל
+                // 1. עצירת הווידאו במידה והגיע לסוף אורך התרגיל המוגדר
                 if (watchdogEnabled && currentEx.duration > 0) {
                     if (currentTime - start >= currentEx.duration) {
                         handleVideoEnd();
@@ -1200,7 +1273,7 @@
                     }
                 }
         
-                // 2. ניטור "פריים תקוע"
+                // 2. ניטור זיהוי פריים תקוע (Frozen Frame) בזמן נגינה
                 if (playerState === YT.PlayerState.PLAYING) {
                     if (Math.abs(currentTime - lastObservedTime) < 0.1) {
                         stuckCounter++;
@@ -1215,7 +1288,7 @@
                     }
                 } 
                 
-                // 3. ניטור טעינה ארוכה
+                // 3. ניטור טעינה ארוכה (Infinite Buffering)
                 else if (playerState === YT.PlayerState.BUFFERING) {
                     bufferingCounter++;
                     if (bufferingCounter >= MAX_BUFFERING_TICKS) {
@@ -1224,7 +1297,7 @@
                     }
                 } 
                 
-                // 4. ניטור מסך שחור - וידאו שלא מתחיל להתנגן
+                // 4. ניטור מסך שחור / וידאו שלא מתחיל לנגן
                 else if (playerState === YT.PlayerState.CUED || playerState === -1) {
                     blackScreenCounter++;
                     if (blackScreenCounter >= MAX_BLACK_SCREEN_TICKS) {
@@ -1232,7 +1305,7 @@
                         recoverPlayer('blackscreen');
                     }
                 } else {
-                    // איפוס מונים אם הכל תקין
+                    // איפוס מוני השגיאות כשהנגן מתפקד כראוי
                     bufferingCounter = 0;
                     blackScreenCounter = 0;
                 }
@@ -1242,6 +1315,9 @@
         }, 400);
     }
     
+    /**
+     * עצירת טיימר ה-Watchdog
+     */
     function stopWatchdog() { 
         if (watchdogInterval) {
             clearInterval(watchdogInterval);
@@ -1249,6 +1325,9 @@
         }
     }
     
+    /**
+     * טיפול בסיום נגינת תרגיל (מעבר לתרגיל הבא בניגון רצוף או חזרה להתחלה)
+     */
     function handleVideoEnd() {
         const start = getStartTime(currentEx.embed || currentEx.link);
         if (isAutoplay && isFavOnly) {
@@ -1269,6 +1348,10 @@
         }
     }
     
+    /**
+     * מנגנון התאוששות ואתחול הנגן בעת זיהוי תקלה (Stuck / Buffering / Black screen)
+     * @param {string} reason - סיבת האתחול
+     */
     function recoverPlayer(reason = 'unknown') {
         stopWatchdog();
         stuckCounter = 0;
@@ -1284,12 +1367,10 @@
             const currentTime = ytPlayer.getCurrentTime();
             const seekTime = currentTime > 0 ? currentTime : pendingStart;
             
-            // אסטרטגיות שונות לסוגי בעיות שונים
+            // הפעלת אסטרטגיית התאוששות בהתאם לסוג התקלה
             if (reason === 'blackscreen') {
-                // מסך שחור - ננסה להפעיל מחדש
                 ytPlayer.playVideo();
                 
-                // אם עדיין לא עובד אחרי שנייה, נטען מחדש
                 setTimeout(() => {
                     try {
                         if (ytPlayer.getPlayerState() !== YT.PlayerState.PLAYING) {
@@ -1304,7 +1385,6 @@
                 }, 1000);
                 
             } else if (reason === 'buffering') {
-                // buffering אינסופי - נסה לעצור ולהתחיל מחדש
                 ytPlayer.stopVideo();
                 setTimeout(() => {
                     ytPlayer.loadVideoById({
@@ -1314,7 +1394,6 @@
                 }, 500);
                 
             } else {
-                // פריים תקוע או סיבה לא ידועה - טעינה מחדש רגילה
                 ytPlayer.loadVideoById({
                     videoId: pendingVideoId,
                     startSeconds: seekTime
@@ -1325,7 +1404,7 @@
             console.error('Error recovering player:', e);
             showToast('שגיאה באתחול הנגן', 'error');
             
-            // ניסיון אחרון - אתחול מלא של הנגן
+            // ניסיון אתחול מלא במקרה של כישלון
             setTimeout(() => {
                 try {
                     ytPlayer.destroy();
@@ -1340,12 +1419,18 @@
         setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
+    /**
+     * הפעלה/ביטול של מצב Watchdog לבקשת המשתמש
+     */
     function toggleWatchdog() {
         watchdogEnabled = !watchdogEnabled;
         document.getElementById('watchdogToggle').classList.toggle('active', watchdogEnabled);
         localStorage.setItem('ijja_watchdog', watchdogEnabled ? '1' : '0');
     }
 
+    /**
+     * הפעלה/ביטול של ניגון רצוף (Autoplay) עבור מועדפים
+     */
     function toggleAutoplay() {
         if (!isFavOnly) return; 
         isAutoplay = !isAutoplay;
@@ -1363,6 +1448,9 @@
         updateModalLayout();
     }
 
+    /**
+     * אתחול הנתונים: טעינת קובץ ה-CSV המכיל את הסילבוס ופיענוחו
+     */
     async function init() {
         try {
             const r = await fetch('Black_belt_syllabus_IJJA.csv', { cache: 'no-cache' });
@@ -1381,12 +1469,15 @@
         }
     }
 
+    /**
+     * שחזור מצב האפליקציה מ-LocalStorage (מיקום גלילה, סדרות פתוחות, מסננים)
+     */
     function restoreState() {
-        // Scroll position
+        // שחזור מיקום הגלילה
         const scrollTop = parseInt(localStorage.getItem('ijja_scroll'));
         if (scrollTop) scrollContainer.scrollTop = scrollTop;
     
-        // Open series
+        // שחזור סדרות פתוחות
         try {
             const openSeries = JSON.parse(localStorage.getItem('ijja_openSeries') || '[]');
             document.querySelectorAll('.ser-item').forEach(s => {
@@ -1403,7 +1494,7 @@
             console.error('Error restoring open series:', e);
         }
     
-        // Favorite filter
+        // שחזור סינון מועדפים
         const favState = localStorage.getItem('ijja_isFavOnly');
         if (favState === '1') {
             isFavOnly = true;
@@ -1411,14 +1502,14 @@
             applyFilters();
         }
 
-        // YouTube mode
+        // שחזור מצב נגן חיצוני
         const ytMode = localStorage.getItem('ijja_ytMode');
         if (ytMode === '1') {
             isExternalYt = true;
             document.getElementById('ytModeBtn').classList.add('yt-active');
         }
 
-        // Watchdog state
+        // שחזור הגדרת Watchdog
         const watchdogState = localStorage.getItem('ijja_watchdog');
         if (watchdogState === '0') {
             watchdogEnabled = false;
@@ -1426,6 +1517,9 @@
         }
     }
     
+    /**
+     * אירוע טעינת החלון הראשי - הפעלת סדר פעולות האתחול
+     */
     window.onload = async function() {
         initDeprecationNotice();
         loadFavorites();
@@ -1435,28 +1529,33 @@
         loadVersion();
     }
 
-// ניהול הודעת השבתה (שלב 1)
+    /**
+     * בדיקה והצגה של הודעת השבתת האפליקציה במידה ולא נסגרה בסשן הנוכחי
+     */
     function initDeprecationNotice() {
         const modal = document.getElementById('deprecationModal');
         if (!modal) return;
 
-        // בדיקה אם המשתמש כבר דילג על ההודעה בסשן הנוכחי
         const dismissed = sessionStorage.getItem('ijja_deprecation_dismissed');
         if (dismissed === '1') {
             modal.classList.add('hidden');
         }
     }
 
+    /**
+     * סגירת מודאל הודעת ההשבתה ושמירת חיווי ב-sessionStorage
+     */
     function closeDeprecationModal() {
         const modal = document.getElementById('deprecationModal');
         if (modal) {
             modal.classList.add('hidden');
         }
-        // שמירת אינדיקציה שהמשתמש סגר את ההודעה בסשן הזה
         sessionStorage.setItem('ijja_deprecation_dismissed', '1');
     }
 
-  // פונקציה להורדת כל קבצי הפרויקט כ-ZIP (שלב 2)
+    /**
+     * אריזה והורדה של כל קבצי קוד המקור של הפרויקט כקובץ ZIP יחיד
+     */
     async function downloadProjectZip() {
         const btn = document.getElementById('downloadZipBtn');
         const originalText = btn.innerHTML;
@@ -1467,7 +1566,6 @@
             
             const zip = new JSZip();
             
-            // רשימת קבצי הפרויקט להורדה
             const filesToDownload = [
                 'index.html',
                 'sw.js',
@@ -1477,7 +1575,6 @@
                 'Logo.png'
             ];
 
-            // טעינת הקבצים ברקע והוספתם ל-ZIP
             for (const fileName of filesToDownload) {
                 try {
                     const response = await fetch(fileName);
@@ -1490,7 +1587,6 @@
                 }
             }
 
-            // יצירת קובץ ה-ZIP והורדתו לדפדפן
             const content = await zip.generateAsync({ type: "blob" });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(content);
@@ -1513,10 +1609,15 @@
         }
     }  
     
+    /**
+     * ניתוח ופירסור מחרוזת ה-CSV והמרתה לאובייקטי תרגילים
+     * @param {string} text - תוכן קובץ ה-CSV
+     * @returns {Array} מערך אובייקטי תרגילים
+     */
     function parseCSV(text) {
         const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
         const results = [];
-        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; 
+        const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/; // Regex להתעלמות מפסיקים בתוך מירכאות
         
         for (let i = 1; i < lines.length; i++) {
             try {
@@ -1540,14 +1641,17 @@
         return results;
     }
 
+    /**
+     * רינדור ובניית הממשק הוויזואלי (HTML) מתוך מסד הנתונים
+     */
     function render() {
         const app = document.getElementById('app');
         
-        // שמירת שדה החיפוש
         const searchBar = app.querySelector('.search-bar');
         app.innerHTML = '';
         if (searchBar) app.appendChild(searchBar);
         
+        // הקבצת התרגילים לפי קטגוריות וסדרות
         const groups = db.reduce((acc, x) => {
             if (!acc[x.cat]) acc[x.cat] = {};
             if (!acc[x.cat][x.ser]) acc[x.cat][x.ser] = [];
@@ -1602,7 +1706,9 @@
         if (searchQuery) handleSearch();
     }
 
-    // חיפוש תרגילים
+    /**
+     * סינון תרגילים בזמן אמת לפי קלט החיפוש
+     */
     function handleSearch() {
         const input = document.getElementById('searchInput');
         searchQuery = input.value.toLowerCase().trim();
@@ -1617,7 +1723,7 @@
             row.classList.toggle('hidden', !matches);
         });
 
-        // הסתר/הצג סדרות וקטגוריות ריקות
+        // הסתרה/הצגה של קטגוריות וסדרות שאין בהן תוצאות תואמות
         document.querySelectorAll('.cat-group').forEach(cDiv => {
             let catHasVisible = false;
             cDiv.querySelectorAll('.ser-item').forEach(sBtn => {
@@ -1638,12 +1744,19 @@
         });
     }
 
+    /**
+     * פתיחת תרגיל לפי ID והגדרת מצב אקראי/מבחן
+     */
     function openVById(id, isRand) { 
         isRandomMode = isRand; 
         const ex = db.find(x => x.id === id); 
         if (ex) openV(ex); 
     }
 
+    /**
+     * פתיחת מודאל הנגן והגדרת פרטי התרגיל המבוקש
+     * @param {Object} ex - אובייקט התרגיל להצגה
+     */
     function openV(ex) {
         if (isExternalYt) {
             window.open(ex.link || ex.embed, '_blank');
@@ -1658,6 +1771,7 @@
 
         const url = ex.embed || ex.link;
 
+        // חילוץ מזהה הווידאו מתוך כתובות מסוגים שונים
         function extractVideoId(url) {
             if (!url) return '';
             let id = '';
@@ -1671,7 +1785,7 @@
         pendingStart = getStartTime(url);
         const cover = document.getElementById('videoCover');
 
-        // איפוס מונים
+        // איפוס מוני בדיקות הנגן
         stuckCounter = 0;
         bufferingCounter = 0;
         blackScreenCounter = 0;
@@ -1682,7 +1796,6 @@
             if (ytPlayer && playerReady) {
                 try {
                     ytPlayer.stopVideo();
-                    // טעינה מראש של הוידאו גם במצב מבחן עצמי
                     ytPlayer.cueVideoById({
                         videoId: pendingVideoId,
                         startSeconds: pendingStart
@@ -1707,11 +1820,17 @@
         }
     }
 
+    /**
+     * חילוץ זמן תחילת הסרטון (בשניות) מתוך פרמטר t/start ב-URL
+     */
     function getStartTime(url) { 
         const m = url.match(/[?&](t|start)=([0-9]+)/); 
         return m ? parseInt(m[2]) : 0; 
     }
 
+    /**
+     * הסרת מסך הכיסוי והפעלת הוידאו במצב "מבחן עצמי"
+     */
     function revealVideo() {
         const cover = document.getElementById('videoCover');
         cover.classList.add('hidden');
@@ -1723,16 +1842,12 @@
         try {
             const state = ytPlayer.getPlayerState();
             
-            // אם הוידאו כבר טעון, פשוט נגן
             if (state === YT.PlayerState.CUED || state === YT.PlayerState.PAUSED) {
                 ytPlayer.playVideo();
-            } 
-            // אם הנגן לא טעון או במצב לא ברור, טען ונגן
-            else {
+            } else {
                 loadVideoSafely(pendingVideoId, pendingStart);
             }
             
-            // בדיקה שהווידיאו מתחיל להתנגן
             setTimeout(() => {
                 try {
                     const newState = ytPlayer.getPlayerState();
@@ -1749,7 +1864,6 @@
             console.error('Error revealing video:', e);
             showToast('שגיאה בהפעלת הווידיאו', 'error');
             
-            // ניסיון שני
             setTimeout(() => {
                 try {
                     loadVideoSafely(pendingVideoId, pendingStart);
@@ -1760,6 +1874,9 @@
         }
     }
 
+    /**
+     * עדכון הלחצנים והטקסטים בחלון המודאל לפי מצב הנגינה הנוכחי
+     */
     function updateModalLayout() {
         const autoBtn = document.getElementById('vAutoplayBtn');
         const nextRandBtn = document.getElementById('vNextRandomBtn');
@@ -1769,7 +1886,7 @@
         const cnt = document.getElementById('vCounter');
         
         [autoBtn, nextRandBtn, pBtn, nBtn].forEach(b => b.classList.add('hidden'));
-        reloadBtn.classList.remove('hidden'); // כפתור טעינה מחדש תמיד גלוי
+        reloadBtn.classList.remove('hidden');
 
         if (isRandomMode) { 
             nextRandBtn.classList.remove('hidden'); 
@@ -1787,7 +1904,9 @@
         autoBtn.classList.toggle('active', isAutoplay);
     }
 
-    // כפייה על טעינה מחדש של הוידיאו
+    /**
+     * טעינה מחדש מאולצת של הסרטון בנגן במקרה של תקלה
+     */
     function forceReloadVideo() {
         if (!ytPlayer || !playerReady || !pendingVideoId) {
             showToast('הנגן לא מוכן', 'error');
@@ -1800,13 +1919,11 @@
             const currentTime = ytPlayer.getCurrentTime();
             const seekTime = currentTime > 1 ? currentTime : pendingStart;
             
-            // עצירה מלאה ואיפוס
             ytPlayer.stopVideo();
             stuckCounter = 0;
             bufferingCounter = 0;
             blackScreenCounter = 0;
             
-            // טעינה מחדש
             setTimeout(() => {
                 loadVideoSafely(pendingVideoId, seekTime);
             }, 300);
@@ -1817,6 +1934,9 @@
         }
     }
 
+    /**
+     * קבלת המערך המלא של התרגילים הרלוונטיים להקשר הצפייה הנוכחי
+     */
     function getCurrentListFull() {
         if (!currentEx) return [];
         if (isFavOnly) {
@@ -1826,6 +1946,10 @@
         }
     }
         
+    /**
+     * מעבר לתרגיל הקודם או הבא ברשימה
+     * @param {number} dir - כיוון הניווט (1 עבור הבא, -1 עבור הקודם)
+     */
     function nav(dir) {
         if (isRandomMode) return;
         const list = getCurrentListFull();
@@ -1838,6 +1962,9 @@
         }
     }
 
+    /**
+     * סגירת מודאל הנגן ועצירת הפעילות
+     */
     function closeV() { 
         document.getElementById('vModal').style.display = 'none'; 
         if (ytPlayer) {
@@ -1851,6 +1978,9 @@
         isRandomMode = false; 
     }
 
+    /**
+     * פתיחה או סגירה של רשימת תרגילים בתוך סדרה
+     */
     function toggleSerList(el) { 
         const list = el.parentElement.nextElementSibling; 
         const open = list.classList.toggle('open'); 
@@ -1858,6 +1988,9 @@
         saveOpenSeries();
     }
 
+    /**
+     * שמירת רשימת הסדרות הפתוחות כעת ב-LocalStorage
+     */
     function saveOpenSeries() {
         try {
             const openSeries = [];
@@ -1875,6 +2008,9 @@
         }
     }
 
+    /**
+     * הוספה או הסרה של תרגיל בודד ברשימת המועדפים
+     */
     function toggleStar(id, el) { 
         if (favs.includes(id)) {
             favs = favs.filter(f => f !== id);
@@ -1886,6 +2022,9 @@
         if (isFavOnly) applyFilters(); 
     }
 
+    /**
+     * הוספה או הסרה של סדרה שלמה למועדפים
+     */
     function toggleSeriesFav(el, cat, ser) { 
         const exs = db.filter(x => x.cat === cat && x.ser === ser);
         const all = exs.every(ex => favs.includes(ex.id));
@@ -1902,6 +2041,9 @@
         render();
     }
         
+    /**
+     * איפוס ומחיקת כל התרגילים המועדפים
+     */
     function clearFavs() { 
         if (confirm("למחוק את כל המועדפים?")) { 
             favs = []; 
@@ -1913,6 +2055,9 @@
         }
     }
 
+    /**
+     * הפעלה או ביטול מצב צפייה במועדפים בלבד
+     */
     function toggleFavFilter() { 
         isFavOnly = !isFavOnly; 
         document.getElementById('favFilterBtn').classList.toggle('active', isFavOnly); 
@@ -1920,6 +2065,9 @@
         saveFavFilter();
     }
     
+    /**
+     * שמירת מצב מסנן המועדפים ב-LocalStorage
+     */
     function saveFavFilter() {
         try {
             localStorage.setItem('ijja_isFavOnly', isFavOnly ? '1' : '0');
@@ -1928,6 +2076,9 @@
         }
     }
 
+    /**
+     * החלת המסננים על האלמנטים במסך (הסתרה/הצגה בהתאם למועדפים)
+     */
     function applyFilters() {
         document.querySelectorAll('.cat-group').forEach(c => {
             let catHasVisible = false;
@@ -1948,6 +2099,9 @@
         });
     }
 
+    /**
+     * פתיחה או סגירה של כל רשימות התרגילים בלחיצה אחת
+     */
     function toggleAll() {
         const anyClosed = Array.from(document.querySelectorAll('.ex-list:not(.hidden)')).some(l => !l.classList.contains('open'));
         document.querySelectorAll('.ex-list').forEach(l => {
@@ -1960,6 +2114,9 @@
         saveOpenSeries();
     }
 
+    /**
+     * בחירה והפעלת תרגיל אקראי מתוך המאגר (מצב מבחן)
+     */
     function playRandom() {
         const pool = db.filter(x => (x.link + x.embed).length > 10);
         if (pool.length) {
@@ -1969,7 +2126,9 @@
         }
     }
 
-    // Keyboard shortcuts
+    /**
+     * האזנה למקשי מקלדת (Shortcuts)
+     */
     document.addEventListener('keydown', (e) => {
         if (document.getElementById('vModal').style.display === 'flex') {
             if (e.key === 'Escape') closeV();
@@ -1982,7 +2141,9 @@
         }
     });
 
-    // תמיכה במחוות החלקה (Swipe) למובייל
+    /**
+     * מנגנון תמיכה במחוות החלקה (Swipe) במכשירי מובייל
+     */
     let touchStartX = 0;
     let touchStartY = 0;
     let touchEndX = 0;
@@ -2005,7 +2166,7 @@
         const deltaX = currentX - touchStartX;
         const deltaY = currentY - touchStartY;
         
-        // הצגת אינדיקטור החלקה
+        // הצגת אינדיקטור ויזואלי של החלקה
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
             const leftIndicator = document.getElementById('swipeLeft');
             const rightIndicator = document.getElementById('swipeRight');
@@ -2026,37 +2187,39 @@
         touchEndX = e.changedTouches[0].screenX;
         touchEndY = e.changedTouches[0].screenY;
         
-        // הסרת אינדיקטורים
         document.getElementById('swipeLeft').classList.remove('active');
         document.getElementById('swipeRight').classList.remove('active');
         
         handleSwipe();
     }, { passive: true });
 
+    /**
+     * טיפול בפעולות החלקה לפי כיוון התנועה
+     */
     function handleSwipe() {
         const deltaX = touchEndX - touchStartX;
         const deltaY = touchEndY - touchStartY;
         
-        // בדיקה שזו החלקה אופקית ולא אנכית
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
             vibrate(10);
             if (deltaX > 0) {
-                // החלקה ימינה - וידאו הבא (בעברית)
+                // החלקה ימינה - מעבר לתרגיל הבא
                 nav(1);
             } else {
-                // החלקה שמאלה - וידאו קודם (בעברית)
+                // החלקה שמאלה - מעבר לתרגיל הקודם
                 nav(-1);
             }
         }
         
-        // החלקה כלפי מטה - סגירת מודל
         if (deltaY > minSwipeDistance * 2 && Math.abs(deltaX) < minSwipeDistance) {
             vibrate(20);
             closeV();
         }
     }
 
-    // מניעת גלילה כשהמודל פתוח
+    /**
+     * מעקב ומניעת גלילה של הרקע כאשר החלון הקופץ פתוח
+     */
     const vModal = document.getElementById('vModal');
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -2068,48 +2231,43 @@
     });
     observer.observe(vModal, { attributes: true });
 
-    // זיהוי מכשיר מובייל
+    /**
+     * זיהוי האם המשתמש גולש ממכשיר נייד
+     */
     function isMobileDevice() {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // התאמת ממשק למובייל
+    // התאמות ממשק מיוחדות למכשירי מובייל
     if (isMobileDevice()) {
-        // הוספת מטא-טאג למניעת zoom
         const viewport = document.querySelector('meta[name=viewport]');
         if (viewport) {
             viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
         }
         
-        // הסתרת סרגל כתובת בגלילה
         let lastScrollTop = 0;
         scrollContainer.addEventListener('scroll', () => {
             const scrollTop = scrollContainer.scrollTop;
             if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // גלילה כלפי מטה
                 window.scrollTo(0, 1);
             }
             lastScrollTop = scrollTop;
         }, { passive: true });
     }
 
-    // תמיכה ב-iOS standalone mode
+    // התאמות למצב אפליקציה עצמאית במכשירי iOS
     if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
         document.body.classList.add('pwa-mode');
-        // התאמת גובה בר העליון ל-safe area
         document.documentElement.style.setProperty('--header-h', 'calc(90px + env(safe-area-inset-top))');
     }
 
-    // טיפול ב-orientation change
+    // טיפול בשינוי סיבוב המסך במכשיר נייד (Orientation change)
     window.addEventListener('orientationchange', () => {
-        // המתן לסיום האנימציה של שינוי האוריינטציה
         setTimeout(() => {
-            // רענון מיקום גלילה
             const currentScroll = scrollContainer.scrollTop;
             scrollContainer.scrollTop = 0;
             scrollContainer.scrollTop = currentScroll;
             
-            // התאמת נגן הוידאו אם פתוח
             if (document.getElementById('vModal').style.display === 'flex' && ytPlayer) {
                 try {
                     ytPlayer.setSize('100%', '100%');
@@ -2120,21 +2278,24 @@
         }, 300);
     });
 
-    // Haptic feedback למובייל (אם נתמך)
+    /**
+     * הפעלת רטט קל במכשירים תומכים (Haptic Feedback)
+     * @param {number} pattern - משך הרטט במאיות שניה
+     */
     function vibrate(pattern = 10) {
         if ('vibrate' in navigator) {
             navigator.vibrate(pattern);
         }
     }
 
-    // הוספת haptic feedback לפעולות מרכזיות
+    // הוספת משוב רטט לפעולת סימון כוכב
     const originalToggleStar = window.toggleStar;
     window.toggleStar = function(id, el) {
         vibrate(10);
         originalToggleStar(id, el);
     };
 
-    // כפתור חזרה למעלה
+    // ניהול הצגת כפתור גלילה חזרה למעלה
     const scrollToTopBtn = document.getElementById('scrollToTop');
     scrollContainer.addEventListener('scroll', () => {
         if (scrollContainer.scrollTop > 300) {
@@ -2144,6 +2305,9 @@
         }
     });
 
+    /**
+     * גלילה חלקות לראש הדף
+     */
     function scrollToTopSmooth() {
         vibrate(10);
         scrollContainer.scrollTo({
@@ -2152,21 +2316,22 @@
         });
     }
 
-    // PWA Installation Prompt
+    /**
+     * ניהול חלון הצעת התקנה כאפליקציה (PWA Installation Prompt)
+     */
     let deferredPrompt;
     
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
         
-        // הצגת הודעת התקנה אם לא התקינו בעבר
         const hasInstalled = localStorage.getItem('ijja_pwa_installed');
         const promptDismissed = localStorage.getItem('ijja_install_dismissed');
         
         if (!hasInstalled && !promptDismissed) {
             setTimeout(() => {
                 document.getElementById('installPrompt').classList.add('visible');
-            }, 5000); // הצג אחרי 5 שניות
+            }, 5000);
         }
     });
 
@@ -2196,7 +2361,7 @@
         document.getElementById('installPrompt').classList.remove('visible');
     });
 
-    // שיפור ביצועים - lazy loading לתמונות
+    // שיפור ביצועים: טעינה עצלנית (Lazy Loading) לתמונות הדף
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -2216,7 +2381,7 @@
         });
     }
 
-    // שמירת רשת נתונים - טעינה מתונה
+    // זיהוי והתראה במצב חיסכון בנתונים (Data Saver Mode)
     if ('connection' in navigator) {
         const connection = navigator.connection;
         if (connection.saveData || connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
@@ -2224,7 +2389,6 @@
             showToast('מצב חיסכון בנתונים מופעל', 'info');
         }
     }
-
 
 </script>
 </body>
