@@ -1,5 +1,5 @@
 {
-  "version": "12.3.0",
+  "version": "12.1.0",
   "releaseDate": "2026-08-13",
   "changes": [
     "Added exercise count to series names",
