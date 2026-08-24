@@ -6,7 +6,6 @@ const CACHE_NAME = `ijja-syllabus-${CACHE_VERSION}`;
 const urlsToCache = [
     './',
     './index.html',
-    './IJJA_log_Video.mp4', // <--- הוספת קובץ הווידאו כאן
     './Logo.png',
     './Black_belt_syllabus_IJJA.csv',
     './manifest.json',
